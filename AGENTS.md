@@ -9,7 +9,6 @@ Personal portfolio for Minh-Thien Nguyen (AI Research Engineer), to be published
 | ----------------------------------------- | ---------------------------------------------------------------------------------- |
 | `.plans/portfolio-plan.md`                | The plan. Stack, content inventory, phases, rejected options. **Read this first.** |
 | `.research/…synthesis-and-action-plan.md` | Index of the five research reports. Read a full report only when you need it.      |
-| `.agents/skills/hallmark/`                | Design skill. `.claude/skills` is a symlink to `.agents/skills`.                   |
 
 Keep the plan current. When a decision changes during implementation, edit
 `.plans/portfolio-plan.md` in the same change.
@@ -88,7 +87,9 @@ The `hallmark` skill governs all visual work. Two rules matter most here:
 - **No slop tells.** Inter, purple or blue gradients, bento grids, glassmorphism,
   centred heroes, emoji icons, italic headings, fake browser chrome, `transition: all`.
 
-Design direction is "quiet craft": Swiss typography, dark default, restrained motion.
+Design direction is "quiet craft": Swiss typography, light default with banded
+sections, restrained motion. Dark mode is a token re-point, not a second design.
+Tokens, type scale, and the band mechanism are specified in plan §2.5.
 
 ## Performance bar
 
