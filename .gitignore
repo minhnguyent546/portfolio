@@ -22,3 +22,9 @@ build/
 /.plans
 
 # misc
+
+# pagefind (generated into public/ by the build script)
+public/pagefind/
+
+# pnpm
+.pnpm-store/
