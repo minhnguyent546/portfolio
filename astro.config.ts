@@ -58,15 +58,49 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  // Variable ranges, not discrete weights: one file per family covers the range.
+  // `opsz` is deliberately omitted from Newsreader — it more than doubles the
+  // woff2 (57KB -> 129KB) for a 14-40px scale that needs no optical compensation.
   fonts: [
     {
-      name: "Google Sans Code",
-      cssVariable: "--font-google-sans-code",
+      name: "Newsreader",
+      cssVariable: "--font-newsreader",
       provider: fontProviders.google(),
-      fallbacks: ["monospace"],
-      weights: [300, 400, 500, 600, 700],
+      fallbacks: ["Georgia", "serif"],
+      weights: ["400 700"],
       styles: ["normal", "italic"],
-      formats: ["woff", "ttf"],
+      subsets: ["latin"],
+    },
+    {
+      name: "Archivo",
+      cssVariable: "--font-archivo",
+      provider: fontProviders.google(),
+      fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
+      weights: ["400 700"],
+      styles: ["normal"],
+      subsets: ["latin"],
+    },
+    {
+      name: "JetBrains Mono",
+      cssVariable: "--font-jetbrains-mono",
+      provider: fontProviders.google(),
+      fallbacks: ["ui-monospace", "monospace"],
+      weights: ["400 600"],
+      styles: ["normal"],
+      subsets: ["latin"],
+    },
+    // Build-time only: satori cannot parse woff2, so the OG routes read these
+    // static ttf instances. Kept as a separate family so the `ttf` @font-face
+    // blocks never enter the stylesheet the browser uses — no <Font> component
+    // references this variable and no CSS resolves it.
+    {
+      name: "Archivo",
+      cssVariable: "--font-archivo-og",
+      provider: fontProviders.google(),
+      weights: [400, 700],
+      styles: ["normal"],
+      subsets: ["latin"],
+      formats: ["ttf"],
     },
   ],
   env: {

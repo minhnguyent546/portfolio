@@ -7,7 +7,10 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: var(--font-google-sans-code);
+
+  --font-app: var(--font-newsreader);
+  --font-display: var(--font-archivo);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 /* Light theme values */

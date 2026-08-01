@@ -1,6 +1,23 @@
 @plugin "@tailwindcss/typography";
 
 @layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
     @apply prose;
@@ -11,10 +28,6 @@
     h4,
     th {
       @apply mb-3 text-foreground;
-    }
-
-    h3 {
-      @apply italic;
     }
 
     p,
