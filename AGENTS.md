@@ -14,6 +14,26 @@ Personal portfolio for Minh-Thien Nguyen (AI Research Engineer), to be published
 Keep the plan current. When a decision changes during implementation, edit
 `.plans/portfolio-plan.md` in the same change.
 
+Keep the plan short. It is a reference for a future reader, not a log of the work. It
+must stay readable at the end of the project, so every edit competes for space with
+everything already there.
+
+- **Record the decision, not the path to it.** Write what was chosen and the one fact
+  that makes it hard to rediscover. Leave out the options you rejected on the way, the
+  measurements that led you there, and the argument you made in chat.
+- **Match the length of the entries beside it.** Most are 3 to 8 lines. A new entry that
+  runs longer needs a reason.
+- **Edit the entry that exists.** Add a new bullet only for a new decision. Two bullets
+  on one topic must become one.
+- **Leave out the things that other files hold.** Skip anything that is already in the
+  code, the config, the commit message, or the response to the user. Version numbers,
+  timings, download counts, and command output all go stale, so cite them only when a
+  number is the reason for the decision.
+- **Write in Simplified Technical English** (the `ste` skill): short sentences, active
+  voice, plain words, one topic per entry.
+
+Say what you cut from the plan in your response, so the user can ask for it back.
+
 ## Commands
 
 The project uses **pnpm** and **Node 22 LTS** (`>= 22.12`):
@@ -99,8 +119,8 @@ and check the browser console.
   permits that action only. It does not permit an amend or a branch change.
   A push to `main` starts the GitHub Actions deploy and publishes the site.
 - **Write new commits.** Use `--amend` only when the user asks for it.
-- **Follow Conventional Commits**: `feat | fix | refactor | build | ci | chore | docs |
-  style | perf | test`.
+- **Follow Conventional Commits**:
+  `feat | fix | refactor | build | ci | chore | docs | style | perf | test`.
 - **Keep edits small.** Do not run repository-wide search-and-replace scripts. Keep each
   change scoped and easy to review.
 - **Expect concurrent changes.** If you see edits that you did not make, assume that
