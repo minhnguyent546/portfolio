@@ -165,14 +165,12 @@ const isActive = (path: string) => {
 </header>
 
 <script>
-  function toggleNav() {
-    const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn");
-    const menuItems = document.querySelector("#menu-items");
-    const menuIcon = document.querySelector("#menu-icon");
-    const closeIcon = document.querySelector("#close-icon");
+  const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn");
+  const menuItems = document.querySelector("#menu-items");
+  const menuIcon = document.querySelector("#menu-icon");
+  const closeIcon = document.querySelector("#close-icon");
 
-    if (!menuBtn || !menuItems || !menuIcon || !closeIcon) return;
-
+  if (menuBtn && menuItems && menuIcon && closeIcon) {
     const openLabel = menuBtn.dataset.labelOpen ?? "Open menu";
     const closeLabel = menuBtn.dataset.labelClose ?? "Close menu";
 
@@ -188,8 +186,4 @@ const isActive = (path: string) => {
       closeIcon.classList.toggle("hidden");
     });
   }
-
-  toggleNav();
-
-  document.addEventListener("astro:after-swap", toggleNav);
 </script>

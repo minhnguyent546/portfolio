@@ -5,6 +5,12 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Native cross-document view transitions. Replaces Astro's ClientRouter, which
+   shipped ~16KB of JS on every page. Browsers without support just hard-navigate. */
+@view-transition {
+  navigation: auto;
+}
+
 @layer base {
   * {
     @apply border-border outline-accent/75;
@@ -35,4 +41,16 @@
 
 :target {
   scroll-margin-block: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
