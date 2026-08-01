@@ -10,9 +10,18 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
+  // Import order belongs to Prettier (@ianvs/prettier-plugin-sort-imports).
+  // TypeScript's `source.organizeImports` runs in mode "All" — it sorts, merges,
+  // AND removes unused. Its sort groups `astro:*` with plain npm specifiers, while
+  // the Prettier plugin gives them their own group ahead of `@/`, so enabling both
+  // made every save flip the file between two orderings. `removeUnusedImports` is
+  // the mode "RemoveUnused" half: it deletes unused bindings without sorting, so it
+  // keeps the cleanup without fighting Prettier. Both set explicitly so a
+  // user-level setting cannot silently switch sorting back on.
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
+      "source.organizeImports": "never",
+      "source.removeUnusedImports": "explicit"
     }
   },
 

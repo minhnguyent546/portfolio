@@ -1,0 +1,5 @@
+# pnpm 11 replaced v10's `onlyBuiltDependencies:` list with this map. sharp powers
+# Astro's image pipeline, so a mismatched key here silently breaks the build.
+allowBuilds:
+  esbuild: true
+  sharp: true

@@ -20,6 +20,7 @@ logs/
 build/
 /.research
 /.plans
+dist/
 
 # misc
 

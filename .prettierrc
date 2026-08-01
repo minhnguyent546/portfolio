@@ -8,7 +8,19 @@
   "trailingComma": "es5",
   "bracketSpacing": true,
   "endOfLine": "lf",
-  "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-astro",
+    "prettier-plugin-tailwindcss"
+  ],
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "^astro$|^astro/|^astro:",
+    "<THIRD_PARTY_MODULES>",
+    "^@/",
+    "^[.]"
+  ],
+  "tailwindStylesheet": "./src/styles/global.css",
   "overrides": [
     {
       "files": "*.astro",
