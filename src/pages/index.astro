@@ -13,7 +13,7 @@ import { useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 
-const { socials, posts: postsConfig } = config;
+const { site, socials, posts: postsConfig } = config;
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
@@ -35,7 +35,7 @@ const homePath = getRelativeLocaleUrl(locale, "");
   >
     <section id="hero" class="border-b border-border pt-8 pb-6">
       <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
-        Mingalaba
+        {site.author}
       </h1>
       <a
         target="_blank"
