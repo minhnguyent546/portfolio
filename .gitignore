@@ -21,6 +21,11 @@ build/
 /.research
 /.plans
 dist/
+/.playwright-mcp/
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
 
 # misc
 
