@@ -1,0 +1,24 @@
+# node
+node_modules/
+.bun
+.DS_Store
+*.tsbuildinfo
+.astro
+.idea/
+.vitest-*
+.vercel
+
+# .env
+.env*
+!.env.example
+
+# logs
+logs/
+*.log
+
+# local stuff
+build/
+/.research
+/.plans
+
+# misc
