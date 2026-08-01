@@ -2,4 +2,5 @@
 # Astro's image pipeline, so a mismatched key here silently breaks the build.
 allowBuilds:
   esbuild: true
+  lefthook: true
   sharp: true

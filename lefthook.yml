@@ -1,0 +1,24 @@
+# https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: false
+  jobs:
+    # Prettier checks and does not write. A hook that rewrites a partially staged
+    # file can shift line numbers, and then lefthook cannot re-apply the unstaged
+    # changes that it hid. That failure discards work. To fix a report, run
+    # `pnpm exec prettier --write <file>` and stage the file again.
+    - name: prettier
+      glob: "*"
+      run: pnpm exec prettier --check --ignore-unknown {staged_files}
+
+    - name: eslint
+      glob: "*.{astro,ts,tsx,js,mjs,cjs}"
+      run: pnpm exec eslint --no-warn-ignored {staged_files}
+
+    # `astro check` takes no file list — it type-checks the whole project, because
+    # a change in one file can break types in another. The glob only decides
+    # whether the job runs, so it lists the file types that can hold a type error.
+    # `md` and `css` cannot, so they stay out.
+    - name: astro check
+      glob: "*.{astro,ts,tsx,js,mjs,cjs,json,mdx}"
+      run: pnpm exec astro check
