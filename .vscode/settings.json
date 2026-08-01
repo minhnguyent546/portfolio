@@ -1,0 +1,28 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Prettier's extension has no built-in `astro` language; without the glob it
+  // skips .astro entirely. The [astro] override keeps the Astro extension's
+  // bundled Prettier from winning, since it cannot see prettier-plugin-tailwindcss.
+  "prettier.documentSelectors": ["**/*.astro"],
+  "[astro]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // Tailwind v4's @theme / @variant / @utility are unknown to VS Code's CSS server.
+  "css.lint.unknownAtRules": "ignore",
+
+  // Required for completions inside class="…".
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+
+  "astro.content-intellisense": true
+}
