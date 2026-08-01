@@ -13,6 +13,9 @@
 !eslint.config.js
 !README.md
 !.vscode
+!AGENTS.md
+!lefthook.yml
+!pnpm-workspace.yaml
 
 # Ignore MDX files
 *.mdx
