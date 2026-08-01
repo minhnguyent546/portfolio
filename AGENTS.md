@@ -5,11 +5,11 @@ Personal portfolio for Minh-Thien Nguyen (AI Research Engineer), to be published
 
 ## Where things live
 
-| Path | Contents |
-|---|---|
-| `.plans/portfolio-plan.md` | The plan. Stack, content inventory, phases, rejected options. **Read this first.** |
-| `.research/…synthesis-and-action-plan.md` | Index of the five research reports. Read a full report only when you need it. |
-| `.agents/skills/hallmark/` | Design skill. `.claude/skills` is a symlink to `.agents/skills`. |
+| Path                                      | Contents                                                                           |
+| ----------------------------------------- | ---------------------------------------------------------------------------------- |
+| `.plans/portfolio-plan.md`                | The plan. Stack, content inventory, phases, rejected options. **Read this first.** |
+| `.research/…synthesis-and-action-plan.md` | Index of the five research reports. Read a full report only when you need it.      |
+| `.agents/skills/hallmark/`                | Design skill. `.claude/skills` is a symlink to `.agents/skills`.                   |
 
 Keep the plan current. When a decision changes during implementation, edit
 `.plans/portfolio-plan.md` in the same change.
@@ -41,6 +41,20 @@ These are decided. Raise a question before you change one.
   Biome, husky, Fontshare fonts (Satoshi, General Sans, Switzer),
   Cloudflare Web Analytics.
 
+## Code rules
+
+Listed most important first.
+
+- **Choose the simplest implementation that meets the current requirements.** Write what the site needs now. Do not build for a requirement that nobody asked for.
+- **Avoid premature abstraction.** Write concrete code until a real pattern appears. Two similar blocks are not a pattern.
+- **Avoid unnecessary fallbacks.** A fallback that nobody needs hides the real failure.
+  Add one only for a failure that you can name.
+- **Decide for the long term.** A simple solution is not the same as a temporary one. Do not accept a stopgap that you plan to replace later. This matters most for the choices that are hard to reverse: the content schemas, the design token names, and the URLs.
+- **Prefer established, well-maintained libraries over custom code.** Write custom code only when the performance bar forces it. The plan permits two hand-rolled parts: the ⌘K palette and the BibTeX cite toggle. Use a library for everything else.
+- **Compose small modules with explicit interfaces.** Do not build a central system that every other file imports. A component that takes props is the default unit.
+- **Keep each module to one job.** Content collections hold the data. Layouts and
+  components render it. Build scripts transform it. Do not mix these three.
+
 ## Design rules
 
 The `hallmark` skill governs all visual work. Two rules matter most here:
@@ -59,6 +73,10 @@ interaction. The ⌘K palette loads on the first keypress. Math renders with KaT
 build time. Keep Lighthouse near 100 on all four scores.
 
 ## Verifying
+
+**Never skip verification.** Do not bypass a required check, a test, or a quality gate.
+The lefthook pre-commit hook runs Prettier and `astro check` on staged files. Do not pass
+`--no-verify` to `git commit`.
 
 Give the smallest sufficient proof. Run `astro check` and a scoped lint, not a
 repository-wide sweep. For visual changes, take a screenshot at 1440, 768, and 375 px
