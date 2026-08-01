@@ -54,6 +54,10 @@ Listed most important first.
 - **Compose small modules with explicit interfaces.** Do not build a central system that every other file imports. A component that takes props is the default unit.
 - **Keep each module to one job.** Content collections hold the data. Layouts and
   components render it. Build scripts transform it. Do not mix these three.
+- **Comment only when necessary.** A comment must explain something the code cannot:
+  a non-obvious constraint, a version trap, a reason for an unusual choice. Never
+  narrate what an edit did, why you chose it, or what is missing. Those belong in the
+  response or the plan, not the file.
 
 ## Design rules
 
