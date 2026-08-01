@@ -1,7 +1,6 @@
 # AGENTS.md
 
-Personal portfolio for Minh-Thien Nguyen (AI Research Engineer), to be published at
-`minhnguyent546.io.vn`. Static Astro site, deployed to GitHub Pages.
+Personal portfolio. Static Astro site, deployed to GitHub Pages.
 
 ## Where things live
 
