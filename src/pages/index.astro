@@ -1,7 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import IconRss from "@/assets/icons/IconRss.svg";
 import BootSequence from "@/components/BootSequence.astro";
+import Card from "@/components/Card.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
 import CompetitionRow from "@/components/home/CompetitionRow.astro";
@@ -56,15 +59,21 @@ const sections = [
 ];
 
 const email = socials.find(({ name }) => name === "mail")?.url;
+
+/** Entry ids for the boot log, in the order the real sections use. */ const bootUnits =
+  async (name: "publications" | "competitions" | "projects") =>
+    (await getCollection(name, ({ data }) => !data.draft))
+      .sort((a, b) => a.data.order - b.data.order)
+      .map(({ id }) => id);
 ---
 
 <Layout class="app-wide">
   <BootSequence
     postCount={sortedPosts.length}
     tagCount={getUniqueTags(posts).length}
-    publications={publications.map(({ id }) => id)}
-    competitions={competitions.map(({ id }) => id)}
-    projects={projects.map(({ id }) => id)}
+    publications={await bootUnits("publications")}
+    competitions={await bootUnits("competitions")}
+    projects={await bootUnits("projects")}
   />
   <Header />
   <SectionNav items={sections} />
