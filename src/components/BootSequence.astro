@@ -39,16 +39,48 @@ type Row = {
   gap: number;
 };
 
-/** The units under one systemd target, then the line that says the target is up. */
-const target = (label: string, units: string[], unitGap: number): Row[] => [
-  ...units.map(unit => ({
-    marker: "OK" as const,
-    text: "Started",
-    name: `${unit}.service`,
-    gap: unitGap,
-  })),
-  { marker: "OK", text: "Reached target", name: label, gap: 150 },
-];
+/**
+ * The most units one target will print. A section can grow without bound, and
+ * past a handful the log stops being readable and starts being a list.
+ */
+const MAX_UNITS = 5;
+
+/**
+ * One systemd target: the line that says it is starting, its units, and the
+ * line that says it is up. Over `MAX_UNITS` the rest are counted rather than
+ * dropped, the way systemd elides its own output.
+ */
+const target = (label: string, units: string[], unitGap: number): Row[] => {
+  // A target with no units would print "Starting" then "Reached" with nothing
+  // between, which reads as broken rather than as an empty collection.
+  if (units.length === 0) return [];
+
+  const shown = units.slice(0, MAX_UNITS);
+  const hidden = units.length - shown.length;
+  return [
+    {
+      marker: null,
+      text: `Starting ${label.toLowerCase()}.target...`,
+      gap: 160,
+    },
+    ...shown.map(unit => ({
+      marker: "OK" as const,
+      text: "Started",
+      name: `${unit}.service`,
+      gap: unitGap,
+    })),
+    ...(hidden > 0
+      ? [
+          {
+            marker: null,
+            text: `... ${hidden} more unit${hidden === 1 ? "" : "s"}`,
+            gap: 90,
+          } satisfies Row,
+        ]
+      : []),
+    { marker: "OK" as const, text: "Reached target", name: label, gap: 150 },
+  ];
+};
 
 // A count of 0 would read as broken, so the line is dropped instead.
 const inventory: Row[] =
@@ -64,10 +96,8 @@ const inventory: Row[] =
     : [];
 
 const rows: Row[] = [
-  { marker: null, text: "Starting publications.target...", gap: 160 },
   { marker: "OK", text: "Mounted", name: `/home/${PROMPT_USER}`, gap: 70 },
   ...target("Publications", publications, 130),
-  { marker: null, text: "Starting competitions.target...", gap: 170 },
   ...target("Competitions", competitions, 130),
   ...target("Projects", projects, 120),
   ...inventory,
