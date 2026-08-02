@@ -7,8 +7,13 @@ pre-commit:
     # file can shift line numbers, and then lefthook cannot re-apply the unstaged
     # changes that it hid. That failure discards work. To fix a report, run
     # `pnpm exec prettier --write <file>` and stage the file again.
+    #
+    # Prettier exits 2 on a symlink passed by name, before it consults
+    # .prettierignore, so the ignore file cannot exclude one. `public/cv.pdf` is a
+    # symlink, so the filter has to happen here.
     - name: prettier
       glob: "*"
+      file_types: not symlink
       run: pnpm exec prettier --check --ignore-unknown {staged_files}
 
     - name: eslint
