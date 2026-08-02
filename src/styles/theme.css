@@ -10,18 +10,17 @@
   --color-surface: var(--surface);
   --color-rule: var(--rule);
 
-  /* PREVIEW ONLY — old names aliased to new values so the whole site renders in
-     the new palette before the class-name sweep. Delete with step 2. */
-  --color-background: var(--paper);
-  --color-foreground: var(--ink);
-  --color-accent-foreground: var(--accent-ink);
-  --color-muted: var(--surface);
-  --color-muted-foreground: var(--ink-muted);
-  --color-border: var(--rule);
-
   --font-app: var(--font-newsreader);
   --font-display: var(--font-archivo);
   --font-mono: var(--font-jetbrains-mono);
+
+  /* Fluid scale: 375px -> 1440px, no breakpoint patching.
+     h1 30->40, h2 23->29, h3 18->20, body 16->17, meta 13.5->14. */
+  --text-meta: clamp(0.8438rem, 0.8327rem + 0.0469vw, 0.875rem);
+  --text-body: clamp(1rem, 0.978rem + 0.0939vw, 1.062rem);
+  --text-h3: clamp(1.125rem, 1.081rem + 0.188vw, 1.25rem);
+  --text-h2: clamp(1.438rem, 1.305rem + 0.563vw, 1.812rem);
+  --text-h1: clamp(1.875rem, 1.655rem + 0.939vw, 2.5rem);
 }
 
 /* Light theme values */

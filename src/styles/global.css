@@ -13,9 +13,9 @@
 
 @layer base {
   * {
-    @apply border-border outline-accent/75;
+    @apply border-rule outline-accent/75;
     scrollbar-width: auto;
-    scrollbar-color: var(--color-muted) transparent;
+    scrollbar-color: var(--color-surface) transparent;
   }
   a,
   button {
@@ -29,6 +29,11 @@
 
 @utility max-w-app {
   @apply max-w-3xl;
+}
+
+/* Reading measure for long-form prose — narrower than the page container. */
+@utility max-w-measure {
+  max-width: 36rem;
 }
 
 @utility app-layout {

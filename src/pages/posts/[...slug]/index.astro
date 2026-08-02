@@ -113,7 +113,7 @@ const ogImage = ogImageUrl
   >
     <h1
       style={{ viewTransitionName: toTransitionName(title) }}
-      class="inline-block text-2xl font-bold text-accent sm:text-3xl"
+      class="inline-block font-bold text-accent"
     >
       {title}
     </h1>
@@ -123,7 +123,7 @@ const ogImage = ogImageUrl
       <span
         aria-hidden="true"
         class:list={[
-          "text-muted-foreground max-sm:hidden",
+          "text-ink-muted max-sm:hidden",
           { hidden: !config.features.editPost?.enabled || hideEditPost },
         ]}
       >
@@ -136,7 +136,7 @@ const ogImage = ogImageUrl
       id="article"
       class:list={[
         "mt-8 w-full",
-        "app-prose max-w-app",
+        "app-prose max-w-measure",
         "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
       ]}
     >
@@ -166,7 +166,7 @@ const ogImage = ogImageUrl
   function createProgressBar() {
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
+      "progress-container fixed top-0 z-10 h-1 w-full bg-paper";
 
     const progressBar = document.createElement("div");
     progressBar.className = "progress-bar h-1 w-0 bg-accent";
@@ -232,7 +232,7 @@ const ogImage = ogImageUrl
         : "-top-3";
 
       const copyButton = document.createElement("button");
-      copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
+      copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-surface border border-surface px-2 py-1 text-xs leading-4 text-ink font-medium`;
       copyButton.innerHTML = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);
