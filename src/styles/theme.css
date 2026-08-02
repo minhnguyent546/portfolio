@@ -1,12 +1,23 @@
 /* Register design tokens for Tailwind v4 */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-alt: var(--paper-alt);
+  --color-ink: var(--ink);
+  --color-ink-heading: var(--ink-heading);
+  --color-ink-muted: var(--ink-muted);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
+  --color-accent-ink: var(--accent-ink);
+  --color-surface: var(--surface);
+  --color-rule: var(--rule);
+
+  /* PREVIEW ONLY — old names aliased to new values so the whole site renders in
+     the new palette before the class-name sweep. Delete with step 2. */
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-accent-foreground: var(--accent-ink);
+  --color-muted: var(--surface);
+  --color-muted-foreground: var(--ink-muted);
+  --color-border: var(--rule);
 
   --font-app: var(--font-newsreader);
   --font-display: var(--font-archivo);
@@ -16,22 +27,33 @@
 /* Light theme values */
 :root,
 [data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
-  --accent-foreground: #ffffff;
-  --muted: #e6e6e6;
-  --muted-foreground: #6b7280;
-  --border: #ece9e9;
+  /* Paints the canvas behind <html> and the UA form controls. Without it the
+     canvas stays white, which shows as a flash during cross-document view
+     transitions when the site theme disagrees with the OS theme. */
+  color-scheme: light;
+
+  --paper: #fdfcfa;
+  --paper-alt: #f8f7f3;
+  --ink: #1a1a18;
+  --ink-heading: #312f2b;
+  --ink-muted: #57544d;
+  --accent: #2c5f8a;
+  --accent-ink: #ffffff;
+  --surface: #eeece5;
+  --rule: #e6e3dc;
 }
 
 /* Dark theme values */
 [data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --accent-foreground: #ffffff;
-  --muted: #343f60;
-  --muted-foreground: #afb9ca;
-  --border: #ab4b08;
+  color-scheme: dark;
+
+  --paper: #16161a;
+  --paper-alt: #1c1c21;
+  --ink: #eceae6;
+  --ink-heading: #eceae6;
+  --ink-muted: #a8a49c;
+  --accent: #7fb0d4;
+  --accent-ink: #16161a;
+  --surface: #26262d;
+  --rule: #2a2a30;
 }
