@@ -121,9 +121,12 @@ const FIRST_ROW_START = 60;
  */
 const MAX_LOG_MS = 2800;
 
+/** Divides every gap. Raise it to play the log faster without retiming rows. */
+const RATE = 1.15;
+
 const naturalEnd =
-  FIRST_ROW_START + rows.reduce((total, row) => total + row.gap, 0);
-const scale = Math.min(1, MAX_LOG_MS / naturalEnd);
+  (FIRST_ROW_START + rows.reduce((total, row) => total + row.gap, 0)) / RATE;
+const scale = Math.min(1, MAX_LOG_MS / naturalEnd) / RATE;
 
 const FIRST_ROW_AT = Math.round(FIRST_ROW_START * scale);
 
@@ -135,7 +138,7 @@ const timedRows = rows.map(row => {
 
 const PROMPT_AT = Math.round(elapsed) + 320;
 /** Long enough to read the log back before it goes. Any input cuts it short. */
-const HOLD_MS = 3000;
+const HOLD_MS = 2500;
 const DISMISS_AT = PROMPT_AT + HOLD_MS;
 
 // Mirrors the banner Arch prints above the login prompt: hostname, kernel
