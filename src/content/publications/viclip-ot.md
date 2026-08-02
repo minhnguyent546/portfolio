@@ -5,7 +5,7 @@ authors:
   - Quoc-Khang Tran
   - Minh-Thien Nguyen
   - Nguyen-Khang Pham
-venue: Preprint, submitted to Expert Systems with Applications
+venue: Preprint, submitted to The Visual Computer
 date: 2026-02-26
 arxivId: "2602.22678"
 links:

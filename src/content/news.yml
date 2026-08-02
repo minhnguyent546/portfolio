@@ -28,7 +28,7 @@
 - id: viclip-ot-preprint
   date: 2026-02-26
   text: Preprint of ViCLIP-OT, a foundation vision-language model for Vietnamese
-    image-text retrieval. Submitted to Expert Systems with Applications.
+    image-text retrieval.
   links:
     - label: arXiv
       url: https://arxiv.org/abs/2602.22678
