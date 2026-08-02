@@ -5,9 +5,9 @@ import config from "@/config";
 import { useTranslations } from "@/i18n";
 
 type Props = {
-  hideEditPost?: CollectionEntry<"posts">["data"]["hideEditPost"];
+  hideEditPost?: CollectionEntry<"blog">["data"]["hideEditPost"];
   class?: string;
-  post: CollectionEntry<"posts">;
+  post: CollectionEntry<"blog">;
 };
 
 const { hideEditPost, post, class: className = "" } = Astro.props;

@@ -15,7 +15,7 @@ import { getUniqueTags } from "@/utils/getUniqueTags";
 import { slugifyAll } from "@/utils/slugify";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
   const tags = getUniqueTags(posts);
 
   return tags.flatMap(({ tag, tagName }) => {

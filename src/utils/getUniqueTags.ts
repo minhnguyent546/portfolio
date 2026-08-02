@@ -14,7 +14,7 @@ type Tag = {
  * - `tag` is the slug used in URLs; `tagName` is the original label for display
  * - Uniqueness is based on the slug (so differently-cased labels collapse)
  */
-export function getUniqueTags(posts: CollectionEntry<"posts">[]) {
+export function getUniqueTags(posts: CollectionEntry<"blog">[]) {
   const tags: Tag[] = posts
     .filter(postFilter)
     .flatMap(post => post.data.tags)

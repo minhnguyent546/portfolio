@@ -10,7 +10,7 @@ import { useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { getUniqueTags } from "@/utils/getUniqueTags";
 
-const posts = await getCollection("posts", ({ data }) => !data.draft);
+const posts = await getCollection("blog", ({ data }) => !data.draft);
 const tags = getUniqueTags(posts);
 
 const locale = Astro.currentLocale ?? config.site.lang;
