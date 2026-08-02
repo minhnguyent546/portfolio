@@ -11,6 +11,8 @@ type Props = {
   description?: string;
   ogImage?: string;
   canonicalURL?: string;
+  /** Applied to <body>. The homepage uses it to widen `--app-width`. */
+  class?: string;
 };
 
 const { site } = config;
@@ -20,6 +22,7 @@ const {
   description = site.description,
   ogImage = resolveDefaultOgImagePath(config),
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
+  class: className,
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
@@ -115,7 +118,10 @@ const rssHref = getRelativeLocaleUrl(
     </script>
   </head>
   <body
-    class="flex min-h-svh flex-col bg-paper font-app text-ink selection:bg-accent/75 selection:text-accent-ink"
+    class:list={[
+      "flex min-h-svh flex-col bg-paper font-app text-ink selection:bg-accent/75 selection:text-accent-ink",
+      className,
+    ]}
   >
     <slot />
     <script>

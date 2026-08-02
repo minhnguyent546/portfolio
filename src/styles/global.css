@@ -12,6 +12,18 @@
 }
 
 @layer base {
+  html {
+    /* Clears the sticky index nav on an anchor jump. `clip` rather than
+       `hidden`, which would turn the root into a scroll container and break
+       `position: sticky`. */
+    scroll-padding-top: 3.5rem;
+    overflow-x: clip;
+  }
+
+  body {
+    overflow-x: clip;
+  }
+
   * {
     @apply border-rule outline-accent/75;
     scrollbar-width: auto;
@@ -27,8 +39,17 @@
   }
 }
 
+/* Page width is a variable, not a utility, because the header, the main
+   element, and the footer are siblings — each needs the same value, and only
+   the homepage changes it. `Layout` sets `--app-width` on <body>. */
 @utility max-w-app {
-  @apply max-w-3xl;
+  max-width: var(--app-width, 48rem);
+}
+
+/* The homepage carries eight dense sections behind a left heading rail, so it
+   runs wider than the reading pages. */
+@utility app-wide {
+  --app-width: 80rem;
 }
 
 /* Reading measure for long-form prose — narrower than the page container. */
