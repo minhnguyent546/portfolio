@@ -12,6 +12,7 @@ doi: 10.32913/mic-ict-research.v2025.n3.1395
 links:
   - label: Code
     url: https://github.com/minhnguyent546/soups
+thumbnail: ./soups-thumbnail.png
 abstract:
   A framework that combines the hybrid CoAtNet architecture with model soups,
   a weight-space ensembling technique that averages checkpoints from one
