@@ -1,0 +1,13 @@
+- id: virtual-tree
+  title: Virtual Tree
+  titleVi: Cây ảo
+  publication: VNOI Magazine
+  year: 2024
+  url: https://drive.google.com/file/d/16ni7Keg2gwx2tdgczMFIGWh3KtNmgaYe/view
+
+- id: xor-techniques
+  title: Subtle Techniques with the Xor Operation
+  titleVi: Kỹ thuật tinh tế về phép Xor
+  publication: VNOI Magazine
+  year: 2023
+  url: https://oj.vnoi.info/pdf/vnoi-magazine-2023-compressed.pdf#page=43

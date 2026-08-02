@@ -32,7 +32,7 @@ export default defineAstroPaperConfig({
     { name: "github", url: "https://github.com/minhnguyent546" },
     { name: "x", url: "https://x.com/minhnguyent546/" },
     { name: "linkedin", url: "https://www.linkedin.com/in/minhnguyent546/" },
-    { name: "mail", url: "mailto:contact@minhnguyent546.vn" },
+    { name: "mail", url: "mailto:minhnguyent546@gmail.com" },
     {
       name: "googleScholar",
       url: "https://scholar.google.com/citations?hl=en&user=0DsVBW4AAAAJ",

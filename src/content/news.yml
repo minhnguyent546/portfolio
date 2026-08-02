@@ -1,0 +1,36 @@
+- id: exact-2026-csonet-submission
+  date: 2026-07-15
+  text:
+    Submitted the CoTu system paper to the EXACT Competition Track at the CSoNet
+    2026 special session, hosted at HCMUT.
+  links:
+    - label: Technical report
+      url: https://arxiv.org/abs/2607.14735
+
+- id: exact-2026-result
+  date: 2026-06-25
+  text:
+    Final results announced for EXACT 2026 at IEEE IJCNN 2026. Team CoTu took the
+    highest technical score of any team, 13.44/15, and placed 3rd overall.
+
+- id: soups-preprint
+  date: 2026-03-02
+  text:
+    Preprint on model soups for Mekong Delta intangible-cultural-heritage image
+    classification. Early accept at the Journal on Information Technologies and
+    Communications.
+  links:
+    - label: arXiv
+      url: https://arxiv.org/abs/2603.02181
+    - label: Code
+      url: https://github.com/minhnguyent546/soups
+
+- id: viclip-ot-preprint
+  date: 2026-02-26
+  text: Preprint of ViCLIP-OT, a foundation vision-language model for Vietnamese
+    image-text retrieval. Submitted to Expert Systems with Applications.
+  links:
+    - label: arXiv
+      url: https://arxiv.org/abs/2602.22678
+    - label: Code
+      url: https://github.com/minhnguyent546/ViCLIP-OT
