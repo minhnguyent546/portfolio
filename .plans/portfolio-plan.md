@@ -153,10 +153,9 @@ text stays at the plugin's 16 px.
   Collapses to stacked below `lg`.
 - **Section padding** `55px 0` equivalent (`3.5rem`), uniform. The bands carry the
   separation, so the padding does not need to.
-- **Container** ~1290 px max. The blog keeps the narrow reading column; only the
-  homepage widens. Bands, the rail, and the wide container land in Phase 4 with the
-  8-section homepage they serve — Phase 2 ships colour and type only (decided
-  2026-08-02).
+- **Container** 80rem max, 1280px of content inside it. The blog keeps the narrow
+  reading column, so the width is a variable (`--app-width`) that the homepage
+  re-points, not a second utility — see Phase 4.
 - **`scroll-padding-top`** matching nav height, so anchor jumps clear the sticky nav.
 - Deliberate two-line heading breaks where a label reads better stacked.
 
@@ -255,7 +254,7 @@ Source Serif 4 is 0.475.
 | Sitemap | `@astrojs/sitemap` (+ `site` set in config) | |
 | Comments | **Skip for v1** | If wanted later: giscus via lazy plain `<script>` (audience has GitHub accounts). |
 | Analytics | **GoatCounter** (hosted, free, no cookies/banner, ~3.5KB) | **Not** Cloudflare Web Analytics — free tier being wound down. Umami self-hosted as alt. |
-| Boot intro | **`BootSequence.astro`** — systemd-style boot log on `/`, once per session | Overrides §1's "no terminal cosplay" for this one component. It uses the site tokens and JetBrains Mono on `--paper`, not a black-and-green tty. `index.astro` passes the entry ids of the publications, competitions, and projects collections, so each one gets a `Started <id>.service` line. Three joke lines follow. Row delays are relative gaps, so new content extends the sequence. It runs 6.2 s, of which 3 s is a hold on the login prompt to let the visitor read the log. Any key, click, scroll, or touch ends it early. A session gate on `<html data-boot>` stops a replay and also skips the overlay under `prefers-reduced-motion: reduce`. Cost against the §1 bar: homepage inline JS goes from 1.9 KB to 2.8 KB, and external JS on `/` stays at 0. |
+| Boot intro | **`BootSequence.astro`** — systemd-style boot log on `/`, once per session | Overrides §1's "no terminal cosplay" for this one component. It uses the site tokens and JetBrains Mono on `--paper`, not a black-and-green tty. `index.astro` passes the entry ids of the publications, competitions, and projects collections, so each one gets a `Started <id>.service` line. Three joke lines follow. The sequence has a fixed length: a cap on the log compresses the row gaps as content grows, so more units do not make the intro longer. It runs 6.2 s, of which 3 s is a hold on the login prompt to let the visitor read the log. The log clips at the height of the screen and follows the printing line down, so a long list cannot push a row off the top. Any key, click, scroll, or touch ends it early. A session gate on `<html data-boot>` stops a replay and also skips the overlay under `prefers-reduced-motion: reduce`. Cost against the §1 bar: homepage inline JS goes from 1.9 KB to 2.8 KB, and external JS on `/` stays at 0. |
 
 ### SEO / metadata
 - `schema.org/Person` JSON-LD, canonical URLs, OG/Twitter cards (generated OG images),
@@ -470,9 +469,22 @@ Source Serif 4 is 0.475.
    because a YAML date always materialises a day, which would print a fabricated day for
    the month-only Viettel entry.
    Contact email is `minhnguyent546@gmail.com` — the config had a domain that does not
-   exist. **Still open:** the CV PDF, and publication thumbnails.*
+   exist. **Done since:** the CV, avatar, and both publication thumbnails.*
 4. **Homepage** — all sections in order, publication rows w/ Cite toggle, competition
    entries w/ leaderboard links.
+   *Status (2026-08-03): done. Eight sections built from the collections; no copy is
+   typed into the page except the About and Contact prose.
+   Three §2.5 items became code. **`max-w-app` is now `var(--app-width, 48rem)`**, not a
+   fixed utility — the header, main, and footer are siblings, so a second wide utility
+   would have left a 48rem header over 80rem content. `Layout` takes a `class` prop; the
+   homepage passes `app-wide` (80rem). **The band alternates on
+   `main > .band:nth-of-type(even)`**, one rule in `Section.astro`, so the sections must
+   stay direct DOM siblings of `main`. **`scroll-padding-top: 3.5rem`** matches the
+   sticky index nav; measured clearance after a `#projects` jump is 16px.
+   `html`/`body` carry `overflow-x: clip`, never `hidden`, which would make the root a
+   scroll container and kill `position: sticky`.
+   **Verified** at 320/375/414/768/1440: 0px horizontal overflow, exact 0px band gaps,
+   no clickable text over one line, console clean, dark mode re-points both bands.*
 5. **Long-form** — blog layout (Expressive Code + KaTeX), first post migrated or new.
 6. **Per-paper pages** — ViCLIP-OT and ViREx-Bench Nerfies-style pages.
 7. **Features** — Pagefind + ⌘K palette, view transitions, OG images, RSS, sitemap,
