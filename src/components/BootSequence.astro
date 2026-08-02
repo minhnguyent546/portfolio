@@ -25,7 +25,7 @@ const PROMPT_USER = "minhnguyent546";
 
 type Row = {
   /** Marker text. `null` renders an empty marker column (a pending line). */
-  marker: "OK" | "FAIL" | "DEPEND" | null;
+  marker: "OK" | "FAIL" | "DEPEND" | "INFO" | null;
   text: string;
   tone?: "warn" | "muted";
   /** Milliseconds since the previous row. Real logs burst and stall. */
@@ -75,6 +75,13 @@ const rows: Row[] = [
     gap: 70,
   },
   { marker: "OK", text: "Reached target Caffeinated", gap: 180 },
+  { marker: "OK", text: "Started clauding.service", gap: 150 },
+  {
+    marker: "INFO",
+    text: "Unit codexing.service is masked",
+    tone: "muted",
+    gap: 90,
+  },
   { marker: "OK", text: "Reached target Portfolio", gap: 150 },
 ];
 
