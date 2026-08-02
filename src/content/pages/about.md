@@ -1,9 +1,9 @@
 ---
 title: About
-description: AI Research Engineer working on inference-time scaling, symbolic reasoning, and high-performance model serving.
+description: Independent AI Researcher working on inference-time scaling, symbolic reasoning, and high-performance model serving.
 ---
 
-I am an AI Research Engineer working on natural language processing and deep
+I am an Independent AI Researcher working on natural language processing and deep
 learning.
 
 My research interests are inference-time scaling, symbolic reasoning,
