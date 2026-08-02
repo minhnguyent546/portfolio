@@ -1,0 +1,50 @@
+---
+/**
+ * One homepage section: a full-bleed tonal band with a left heading rail.
+ *
+ * The band alternates on `:nth-of-type`, so the sections must be DOM siblings.
+ * That is why this renders `<section>` as its root and takes no `tone` prop —
+ * position in the page decides the tone.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  id: string;
+  /** Two digits, shown above the heading in the rail. */
+  index: string;
+  title: string;
+  /** Sits under the heading in the rail, at meta size. */
+  note?: string;
+} & HTMLAttributes<"section">;
+
+const { id, index, title, note, class: className, ...attrs } = Astro.props;
+---
+
+<section id={id} class:list={["band", className]} {...attrs}>
+  <div class="app-layout grid gap-x-10 gap-y-5 py-14 lg:grid-cols-12">
+    <header class="lg:col-span-4 lg:pe-8">
+      <p
+        class="font-mono text-meta tracking-[0.18em] text-ink-muted tabular-nums"
+      >
+        {index}
+      </p>
+      <h2 class="mt-1 wrap-anywhere text-ink-heading">{title}</h2>
+      {
+        note && (
+          <p class="mt-2 max-w-measure text-meta text-ink-muted">{note}</p>
+        )
+      }
+    </header>
+    <div class="min-w-0 lg:col-span-8">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The tone change *is* the section boundary — adjacent sections touch at
+     0px. Scoped to `main` so only the homepage bands alternate. */
+  :global(main > .band:nth-of-type(even)) {
+    background: var(--paper-alt);
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+/**
+ * In-page index for the homepage sections. Sticks under the masthead so the
+ * eight sections stay reachable while scrolling.
+ *
+ * `scroll-padding-top` in global.css matches the height of this strip; change
+ * one and the anchor jumps land under the other.
+ */
+type Props = {
+  items: { id: string; label: string }[];
+};
+
+const { items } = Astro.props;
+---
+
+<nav
+  aria-label="Sections"
+  class="sticky top-0 z-30 border-b border-rule bg-paper/90 backdrop-blur-sm"
+>
+  <ul
+    class="app-layout flex snap-x [scrollbar-width:none] gap-x-5 overflow-x-auto py-3 text-meta whitespace-nowrap [&::-webkit-scrollbar]:hidden"
+  >
+    {
+      items.map(({ id, label }) => (
+        <li class="snap-start">
+          <a
+            href={`#${id}`}
+            class="inline-block py-1 text-ink-muted underline decoration-transparent underline-offset-4 hover:text-accent hover:decoration-current"
+          >
+            {label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

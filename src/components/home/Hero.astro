@@ -1,0 +1,50 @@
+---
+/**
+ * H2 split diptych — statement left, portrait right, at 7/5.
+ * Sits above the first band and carries no tone of its own.
+ */
+import { Image } from "astro:assets";
+import avatar from "@/assets/images/avatar.jpg";
+import Socials from "@/components/Socials.astro";
+import config from "@/config";
+import { getAssetPath } from "@/utils/withBase";
+
+const { site } = config;
+---
+
+<section id="hero" class="app-layout grid gap-8 py-14 lg:grid-cols-12">
+  <div class="lg:col-span-8">
+    <h1 class="wrap-anywhere text-ink-heading">{site.author}</h1>
+    <p
+      class="mt-2 font-mono text-meta tracking-[0.14em] text-ink-muted uppercase"
+    >
+      Independent AI Researcher
+    </p>
+
+    <p class="mt-5 max-w-measure">
+      Working on inference-time scaling, symbolic reasoning, and
+      high-performance model serving.
+    </p>
+
+    <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <a
+        href={getAssetPath("cv.pdf")}
+        class="inline-block border border-accent px-4 py-2 text-meta text-accent hover:bg-accent hover:text-accent-ink"
+      >
+        Curriculum vitae
+      </a>
+      <Socials />
+    </div>
+  </div>
+
+  <div class="lg:col-span-4">
+    <Image
+      src={avatar}
+      alt={`Portrait of ${site.author}`}
+      width={220}
+      densities={[1, 2]}
+      loading="eager"
+      class="size-40 border border-rule object-cover lg:size-full lg:max-w-55"
+    />
+  </div>
+</section>

@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from "astro:content";
+import LinkRow from "./LinkRow.astro";
+
+type Props = { entry: CollectionEntry<"projects"> };
+
+const { title, summary, stack, repo, links } = Astro.props.entry.data;
+
+const allLinks = [
+  ...(repo ? [{ label: "Repository", url: repo }] : []),
+  ...links,
+];
+---
+
+<article class="grid gap-x-8 gap-y-2 py-6 sm:grid-cols-12">
+  <h3 class="font-mono text-h3 wrap-anywhere text-ink-heading sm:col-span-4">
+    {title}
+  </h3>
+
+  <div class="min-w-0 sm:col-span-8">
+    <p class="max-w-measure">{summary}</p>
+
+    {
+      stack.length > 0 && (
+        <ul class="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-meta text-ink-muted">
+          {stack.map(item => (
+            <li class="after:ms-2 after:text-rule after:content-['/'] last:after:content-none">
+              {item}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <LinkRow links={allLinks} class="mt-2" />
+  </div>
+</article>

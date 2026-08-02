@@ -1,0 +1,95 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import config from "@/config";
+import { formatDate } from "@/utils/formatDate";
+import LinkRow from "./LinkRow.astro";
+
+type Props = { entry: CollectionEntry<"publications"> };
+
+const { entry } = Astro.props;
+const {
+  title,
+  shortTitle,
+  authors,
+  venue,
+  date,
+  arxivId,
+  doi,
+  links,
+  thumbnail,
+  abstract,
+  bibtex,
+} = entry.data;
+
+const { label, datetime } = formatDate(date);
+
+// Built here rather than stored, so an id change cannot leave a stale URL.
+const idLinks = [
+  ...(arxivId
+    ? [
+        { label: `arXiv:${arxivId}`, url: `https://arxiv.org/abs/${arxivId}` },
+        { label: "PDF", url: `https://arxiv.org/pdf/${arxivId}` },
+      ]
+    : []),
+  ...(doi ? [{ label: "DOI", url: `https://doi.org/${doi}` }] : []),
+];
+---
+
+<article class="flex flex-col gap-5 py-7 sm:flex-row">
+  {
+    thumbnail && (
+      <div class="flex h-30 w-44 shrink-0 items-center justify-center border border-rule bg-paper p-2">
+        <Image
+          src={thumbnail}
+          alt=""
+          width={352}
+          densities={[1, 2]}
+          loading="lazy"
+          class="max-h-full w-auto object-contain"
+        />
+      </div>
+    )
+  }
+
+  <div class="min-w-0">
+    <h3 class="wrap-anywhere text-ink-heading">{title}</h3>
+
+    <p class="mt-2 text-meta text-ink-muted">
+      {
+        authors.map((name, i) => (
+          <>
+            {i > 0 && ", "}
+            <span
+              class:list={{
+                "font-semibold text-ink": name === config.site.author,
+              }}
+            >
+              {name}
+            </span>
+          </>
+        ))
+      }
+    </p>
+
+    <p class="mt-1 text-meta text-ink-muted">
+      {venue} · <time datetime={datetime}>{label}</time>
+    </p>
+
+    <p class="mt-3 max-w-measure">{abstract}</p>
+
+    <LinkRow links={[...idLinks, ...links]} class="mt-3" />
+
+    <details class="group mt-3">
+      <summary
+        class="inline-block cursor-pointer py-1 text-meta text-accent underline decoration-rule underline-offset-4 select-none hover:decoration-current"
+      >
+        <span class="group-open:hidden">Cite</span>
+        <span class="hidden group-open:inline">Hide citation</span>
+        <span class="sr-only">{shortTitle}</span>
+      </summary>
+      <pre
+        class="mt-2 overflow-x-auto border border-rule bg-surface/60 p-3 text-meta"><code>{bibtex.trimEnd()}</code></pre>
+    </details>
+  </div>
+</article>

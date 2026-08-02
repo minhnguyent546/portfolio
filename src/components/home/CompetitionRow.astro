@@ -1,0 +1,63 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import { formatDate } from "@/utils/formatDate";
+import LinkRow from "./LinkRow.astro";
+
+type Props = { entry: CollectionEntry<"competitions"> };
+
+const { entry } = Astro.props;
+const { title, venue, date, datePrecision, result, summary, links, figure } =
+  entry.data;
+
+const { label, datetime } = formatDate(date, datePrecision);
+
+// The body is optional in this collection; only render the wrapper when it
+// has content.
+const { Content } = await render(entry);
+const hasBody = entry.body != null && entry.body.trim() !== "";
+---
+
+<article class="py-7">
+  <p class="text-meta text-ink-muted">
+    {venue} · <time datetime={datetime}>{label}</time>
+  </p>
+
+  <h3 class="mt-1 wrap-anywhere text-ink-heading">{title}</h3>
+
+  {
+    result && (
+      <p class="mt-2 inline-block border border-accent/40 px-2 py-0.5 font-mono text-meta text-accent">
+        {result}
+      </p>
+    )
+  }
+
+  <p class="mt-3 max-w-measure">{summary}</p>
+
+  {
+    hasBody && (
+      <div class="app-prose mt-4 max-w-measure prose-p:text-body">
+        <Content />
+      </div>
+    )
+  }
+
+  {
+    figure && (
+      <figure class="mt-5">
+        <Image
+          src={figure.src}
+          alt={figure.alt}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 64rem) 44rem, 92vw"
+          loading="lazy"
+          class="w-full border border-rule bg-paper"
+        />
+      </figure>
+    )
+  }
+
+  <LinkRow {links} class="mt-4" />
+</article>
