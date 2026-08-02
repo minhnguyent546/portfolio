@@ -26,8 +26,15 @@ const PROMPT_USER = "minhnguyent546";
 type Row = {
   /** Marker text. `null` renders an empty marker column (a pending line). */
   marker: "OK" | "FAIL" | "DEPEND" | "INFO" | null;
+  /** The muted lead-in, e.g. `Started`. A space follows it in the markup. */
   text: string;
+  /** The unit or target name. This is the part that carries the emphasis. */
+  name?: string;
+  /** Muted tail, joined to the name with no space of its own. */
+  tail?: string;
   tone?: "warn" | "muted";
+  /** Emphasis on `name`. Full-contrast ink by default; the jokes take colour. */
+  nameTone?: "accent" | "warn";
   /** Milliseconds since the previous row. Real logs burst and stall. */
   gap: number;
 };
@@ -36,10 +43,11 @@ type Row = {
 const target = (label: string, units: string[], unitGap: number): Row[] => [
   ...units.map(unit => ({
     marker: "OK" as const,
-    text: `Started ${unit}.service`,
+    text: "Started",
+    name: `${unit}.service`,
     gap: unitGap,
   })),
-  { marker: "OK", text: `Reached target ${label}`, gap: 150 },
+  { marker: "OK", text: "Reached target", name: label, gap: 150 },
 ];
 
 // A count of 0 would read as broken, so the line is dropped instead.
@@ -48,7 +56,8 @@ const inventory: Row[] =
     ? [
         {
           marker: "OK",
-          text: `Loaded ${postCount} post${postCount === 1 ? "" : "s"}, ${tagCount} tag${tagCount === 1 ? "" : "s"}`,
+          text: "Loaded",
+          name: `${postCount} post${postCount === 1 ? "" : "s"}, ${tagCount} tag${tagCount === 1 ? "" : "s"}`,
           gap: 140,
         },
       ]
@@ -56,7 +65,7 @@ const inventory: Row[] =
 
 const rows: Row[] = [
   { marker: null, text: "Starting publications.target...", gap: 160 },
-  { marker: "OK", text: `Mounted /home/${PROMPT_USER}`, gap: 70 },
+  { marker: "OK", text: "Mounted", name: `/home/${PROMPT_USER}`, gap: 70 },
   ...target("Publications", publications, 130),
   { marker: null, text: "Starting competitions.target...", gap: 170 },
   ...target("Competitions", competitions, 130),
@@ -64,25 +73,42 @@ const rows: Row[] = [
   ...inventory,
   {
     marker: "FAIL",
-    text: "Failed to start sleep.service",
+    text: "Failed to start",
+    name: "sleep.service",
     tone: "warn",
+    nameTone: "warn",
     gap: 220,
   },
   {
     marker: "DEPEND",
-    text: "Dependency failed for well-rested.target",
+    text: "Dependency failed for",
+    name: "well-rested.target",
     tone: "muted",
     gap: 70,
   },
-  { marker: "OK", text: "Reached target Caffeinated", gap: 180 },
-  { marker: "OK", text: "Started clauding.service", gap: 150 },
+  {
+    marker: "OK",
+    text: "Reached target",
+    name: "Caffeinated",
+    nameTone: "accent",
+    gap: 180,
+  },
+  {
+    marker: "OK",
+    text: "Started",
+    name: "clauding.service",
+    nameTone: "accent",
+    gap: 150,
+  },
   {
     marker: "INFO",
-    text: "Unit codexing.service is masked",
+    text: "Unit",
+    name: "codexing.service",
+    tail: " is masked",
     tone: "muted",
     gap: 90,
   },
-  { marker: "OK", text: "Reached target Portfolio", gap: 150 },
+  { marker: "OK", text: "Reached target", name: "Portfolio", gap: 150 },
 ];
 
 /** Delay on the `cold boot` line, which is in the markup rather than in `rows`. */
@@ -162,7 +188,26 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
           >
             {row.marker}
           </span>
-          <span class="boot-text">{row.text}</span>
+          <span class="boot-text">
+            {row.text}
+            {row.name && (
+              <>
+                {/* `compressHTML: 'jsx'` eats a literal space between the two
+                    spans, so the separator is an explicit entity. */}
+                {" "}
+                <span
+                  class:list={[
+                    "boot-name",
+                    row.nameTone === "accent" && "is-accent",
+                    row.nameTone === "warn" && "is-warn",
+                  ]}
+                >
+                  {row.name}
+                </span>
+                {row.tail}
+              </>
+            )}
+          </span>
         </p>
       ))
     }
@@ -303,6 +348,23 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
     color: var(--ink-muted);
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+
+  /* Two tiers of emphasis. The name is what the visitor is meant to read, so it
+     takes full-contrast ink against the muted verb beside it. Colour is spent
+     only on the three joke lines, which is what keeps them findable in a log
+     this long. */
+  .boot-name {
+    color: var(--ink);
+  }
+
+  .boot-name.is-accent {
+    color: var(--accent);
+  }
+
+  /* Matches the FAIL marker on the same row rather than adding a third colour. */
+  .boot-name.is-warn {
+    color: var(--ink-warn);
   }
 
   /* Typed out by revealing, not by animating width — width reflows every frame. */
