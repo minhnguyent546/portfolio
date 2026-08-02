@@ -1,0 +1,414 @@
+---
+/**
+ * Boot-sequence intro overlay. Plays once per session on the homepage, then
+ * fades to reveal the real hero underneath.
+ *
+ * Service names come from the caller, which reads the real collections. Row
+ * delays are relative, so adding a publication or a project extends the
+ * sequence instead of colliding with a hardcoded timestamp.
+ */
+import pkg from "../../package.json";
+
+type Props = {
+  postCount: number;
+  tagCount: number;
+  /** Entry ids, already sorted and draft-filtered. Rendered as unit names. */
+  publications: string[];
+  competitions: string[];
+  projects: string[];
+};
+
+const { postCount, tagCount, publications, competitions, projects } =
+  Astro.props;
+
+const PROMPT_USER = "minhnguyent546";
+
+type Row = {
+  /** Marker text. `null` renders an empty marker column (a pending line). */
+  marker: "OK" | "FAIL" | "DEPEND" | null;
+  text: string;
+  tone?: "warn" | "muted";
+  /** Milliseconds since the previous row. Real logs burst and stall. */
+  gap: number;
+};
+
+/** The units under one systemd target, then the line that says the target is up. */
+const target = (label: string, units: string[], unitGap: number): Row[] => [
+  ...units.map(unit => ({
+    marker: "OK" as const,
+    text: `Started ${unit}.service`,
+    gap: unitGap,
+  })),
+  { marker: "OK", text: `Reached target ${label}`, gap: 150 },
+];
+
+// A count of 0 would read as broken, so the line is dropped instead.
+const inventory: Row[] =
+  postCount > 0
+    ? [
+        {
+          marker: "OK",
+          text: `Loaded ${postCount} post${postCount === 1 ? "" : "s"}, ${tagCount} tag${tagCount === 1 ? "" : "s"}`,
+          gap: 140,
+        },
+      ]
+    : [];
+
+const rows: Row[] = [
+  { marker: null, text: "Starting publications.target...", gap: 160 },
+  { marker: "OK", text: `Mounted /home/${PROMPT_USER}`, gap: 70 },
+  ...target("Publications", publications, 130),
+  { marker: null, text: "Starting competitions.target...", gap: 170 },
+  ...target("Competitions", competitions, 130),
+  ...target("Projects", projects, 120),
+  ...inventory,
+  {
+    marker: "FAIL",
+    text: "Failed to start sleep.service",
+    tone: "warn",
+    gap: 220,
+  },
+  {
+    marker: "DEPEND",
+    text: "Dependency failed for well-rested.target",
+    tone: "muted",
+    gap: 70,
+  },
+  { marker: "OK", text: "Reached target Caffeinated", gap: 180 },
+  { marker: "OK", text: "Reached target Portfolio", gap: 150 },
+];
+
+/** Delay on the `cold boot` line, which is in the markup rather than in `rows`. */
+const FIRST_ROW_START = 60;
+
+/**
+ * Ceiling on the log itself, before the prompt. The row count grows with the
+ * content, so without this every new project makes the intro longer. The gaps
+ * compress instead, and the sequence stays a fixed length.
+ */
+const MAX_LOG_MS = 2800;
+
+const naturalEnd =
+  FIRST_ROW_START + rows.reduce((total, row) => total + row.gap, 0);
+const scale = Math.min(1, MAX_LOG_MS / naturalEnd);
+
+const FIRST_ROW_AT = Math.round(FIRST_ROW_START * scale);
+
+let elapsed = FIRST_ROW_START * scale;
+const timedRows = rows.map(row => {
+  elapsed += row.gap * scale;
+  return { ...row, at: Math.round(elapsed) };
+});
+
+const PROMPT_AT = Math.round(elapsed) + 320;
+/** Long enough to read the log back before it goes. Any input cuts it short. */
+const HOLD_MS = 3000;
+const DISMISS_AT = PROMPT_AT + HOLD_MS;
+
+// Mirrors the banner Arch prints above the login prompt: hostname, kernel
+// release, tty. The release is the real package version, not a made-up one.
+const RELEASE = `${pkg.version}-${PROMPT_USER}`;
+
+// One string, so the step count below matches the characters actually revealed.
+const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
+---
+
+{
+  /*
+    Sets data-boot before the hero parses, so the overlay is never seen covering
+    an already-painted page. Same synchronous-inline pattern as the theme script
+    in Layout.astro. Runs before the markup below on purpose.
+  */
+}
+<script is:inline>
+  (function () {
+    try {
+      if (sessionStorage.getItem("booted")) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      sessionStorage.setItem("booted", "1");
+      document.firstElementChild?.setAttribute("data-boot", "run");
+    } catch {
+      // Private-mode storage throws. No overlay is the right failure.
+    }
+  })();
+</script>
+
+<div id="boot" aria-hidden="true" inert data-dismiss-at={DISMISS_AT}>
+  <div class="boot-log">
+    <p class="boot-banner">
+      portfolio {RELEASE} (tty1)
+    </p>
+    <p class="boot-row" style={{ "--d": `${FIRST_ROW_AT}ms` }}>
+      <span class="boot-stamp">[ 0.4829]</span>
+      <span class="boot-text">{PROMPT_USER}@portfolio: cold boot</span>
+    </p>
+    {
+      timedRows.map(row => (
+        <p class="boot-row" style={{ "--d": `${row.at}ms` }}>
+          <span
+            class:list={[
+              "boot-marker",
+              row.marker === null && "is-pending",
+              row.tone === "warn" && "is-warn",
+              row.tone === "muted" && "is-muted",
+            ]}
+          >
+            {row.marker}
+          </span>
+          <span class="boot-text">{row.text}</span>
+        </p>
+      ))
+    }
+    <p class="boot-prompt" style={{ "--d": `${PROMPT_AT}ms` }}>
+      <span class="boot-typed" style={{ "--n": PROMPT_LINE.length }}
+        >{PROMPT_LINE}</span
+      ><span class="boot-caret"></span>
+    </p>
+  </div>
+  <p class="boot-hint">press any key</p>
+</div>
+
+<style>
+  /* No JS, no overlay — crawlers and no-JS visitors get the real page. */
+  #boot {
+    display: none;
+  }
+
+  /* Both states share the layout. If "done" dropped back to display:none the
+     overlay would vanish instead of fading, and animationend would never fire. */
+  :global([data-boot="run"]) #boot,
+  :global([data-boot="done"]) #boot {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Scales on height, not width: on a 568px-tall phone a fixed 2rem costs the
+       log three rows it does not need to give up. */
+    gap: clamp(1rem, 3vh, 2rem);
+    padding: clamp(1rem, 4vw, 3rem);
+    background-color: var(--paper);
+    font-family: var(--font-mono);
+    /* Fits the longest row (~50ch) at 320px without horizontal scroll. */
+    font-size: clamp(0.6875rem, 0.53rem + 0.75vw, 0.875rem);
+    line-height: 1.7;
+  }
+
+  :global([data-boot="done"]) #boot {
+    animation: boot-out var(--dur-long) var(--ease-out) forwards;
+  }
+
+  .boot-log {
+    /* Shared by the marker and the stamp so the two stay in one column. The
+       widest content is `[ DEPEND ]` — 6ch of text, 2ch of brackets, 1ch of
+       bracket margin — and the timestamp is cut to the same 9ch. */
+    --col: 9ch;
+
+    margin-inline: auto;
+    width: 100%;
+    max-width: 54ch;
+
+    /* The row count grows with the content, so on a short viewport the log will
+       eventually be taller than the screen. A flex item defaults to
+       min-height:auto and refuses to shrink, so it would overflow the centred
+       parent at BOTH ends — and the top half is unreachable, because the
+       overlay cannot be scrolled by hand (scrolling dismisses it). min-height:0
+       lets it shrink to the space available and clip instead.
+
+       `hidden`, not `auto` or `clip`. `auto` on an inert element is the worst of
+       both: inert blocks the user from scrolling it, but the scroll container
+       still swallows the wheel event, so a scroll gesture neither scrolls nor
+       dismisses. `clip` is not a scroll container at all, so the script below
+       could not drive it. `hidden` clips, takes no input, and still moves via
+       scrollTop. */
+    min-height: 0;
+    overflow-y: hidden;
+  }
+
+  .boot-banner {
+    margin-bottom: 1.5em;
+    color: var(--ink-muted);
+    opacity: 0;
+    animation: boot-in var(--dur-micro) var(--ease-out) forwards;
+  }
+
+  .boot-row,
+  .boot-prompt {
+    display: flex;
+    gap: 0.75ch;
+    white-space: nowrap;
+    opacity: 0;
+    animation: boot-in var(--dur-micro) var(--ease-out) var(--d) forwards;
+  }
+
+  .boot-prompt {
+    margin-top: 1.5em;
+    gap: 0;
+    color: var(--ink);
+  }
+
+  /* Width comes from CSS, not from literal spaces — compressHTML: 'jsx'
+     collapses inline whitespace, and OK/FAIL/DEPEND differ in width anyway. */
+  .boot-marker {
+    flex: none;
+    width: var(--col);
+    color: var(--accent);
+    text-align: center;
+  }
+
+  .boot-marker::before {
+    content: "[";
+    margin-inline-end: 0.5ch;
+  }
+
+  .boot-marker::after {
+    content: "]";
+    margin-inline-start: 0.5ch;
+  }
+
+  .boot-marker.is-warn {
+    color: var(--ink-warn);
+  }
+
+  .boot-marker.is-muted {
+    color: var(--ink-muted);
+  }
+
+  /* A pending line has no brackets at all, matching real systemd output. */
+  .boot-marker.is-pending::before,
+  .boot-marker.is-pending::after {
+    content: none;
+  }
+
+  .boot-stamp {
+    flex: none;
+    width: var(--col);
+    color: var(--ink-muted);
+    text-align: end;
+  }
+
+  /* Long names wrap rather than clip. An ellipsis at 320px would cut the end off
+     `well-rested.target`, which is where the joke is. min-width lets the flex
+     item shrink below its content; anywhere breaks inside the service names. */
+  .boot-text {
+    min-width: 0;
+    color: var(--ink-muted);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Typed out by revealing, not by animating width — width reflows every frame. */
+  .boot-typed {
+    animation: boot-type 360ms steps(var(--n)) var(--d) both;
+  }
+
+  .boot-caret {
+    width: 1ch;
+    height: 1.15em;
+    background-color: var(--ink);
+    animation: boot-blink 900ms steps(2, jump-none) calc(var(--d) + 360ms)
+      infinite both;
+  }
+
+  .boot-hint {
+    color: var(--ink-muted);
+    font-size: 0.8em;
+    text-align: center;
+    opacity: 0;
+    animation: boot-in var(--dur-long) var(--ease-out) 400ms forwards;
+  }
+
+  @keyframes boot-in {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes boot-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @keyframes boot-type {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Starts solid, not blank — the caret must be visible the instant it lands. */
+  @keyframes boot-blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* The gate script never sets data-boot under `reduce`, so the overlay simply
+     does not exist. This block only covers a preference changed mid-sequence. */
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-boot]) #boot {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.firstElementChild;
+
+  if (root?.getAttribute("data-boot") === "run") {
+    const overlay = document.querySelector<HTMLElement>("#boot");
+    const controller = new AbortController();
+
+    // Once the content outgrows a short viewport the log scrolls inside itself,
+    // so the line that is printing has to be brought into view. animationstart
+    // bubbles, so one listener covers every row without a timer per row. Early
+    // rows sit above the fold and give a negative delta, which is ignored — the
+    // log only ever follows downward, like a real tty.
+    const log = overlay?.querySelector<HTMLElement>(".boot-log");
+    log?.addEventListener("animationstart", event => {
+      const row = event.target as HTMLElement;
+      const delta =
+        row.getBoundingClientRect().bottom - log.getBoundingClientRect().bottom;
+      if (delta > 0) log.scrollTop += delta;
+    });
+
+    const dismiss = () => {
+      controller.abort();
+      root.setAttribute("data-boot", "done");
+      // Drop the attribute once the fade ends so the overlay stops compositing.
+      // animationend bubbles, and the rows are still finishing their own
+      // fade-ins, so the target check is required or the first row to land
+      // cancels the fade. The timer covers a tab backgrounded mid-fade, where
+      // the event never fires at all.
+      const clear = () => root.removeAttribute("data-boot");
+      overlay?.addEventListener("animationend", event => {
+        if (event.target === overlay) clear();
+      });
+      setTimeout(clear, 600);
+    };
+
+    // `wheel` covers the trackpad and mouse-wheel path. It is kept even though
+    // the overlay makes the page unscrollable — a wheel event still reaches the
+    // window on the viewports where the page underneath can scroll, and costs
+    // nothing where it cannot.
+    for (const event of ["keydown", "pointerdown", "wheel", "touchstart"]) {
+      window.addEventListener(event, dismiss, {
+        once: true,
+        passive: true,
+        signal: controller.signal,
+      });
+    }
+
+    // Computed in the frontmatter, because the row count decides it. This
+    // script is bundled, so it cannot read the value any other way.
+    setTimeout(dismiss, Number(overlay?.dataset.dismissAt));
+  }
+</script>
