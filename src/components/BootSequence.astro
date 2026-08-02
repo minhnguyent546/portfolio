@@ -34,7 +34,7 @@ type Row = {
   tail?: string;
   tone?: "warn" | "muted";
   /** Emphasis on `name`. Full-contrast ink by default; the jokes take colour. */
-  nameTone?: "accent" | "warn";
+  nameTone?: "ok" | "warn";
   /** Milliseconds since the previous row. Real logs burst and stall. */
   gap: number;
 };
@@ -90,14 +90,14 @@ const rows: Row[] = [
     marker: "OK",
     text: "Reached target",
     name: "Caffeinated",
-    nameTone: "accent",
+    nameTone: "ok",
     gap: 180,
   },
   {
     marker: "OK",
     text: "Started",
     name: "clauding.service",
-    nameTone: "accent",
+    nameTone: "ok",
     gap: 150,
   },
   {
@@ -198,7 +198,7 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
                 <span
                   class:list={[
                     "boot-name",
-                    row.nameTone === "accent" && "is-accent",
+                    row.nameTone === "ok" && "is-ok",
                     row.nameTone === "warn" && "is-warn",
                   ]}
                 >
@@ -358,8 +358,10 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
     color: var(--ink);
   }
 
-  .boot-name.is-accent {
-    color: var(--accent);
+  /* Green is what a real tty prints for a unit that came up, so it reads as
+     success without a legend. Red is spent on the one line that failed. */
+  .boot-name.is-ok {
+    color: var(--ink-ok);
   }
 
   /* Matches the FAIL marker on the same row rather than adding a third colour. */

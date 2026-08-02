@@ -91,6 +91,7 @@ separate design.
 | `--accent` | `#2c5f8a` | `#7fb0d4` | links, marks |
 | `--accent-ink` | `#ffffff` | `#16161a` | text on an accent fill |
 | `--ink-warn` | `#a3382a` | `#e08c74` | failure states |
+| `--ink-ok` | `#24603a` | `#7fc79b` | success states |
 | `--surface` | `#eeece5` | `#26262d` | code blocks, table stripes, chips |
 | `--rule` | `#e6e3dc` | `#2a2a30` | hairlines |
 
@@ -112,6 +113,7 @@ Never a button flood, never a gradient.
 | `--ink-muted` | 7.37 | 7.05 |
 | `--accent` | 6.58 | 6.30 |
 | `--ink-warn` | 6.49 | 6.21 |
+| `--ink-ok` | 7.29 | 8.52 |
 
 Band pair itself: 1.045 light, 1.063 dark.
 
