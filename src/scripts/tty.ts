@@ -10,7 +10,8 @@ type Vfs = {
   links: Record<string, string>;
 };
 
-const HOME = "/home/visitor";
+/** Where `buildFs` keyed the content. The login moves it to the real user. */
+const BUILD_HOME = "/home/visitor";
 const SESSION_KEY = "tty3";
 
 /**
@@ -49,7 +50,13 @@ if (root && out && promptEl && input && payload) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let user = root.dataset.user ?? "visitor";
-  let cwd = HOME;
+  /**
+   * The content is keyed at `BUILD_HOME`, but the prompt says `~` belongs to
+   * whoever logged in. Re-keying the map once at login is what makes the two
+   * agree: `pwd` and `ls /home/<name>` then answer from the same paths.
+   */
+  let home = BUILD_HOME;
+  let cwd = home;
   let phase: "login" | "password" | "shell" = "login";
   const cmdLog: string[] = [];
   let logAt = 0;
@@ -82,13 +89,26 @@ if (root && out && promptEl && input && payload) {
     }
   }
 
-  /** `/home/visitor/projects` prints as `~/projects`, the way a real shell does. */
+  /** `/home/ada/projects` prints as `~/projects`, the way a real shell does. */
   function short(path: string) {
-    return path === HOME
+    return path === home
       ? "~"
-      : path.startsWith(`${HOME}/`)
-        ? `~${path.slice(HOME.length)}`
+      : path.startsWith(`${home}/`)
+        ? `~${path.slice(home.length)}`
         : path;
+  }
+
+  /** Moves every content path under the name the visitor logged in with. */
+  function setHome(name: string) {
+    const next = `/home/${name}`;
+    if (next === home) return;
+    for (const path of Object.keys(fs.files)) {
+      if (!path.startsWith(`${home}/`)) continue;
+      fs.files[`${next}${path.slice(home.length)}`] = fs.files[path]!;
+      delete fs.files[path];
+    }
+    cwd = cwd.startsWith(home) ? `${next}${cwd.slice(home.length)}` : cwd;
+    home = next;
   }
 
   function print(text = "", tone?: Tone) {
@@ -127,7 +147,7 @@ if (root && out && promptEl && input && payload) {
     const base = arg.startsWith("/")
       ? []
       : arg.startsWith("~")
-        ? HOME.split("/").filter(Boolean)
+        ? home.split("/").filter(Boolean)
         : cwd.split("/").filter(Boolean);
     const parts = arg.replace(/^~/, "").split("/").filter(Boolean);
     for (const part of parts) {
@@ -229,7 +249,7 @@ if (root && out && promptEl && input && payload) {
       }
 
       case "cd": {
-        const target = rest[0] ? resolve(rest[0]) : HOME;
+        const target = rest[0] ? resolve(rest[0]) : home;
         if (denied(target)) {
           print(`cd: ${rest[0]}: Permission denied`, "warn");
           return;
@@ -243,10 +263,7 @@ if (root && out && promptEl && input && payload) {
       }
 
       case "pwd":
-        // The filesystem is built once, so its home is literally
-        // `/home/visitor`. Printing the logged-in name keeps `pwd` agreeing
-        // with the prompt.
-        print(cwd.replace(HOME, `/home/${user}`));
+        print(cwd);
         return;
 
       case "cat": {
@@ -391,6 +408,7 @@ if (root && out && promptEl && input && payload) {
         return;
       }
       phase = "shell";
+      setHome(user);
       // The login exchange is not scrollback a reload should replay, and the
       // password prompt least of all. The restored screen starts at the motd.
       lines = [];
@@ -474,6 +492,7 @@ if (root && out && promptEl && input && payload) {
   input.disabled = false;
   if (resumed) {
     user = resumed.user;
+    setHome(user);
     cwd = resumed.cwd;
     cmdLog.push(...resumed.cmdLog);
     logAt = cmdLog.length;
