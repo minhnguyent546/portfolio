@@ -125,28 +125,31 @@ Each theme block must also set `color-scheme`. Without it the canvas behind `<ht
 stays white, which shows as a flash during the cross-document view transition when the
 site theme and the OS theme disagree.
 
-### Type scale — reduced from the reference
+### Type scale — sized for Newsreader
 
-jimfan.me runs 21 px body / 47 px h1. The user asked for smaller. **Body drops to
-17 px (−19%), h1 to 40 px (−15%)** — still well above the 16 px default, so the
-comfortable-reading quality survives, but it no longer reads oversized.
+jimfan.me runs 21 px body / 47 px h1 in Roboto. The user asked for smaller, so the
+first scale set body to 17 px. That was too small: Newsreader's x-height ratio is
+**0.4531** against **0.5313** for Roboto or Arial, so 17 px Newsreader reads like
+14.5 px Arial — below the browser default, not above it. Nominal px understates a
+serif with a small x-height. **Body is now 18.75 px, h1 43 px.**
 
 | Role | 375 px | 1440 px | `clamp()` |
 |---|---|---|---|
-| h1 | 30 | 40 | `clamp(1.875rem, 1.655rem + 0.939vw, 2.5rem)` |
-| h2 | 23 | 29 | `clamp(1.438rem, 1.305rem + 0.563vw, 1.812rem)` |
-| h3 | 18 | 20 | `clamp(1.125rem, 1.081rem + 0.188vw, 1.25rem)` |
-| body | 16 | 17 | `clamp(1rem, 0.978rem + 0.0939vw, 1.062rem)` |
-| meta | 13.5 | 14 | `clamp(0.8438rem, 0.8327rem + 0.0469vw, 0.875rem)` |
+| h1 | 31 | 43 | `clamp(1.9375rem, 1.6812rem + 1.0939vw, 2.6875rem)` |
+| h2 | 24 | 31 | `clamp(1.5rem, 1.3521rem + 0.6315vw, 1.9375rem)` |
+| h3 | 19 | 21 | `clamp(1.1875rem, 1.1345rem + 0.2264vw, 1.3125rem)` |
+| body | 17 | 18.75 | `clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem)` |
+| meta | 14 | 15 | `clamp(0.875rem, 0.8562rem + 0.0803vw, 0.9375rem)` |
 
-Fluid via `clamp()` — no breakpoint patching. Body leading **1.6** (27.2 px at 17 px).
-Measure capped at **36rem** for prose. Heading spread is **2.35×**, close to
-jimfan.me's 2.25× — the moderate scale is deliberate and is what makes a
-publications-heavy page work; the other references were at 1.06× or enormous.
+Fluid via `clamp()` — no breakpoint patching. Body leading **1.6**. Measure capped at
+**36rem** for prose, which gives 62 characters per line — the middle of the 60–75
+optimum, so the measure is not the lever for a page that reads sparse. Heading spread
+is **2.29×**.
 
-Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`. `.app-prose` needs its
-own h1–h3 rules: the `prose` plugin sets sizes that win over the base layer. Prose body
-text stays at the plugin's 16 px.
+Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-08-03.
+`.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
+sets sizes that win over the base layer, so without that one line the reading pages
+stay at 16 px while the rest of the site grows.
 
 ### Layout
 

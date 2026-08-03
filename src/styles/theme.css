@@ -17,12 +17,14 @@
   --font-mono: var(--font-jetbrains-mono);
 
   /* Fluid scale: 375px -> 1440px, no breakpoint patching.
-     h1 30->40, h2 23->29, h3 18->20, body 16->17, meta 13.5->14. */
-  --text-meta: clamp(0.8438rem, 0.8327rem + 0.0469vw, 0.875rem);
-  --text-body: clamp(1rem, 0.978rem + 0.0939vw, 1.062rem);
-  --text-h3: clamp(1.125rem, 1.081rem + 0.188vw, 1.25rem);
-  --text-h2: clamp(1.438rem, 1.305rem + 0.563vw, 1.812rem);
-  --text-h1: clamp(1.875rem, 1.655rem + 0.939vw, 2.5rem);
+     h1 31->43, h2 24->31, h3 19->21, body 17->18.75, meta 14->15.
+     Sized for Newsreader, whose x-height ratio (0.4531) runs 15% under a
+     typical sans, so nominal px understates the perceived size. */
+  --text-meta: clamp(0.875rem, 0.8562rem + 0.0803vw, 0.9375rem);
+  --text-body: clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem);
+  --text-h3: clamp(1.1875rem, 1.1345rem + 0.2264vw, 1.3125rem);
+  --text-h2: clamp(1.5rem, 1.3521rem + 0.6315vw, 1.9375rem);
+  --text-h1: clamp(1.9375rem, 1.6812rem + 1.0939vw, 2.6875rem);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-micro: 120ms;

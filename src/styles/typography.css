@@ -40,6 +40,11 @@
   .app-prose {
     @apply prose;
 
+    /* The plugin hard-sets 1rem here, which shadows the size `body` sets.
+       Restoring it keeps the reading pages level with the rest of the site;
+       everything inside sizes in `em`, so the whole block scales with it. */
+    font-size: var(--text-body);
+
     h1,
     h2,
     h3,
