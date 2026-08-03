@@ -46,7 +46,7 @@ if (root && out && promptEl && input && payload) {
     if (tone) line.className = `tty-${tone}`;
     line.textContent = text;
     out!.append(line);
-    out!.scrollTop = out!.scrollHeight;
+    root!.scrollTop = root!.scrollHeight;
     return line;
   }
 
@@ -356,8 +356,9 @@ if (root && out && promptEl && input && payload) {
 
   // A drag that selected text must keep its selection, and a printed link must
   // stay clickable, so only a bare click hands focus back. `pointerup` because
-  // on `pointerdown` the selection does not exist yet.
-  out.addEventListener("pointerup", event => {
+  // on `pointerdown` the selection does not exist yet. Bound to the panel, not
+  // to the scrollback, so the blank space under the prompt also takes a click.
+  root.addEventListener("pointerup", event => {
     if (!getSelection()?.isCollapsed) return;
     if ((event.target as HTMLElement).closest("a")) return;
     input.focus();
