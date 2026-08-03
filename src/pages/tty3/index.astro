@@ -51,12 +51,16 @@ const aboutUrl = getRelativeLocaleUrl(locale, "about");
 {
   /* The panel scrolls its own scrollback, so the page behind it must not
      scroll too. `min-h-svh` on <body> leaves the height indefinite, which lets
-     the panel grow the document and push the prompt out of view instead. */
+     the panel grow the document and push the prompt out of view instead.
+
+     `dvh`, not `svh`: `svh` is the viewport with the mobile browser bars shown,
+     so once they retract the page is shorter than the space available and the
+     footer leaves scrollable dead ground under it. `dvh` tracks the bars. */
 }
 <Layout
   title={`tty3 | ${config.site.title}`}
   description="A simulated terminal over the contents of this site."
-  class="h-svh overflow-hidden"
+  class="h-dvh overflow-hidden"
 >
   <Header />
 
@@ -108,12 +112,29 @@ const aboutUrl = getRelativeLocaleUrl(locale, "about");
 </Layout>
 
 <style>
+  /* <body> is clipped, but the root is still the scroll container and takes its
+     height from the document. Without this the page can scroll past the footer
+     into empty space that the clipped body no longer fills. */
+  :global(html:has(#tty)) {
+    height: 100%;
+    overflow: hidden;
+  }
+
   #tty {
-    /* 16px flat, not the fluid boot-log scale: a smaller input font makes iOS
-       zoom on focus, and a monospace block with two sizes looks broken. */
+    /* Smaller than the 1rem body text: a terminal earns its density, and the
+       panel is a fixed height, so every step down is another line of output. */
     font-family: var(--font-mono);
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+
+  /* A touch device zooms when it focuses an input under 16px, and the panel is
+     narrow enough there that the density would not buy much anyway. Sizing the
+     panel rather than the input keeps the block at one size. */
+  @media (pointer: coarse) {
+    #tty {
+      font-size: 1rem;
+    }
   }
 
   #tty:focus-within {
