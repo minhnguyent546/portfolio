@@ -13,6 +13,17 @@ type Vfs = {
 const HOME = "/home/visitor";
 const SESSION_KEY = "tty3";
 
+/**
+ * The two real accounts, each mapped to the home it owns. No password logs in
+ * as either, and neither home can be read. The boot log on `/` types
+ * `portfolio login: minhnguyent546`, so the owner has a seat the visitor does
+ * not — the locked door is the point.
+ */
+const LOCKED: Record<string, string> = {
+  root: "/root",
+  minhnguyent546: "/home/minhnguyent546",
+};
+
 /** Scrollback carried across a reload. A real tty drops its oldest lines too. */
 const MAX_LINES = 500;
 
@@ -131,14 +142,30 @@ if (root && out && promptEl && input && payload) {
   function listDir(dir: string) {
     const prefix = dir === "/" ? "/" : `${dir}/`;
     const names = new Set<string>();
+    // A locked home holds no files, so it is carried as a path of its own or it
+    // would not exist for its parent to list.
     for (const path of Object.keys(fs.files)) {
       if (!path.startsWith(prefix)) continue;
       const rest = path.slice(prefix.length);
       const cut = rest.indexOf("/");
       names.add(cut === -1 ? rest : `${rest.slice(0, cut)}/`);
     }
+    for (const home of Object.values(LOCKED)) {
+      if (!home.startsWith(prefix)) continue;
+      const rest = home.slice(prefix.length);
+      names.add(`${rest.split("/")[0]}/`);
+    }
     return [...names].sort();
   }
+
+  /**
+   * Refused rather than absent. A real account the visitor cannot read still
+   * shows up in its parent directory, which is what makes the door worth trying.
+   */
+  const denied = (path: string) =>
+    Object.values(LOCKED).some(
+      home => path === home || path.startsWith(`${home}/`)
+    );
 
   const COMMANDS = [
     "help",
@@ -179,6 +206,13 @@ if (root && out && promptEl && input && payload) {
 
       case "ls": {
         const dir = resolve(rest[0] ?? ".");
+        if (denied(dir)) {
+          print(
+            `ls: cannot open directory '${rest[0] ?? "."}': Permission denied`,
+            "warn"
+          );
+          return;
+        }
         const all = flags.includes("-a");
         const entries = listDir(dir).filter(n => all || !n.startsWith("."));
         if (entries.length === 0 && !(dir in fs.files)) {
@@ -196,6 +230,10 @@ if (root && out && promptEl && input && payload) {
 
       case "cd": {
         const target = rest[0] ? resolve(rest[0]) : HOME;
+        if (denied(target)) {
+          print(`cd: ${rest[0]}: Permission denied`, "warn");
+          return;
+        }
         if (listDir(target).length === 0) {
           print(`cd: ${rest[0]}: Not a directory`, "warn");
           return;
@@ -214,6 +252,10 @@ if (root && out && promptEl && input && payload) {
       case "cat": {
         if (!rest[0]) return print("cat: missing operand", "warn");
         const path = resolve(rest[0]);
+        if (denied(path)) {
+          print(`cat: ${rest[0]}: Permission denied`, "warn");
+          return;
+        }
         const body = fs.files[path];
         if (body === undefined) {
           const isDir = listDir(path).length > 0;
@@ -337,6 +379,17 @@ if (root && out && promptEl && input && payload) {
     if (phase === "password") {
       print("Password:");
       input!.type = "text";
+      // The password is never checked, so a locked account is refused here
+      // rather than at the login line: naming one must not tell the visitor
+      // that the name was the reason.
+      if (user in LOCKED) {
+        print("Login incorrect", "warn");
+        print();
+        user = "visitor";
+        phase = "login";
+        promptEl!.textContent = "portfolio login:";
+        return;
+      }
       phase = "shell";
       // The login exchange is not scrollback a reload should replay, and the
       // password prompt least of all. The restored screen starts at the motd.
