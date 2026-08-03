@@ -488,12 +488,18 @@ if (root && out && promptEl && input && payload) {
     // Private mode throws on read, and a payload from an older shape throws on
     // parse. A fresh login is the right failure for both.
   }
+  // The store is the visitor's to edit, so a resumed name is checked against
+  // the same table the login uses. Nothing is readable either way, but the
+  // prompt must not claim an account the login refuses to hand out.
+  if (resumed && resumed.user in LOCKED) resumed = null;
 
   input.disabled = false;
   if (resumed) {
     user = resumed.user;
-    setHome(user);
+    // Restored first, so a directory saved under the old home is carried over
+    // by the same rename that moves the files.
     cwd = resumed.cwd;
+    setHome(user);
     cmdLog.push(...resumed.cmdLog);
     logAt = cmdLog.length;
     phase = "shell";
