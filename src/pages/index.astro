@@ -1,6 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import IconLinkedin from "@/assets/icons/socials/linkedin.svg";
+import IconMail from "@/assets/icons/socials/mail.svg";
+import IconX from "@/assets/icons/socials/x.svg";
 import BootSequence from "@/components/BootSequence.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
@@ -55,7 +58,31 @@ const sections = [
   { id: "contact", label: "Contact" },
 ];
 
-const email = socials.find(({ name }) => name === "mail")?.url;
+const socialUrl = (name: string) => socials.find(s => s.name === name)!.url;
+
+const contactRows = [
+  {
+    Icon: IconMail,
+    href: socialUrl("mail"),
+    text: socialUrl("mail").replace("mailto:", ""),
+    srSuffix: "",
+    mono: true,
+  },
+  {
+    Icon: IconX,
+    href: socialUrl("x"),
+    text: "DMs are open",
+    srSuffix: " on X",
+    mono: false,
+  },
+  {
+    Icon: IconLinkedin,
+    href: socialUrl("linkedin"),
+    text: "Happy to connect",
+    srSuffix: " on LinkedIn",
+    mono: false,
+  },
+];
 
 /** Entry ids for the boot log, in the order the real sections use. */ const bootUnits =
   async (name: "publications" | "competitions" | "projects") =>
@@ -220,22 +247,33 @@ const email = socials.find(({ name }) => name === "mail")?.url;
     </Section>
 
     <Section id="contact" index="07" title="Contact">
-      <p class="max-w-measure">
-        Email is the surest way to reach me. I read everything about research
-        collaboration, papers, and open-source work.
-      </p>
-      {
-        email && (
-          <p class="mt-4">
-            <a
-              href={email}
-              class="inline-block py-1 font-mono text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-            >
-              {email.replace("mailto:", "")}
-            </a>
-          </p>
-        )
-      }
+      <ul class="flex flex-col gap-y-1">
+        {
+          contactRows.map(({ Icon, href, text, srSuffix, mono }) => {
+            const isMail = href.startsWith("mailto:");
+            return (
+              <li>
+                <a
+                  href={href}
+                  target={isMail ? undefined : "_blank"}
+                  rel={isMail ? undefined : "noopener noreferrer"}
+                  class="inline-flex items-center gap-2.5 py-1.5 text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
+                >
+                  <Icon
+                    class="size-5 shrink-0 no-underline"
+                    aria-hidden="true"
+                  />
+                  <span class:list={[{ "font-mono": mono }]}>
+                    {text}
+                    <span class="sr-only">{srSuffix}</span>
+                    {!isMail && <span aria-hidden="true"> ↗</span>}
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
     </Section>
   </main>
 
