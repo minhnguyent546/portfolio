@@ -7,6 +7,8 @@
  * delays are relative, so adding a publication or a project extends the
  * sequence instead of colliding with a hardcoded timestamp.
  */
+import { getRelativeLocaleUrl } from "astro:i18n";
+import config from "@/config";
 import pkg from "../../package.json";
 
 type Props = {
@@ -177,6 +179,12 @@ const RELEASE = `${pkg.version}-${PROMPT_USER}`;
 
 // One string, so the step count below matches the characters actually revealed.
 const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
+
+/** The shell the login prompt implies. Carries the base path already. */
+const TTY_PATH = getRelativeLocaleUrl(
+  Astro.currentLocale ?? config.site.lang,
+  "tty3"
+);
 ---
 
 {
@@ -199,7 +207,13 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
   })();
 </script>
 
-<div id="boot" aria-hidden="true" inert data-dismiss-at={DISMISS_AT}>
+<div
+  id="boot"
+  aria-hidden="true"
+  inert
+  data-dismiss-at={DISMISS_AT}
+  data-tty-path={TTY_PATH}
+>
   <div class="boot-log">
     <p class="boot-banner">
       portfolio {RELEASE} (tty1)
@@ -250,7 +264,7 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
       ><span class="boot-caret"></span>
     </p>
   </div>
-  <p class="boot-hint">press any key</p>
+  <p class="boot-hint">press any key · t for tty3</p>
 </div>
 
 <style>
@@ -499,12 +513,25 @@ const PROMPT_LINE = `portfolio login: ${PROMPT_USER}`;
       setTimeout(clear, 600);
     };
 
+    // `t` opens the shell the login prompt implies, rather than dismissing.
+    // Wrapping the shared handler keeps `once: true` doing the work: the
+    // keydown listener is spent either way, so a dismiss can never race the
+    // navigation and repaint the page underneath.
+    const onEvent = (event: Event) => {
+      const path = overlay?.dataset.ttyPath;
+      if (path && event instanceof KeyboardEvent && event.key === "t") {
+        location.href = path;
+        return;
+      }
+      dismiss();
+    };
+
     // `wheel` covers the trackpad and mouse-wheel path. It is kept even though
     // the overlay makes the page unscrollable — a wheel event still reaches the
     // window on the viewports where the page underneath can scroll, and costs
     // nothing where it cannot.
     for (const event of ["keydown", "pointerdown", "wheel", "touchstart"]) {
-      window.addEventListener(event, dismiss, {
+      window.addEventListener(event, onEvent, {
         once: true,
         passive: true,
         signal: controller.signal,
