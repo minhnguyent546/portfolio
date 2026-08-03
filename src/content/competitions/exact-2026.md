@@ -24,18 +24,15 @@ figure:
 order: 1
 ---
 
-EXACT 2026 asks for answers that are correct and explainable, with self-hosted
-open-weight models capped at 8B parameters and a 60-second budget per query.
-Two tasks: logical reasoning over university regulations, and multi-step
-physics.
-
-The CoTu system writes a program instead of stating an answer. Regulation
-queries become a Z3 encoding whose entailment verdict grounds the deduction;
-physics becomes numerical Python. Both share a self-correction loop and emit
-the same explained-JSON structure. Answer-type routing, distillation-based
-task fine-tuning, and SGLang with speculative decoding keep it inside the
-latency limit.
-
-The system scored perfectly on physics in both automated selection rounds.
-Grounding answers in a symbolic solver produces verifiable deductions even at
-4B scale — what remains hard is premise selection, not the deduction itself.
+EXACT 2026 asks for answers that are correct and explainable, from self-hosted
+open-weight models capped at 8B parameters with a 60-second budget per query,
+over two tasks: logical reasoning over university regulations, and multi-step
+physics. The CoTu system writes a program instead of stating an answer, so
+regulation queries become a Z3 encoding whose entailment verdict grounds the
+deduction and physics becomes numerical Python, both sharing a self-correction
+loop and the same explained-JSON structure. Answer-type routing,
+distillation-based task fine-tuning, and SGLang with speculative decoding keep
+it inside the latency limit, and the system scored perfectly on physics in both
+automated selection rounds. Grounding answers in a symbolic solver produces
+verifiable deductions even at 4B scale; what remains hard is premise selection,
+not the deduction itself.
