@@ -135,7 +135,9 @@ if (root && out && promptEl && input && payload) {
     const anchor = document.createElement("a");
     anchor.href = url;
     anchor.textContent = url;
-    if (url.startsWith("http")) {
+    // Matches what `open` does with the same URL, so clicking the printed line
+    // and typing the command lead to the same place.
+    if (!url.startsWith("mailto:")) {
       anchor.target = "_blank";
       anchor.rel = "noopener noreferrer";
     }
@@ -296,7 +298,19 @@ if (root && out && promptEl && input && payload) {
           return;
         }
         printLink(url);
-        setTimeout(() => (location.href = url), 400);
+        // `mailto:` hands off to the mail client without unloading the page, so
+        // a tab opened for it would be left behind empty.
+        if (url.startsWith("mailto:")) {
+          location.href = url;
+          return;
+        }
+        // A new tab, and synchronously, so the keypress that submitted the line
+        // is still the gesture the popup blocker sees. Navigating in place would
+        // tear down the session the visitor is working in.
+        const opened = window.open(url, "_blank", "noopener,noreferrer");
+        if (!opened) {
+          print("open: blocked. The link above still works.", "muted");
+        }
         return;
       }
 
@@ -471,10 +485,12 @@ if (root && out && promptEl && input && payload) {
   });
 
   // A drag that selected text must keep its selection, and a printed link must
-  // stay clickable, so only a bare click hands focus back. `pointerup` because
-  // on `pointerdown` the selection does not exist yet. Bound to the panel, not
-  // to the scrollback, so the blank space under the prompt also takes a click.
-  root.addEventListener("pointerup", event => {
+  // stay clickable, so only a bare click hands focus back. Bound to the panel,
+  // not to the scrollback, so the blank space under the prompt also takes a
+  // click. `click`, not `pointerup`: a tap emits a compatibility mouse sequence
+  // afterwards, and that would move focus back off the input. `click` is the
+  // last event of both sequences, and by then the selection exists.
+  root.addEventListener("click", event => {
     if (!getSelection()?.isCollapsed) return;
     if ((event.target as HTMLElement).closest("a")) return;
     input.focus();
