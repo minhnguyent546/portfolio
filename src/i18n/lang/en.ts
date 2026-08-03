@@ -62,6 +62,7 @@ export default {
     noResults: "No results found",
     goToPreviousPage: "Go to previous page",
     goToNextPage: "Go to next page",
+    terminalInput: "Terminal command",
   },
   notFound: {
     title: "404 Not Found",

@@ -60,6 +60,7 @@ export interface UIStrings {
     noResults: string;
     goToPreviousPage: string;
     goToNextPage: string;
+    terminalInput: string;
   };
   notFound: {
     title: string;
