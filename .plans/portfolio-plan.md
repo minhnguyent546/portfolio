@@ -258,6 +258,7 @@ Source Serif 4 is 0.475.
 | RSS | `@astrojs/rss` — full-content feed; consider separate publications feed | |
 | Sitemap | `@astrojs/sitemap` (+ `site` set in config) | |
 | Comments | **Skip for v1** | If wanted later: giscus via lazy plain `<script>` (audience has GitHub accounts). |
+| Section nav | **`SectionNav.astro`** — sticky in-page index on `/`, with the current section marked | The only JS on the homepage that is not the boot log, ~380 B gzipped. CSS cannot do it: `:target` fires on click and never on scroll, and scroll-driven animations style the scrolled element, with no selector that reaches a sibling nav link. Two traps, both found by measuring. The reading line is a third of the way down the viewport, not under the nav: Writing and Contact are shorter than the screen, so their tops never reach it — Writing needs 5511 px of scroll against a 5461 px maximum. A click on either therefore lands at the page bottom, so the clicked link is pinned until a wheel, touch, or key press hands control back to the scroll position. Homepage inline JS goes from 2.8 KB to 3.7 KB raw (1.4 KB gzipped); external JS on `/` stays at 0. |
 | Analytics | **GoatCounter** (hosted, free, no cookies/banner, ~3.5KB) | **Not** Cloudflare Web Analytics — free tier being wound down. Umami self-hosted as alt. |
 | Boot intro | **`BootSequence.astro`** — systemd-style boot log on `/`, once per session | Overrides §1's "no terminal cosplay" for this one component. It uses the site tokens and JetBrains Mono on `--paper`, not a black-and-green tty. `index.astro` passes the entry ids of the publications, competitions, and projects collections. Each section prints at most 5 `Started <id>.service` lines and then counts the rest, so a long collection cannot flood the log. A section with no entries prints nothing. Joke lines follow. The sequence has a fixed length near 5 s: a cap on the log compresses the row gaps as content grows, and the last 2.5 s hold on the login prompt to let the visitor read the log. The log clips at the height of the screen and follows the printing line down, so a long list cannot push a row off the top. Any key, click, scroll, or touch ends it early. A session gate on `<html data-boot>` stops a replay and also skips the overlay under `prefers-reduced-motion: reduce`. Cost against the §1 bar: homepage inline JS goes from 1.9 KB to 2.8 KB, and external JS on `/` stays at 0. |
 
@@ -489,7 +490,14 @@ Source Serif 4 is 0.475.
    `html`/`body` carry `overflow-x: clip`, never `hidden`, which would make the root a
    scroll container and kill `position: sticky`.
    **Verified** at 320/375/414/768/1440: 0px horizontal overflow, exact 0px band gaps,
-   no clickable text over one line, console clean, dark mode re-points both bands.*
+   no clickable text over one line, console clean, dark mode re-points both bands.
+   **Revised 2026-08-03** after a review of the built page: the type scale is resized
+   for Newsreader (§2.5), the index nav marks the current section, and the two image
+   components had opposite faults — the publication box over-constrained a wide
+   diagram to 158px, and the competition figure had no cap at all, so a 1039×1350
+   source rendered 819×1063. Both now size from the real source ratios. The masthead
+   and the index nav are not two sticky bars: `Header` is `position: static` and
+   scrolls away, so `scroll-padding-top` stays at the height of the index nav alone.*
 5. **Long-form** — blog layout (Expressive Code + KaTeX), first post migrated or new.
 6. **Per-paper pages** — ViCLIP-OT and ViREx-Bench Nerfies-style pages.
 7. **Features** — Pagefind + ⌘K palette, view transitions, OG images, RSS, sitemap,
