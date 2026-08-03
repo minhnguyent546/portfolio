@@ -13,6 +13,19 @@ type Vfs = {
 const HOME = "/home/visitor";
 const SESSION_KEY = "tty3";
 
+/** Scrollback carried across a reload. A real tty drops its oldest lines too. */
+const MAX_LINES = 500;
+
+type Tone = "warn" | "ok" | "muted";
+
+/** `lines` holds text, never markup: `echo` reflects what the visitor typed. */
+type Saved = {
+  user: string;
+  cwd: string;
+  cmdLog: string[];
+  lines: [Tone | "" | "link", string][];
+};
+
 const root = document.querySelector<HTMLElement>("#tty");
 const out = document.querySelector<HTMLElement>("#tty-out");
 const promptEl = document.querySelector<HTMLElement>("#tty-prompt");
@@ -29,8 +42,34 @@ if (root && out && promptEl && input && payload) {
   let phase: "login" | "password" | "shell" = "login";
   const cmdLog: string[] = [];
   let logAt = 0;
+  /** The scrollback as data. Kept beside the DOM so a save needs no scraping. */
+  let lines: Saved["lines"] = [];
 
   const prompt = () => `${user}@portfolio:${short(cwd)}$`;
+
+  /** Oldest first, so the cap drops the lines a visitor has scrolled past. */
+  function record(entry: Saved["lines"][number]) {
+    lines.push(entry);
+    if (lines.length > MAX_LINES) {
+      lines = lines.slice(-MAX_LINES);
+      while (out!.childElementCount > MAX_LINES)
+        out!.firstElementChild!.remove();
+    }
+  }
+
+  /** Written on each command rather than each line: one write, not forty. */
+  function save() {
+    if (phase !== "shell") return;
+    try {
+      sessionStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({ user, cwd, cmdLog, lines } satisfies Saved)
+      );
+    } catch {
+      // Private mode throws, and so does a full quota. Losing the scrollback
+      // is not worth interrupting the session over.
+    }
+  }
 
   /** `/home/visitor/projects` prints as `~/projects`, the way a real shell does. */
   function short(path: string) {
@@ -41,12 +80,13 @@ if (root && out && promptEl && input && payload) {
         : path;
   }
 
-  function print(text = "", tone?: "warn" | "ok" | "muted") {
+  function print(text = "", tone?: Tone) {
     const line = document.createElement("div");
     if (tone) line.className = `tty-${tone}`;
     line.textContent = text;
     out!.append(line);
     root!.scrollTop = root!.scrollHeight;
+    record([tone ?? "", text]);
     return line;
   }
 
@@ -57,11 +97,13 @@ if (root && out && promptEl && input && payload) {
       .split("\n")
       .forEach(l => print(l));
 
-  function printLink(label: string, url: string) {
+  /** The label is always the URL, so one field restores the whole line. */
+  function printLink(url: string) {
     const line = print();
+    lines[lines.length - 1] = ["link", url];
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.textContent = label;
+    anchor.textContent = url;
     if (url.startsWith("http")) {
       anchor.target = "_blank";
       anchor.rel = "noopener noreferrer";
@@ -194,7 +236,7 @@ if (root && out && promptEl && input && payload) {
           print("Try: open github, open blog, open about", "muted");
           return;
         }
-        printLink(url, url);
+        printLink(url);
         setTimeout(() => (location.href = url), 400);
         return;
       }
@@ -225,6 +267,7 @@ if (root && out && promptEl && input && payload) {
 
       case "clear":
         out!.replaceChildren();
+        lines = [];
         return;
 
       case "exit":
@@ -295,13 +338,12 @@ if (root && out && promptEl && input && payload) {
       print("Password:");
       input!.type = "text";
       phase = "shell";
-      try {
-        sessionStorage.setItem(SESSION_KEY, user);
-      } catch {
-        // Private-mode storage throws. Logging in again is a fine failure.
-      }
+      // The login exchange is not scrollback a reload should replay, and the
+      // password prompt least of all. The restored screen starts at the motd.
+      lines = [];
       welcome();
       promptEl!.textContent = prompt();
+      save();
       return;
     }
 
@@ -312,6 +354,7 @@ if (root && out && promptEl && input && payload) {
     }
     run(value);
     promptEl!.textContent = prompt();
+    save();
   }
 
   function welcome() {
@@ -351,6 +394,8 @@ if (root && out && promptEl && input && payload) {
     if (event.ctrlKey && event.key === "l") {
       event.preventDefault();
       out.replaceChildren();
+      lines = [];
+      save();
     }
   });
 
@@ -364,19 +409,28 @@ if (root && out && promptEl && input && payload) {
     input.focus();
   });
 
-  let resumed = "";
+  let resumed: Saved | null = null;
   try {
-    resumed = sessionStorage.getItem(SESSION_KEY) ?? "";
+    const stored = sessionStorage.getItem(SESSION_KEY);
+    resumed = stored ? (JSON.parse(stored) as Saved) : null;
   } catch {
-    // Same private-mode case as above.
+    // Private mode throws on read, and a payload from an older shape throws on
+    // parse. A fresh login is the right failure for both.
   }
 
   input.disabled = false;
   if (resumed) {
-    user = resumed;
+    user = resumed.user;
+    cwd = resumed.cwd;
+    cmdLog.push(...resumed.cmdLog);
+    logAt = cmdLog.length;
     phase = "shell";
-    printBlock(fs.files["/etc/motd"] ?? "");
-    print();
+    // Re-printed through the same path that wrote them, so the restored screen
+    // carries no markup the shell would not have produced itself.
+    for (const [tone, text] of resumed.lines) {
+      if (tone === "link") printLink(text);
+      else print(text, tone || undefined);
+    }
     promptEl.textContent = prompt();
   } else {
     print("portfolio (tty3)");
