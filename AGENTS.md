@@ -68,7 +68,7 @@ Listed most important first.
 - **Avoid unnecessary fallbacks.** A fallback that nobody needs hides the real failure.
   Add one only for a failure that you can name.
 - **Decide for the long term.** A simple solution is not the same as a temporary one. Do not accept a stopgap that you plan to replace later. This matters most for the choices that are hard to reverse: the content schemas, the design token names, and the URLs.
-- **Prefer established, well-maintained libraries over custom code.** Write custom code only when the performance bar forces it. The plan permits two hand-rolled parts: the ⌘K palette and the BibTeX cite toggle. Use a library for everything else.
+- **Prefer established, well-maintained libraries over custom code.** Write custom code only when the performance bar forces it. The plan permits three hand-rolled parts: the ⌘K palette, the BibTeX cite toggle, and the tty3 shell. Use a library for everything else.
 - **Compose small modules with explicit interfaces.** Do not build a central system that every other file imports. A component that takes props is the default unit.
 - **Keep each module to one job.** Content collections hold the data. Layouts and
   components render it. Build scripts transform it. Do not mix these three.
