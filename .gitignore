@@ -19,7 +19,7 @@ logs/
 # local stuff
 build/
 /.research
-/.plans/
+/.plans/*
 !/.plans/portfolio-plan.md
 dist/
 /.playwright-mcp/
