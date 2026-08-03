@@ -50,10 +50,10 @@ const hasBody = entry.body != null && entry.body.trim() !== "";
         <Image
           src={figure.src}
           alt={figure.alt}
-          widths={[480, 800, 1200]}
-          sizes="(min-width: 64rem) 44rem, 92vw"
+          widths={[448, 896]}
+          sizes="(min-width: 40rem) 28rem, 92vw"
           loading="lazy"
-          class="w-full border border-rule bg-paper"
+          class="w-full max-w-md border border-rule bg-paper"
         />
       </figure>
     )
