@@ -14,18 +14,19 @@ const { items } = Astro.props;
 ---
 
 <nav
+  id="section-nav"
   aria-label="Sections"
   class="sticky top-0 z-30 border-b border-rule bg-paper/90 backdrop-blur-sm"
 >
   <ul
-    class="app-layout flex snap-x [scrollbar-width:none] gap-x-5 overflow-x-auto py-3 text-meta whitespace-nowrap [&::-webkit-scrollbar]:hidden"
+    class="app-layout flex snap-x [scrollbar-width:none] gap-x-5 overflow-x-auto py-3 whitespace-nowrap [&::-webkit-scrollbar]:hidden"
   >
     {
       items.map(({ id, label }) => (
         <li class="snap-start">
           <a
             href={`#${id}`}
-            class="inline-block py-1 text-ink-muted underline decoration-transparent underline-offset-4 hover:text-accent hover:decoration-current"
+            class="inline-block py-1 text-ink-muted underline decoration-transparent underline-offset-4 hover:text-accent hover:decoration-current aria-[current]:text-accent aria-[current]:decoration-current"
           >
             {label}
           </a>
@@ -34,3 +35,63 @@ const { items } = Astro.props;
     }
   </ul>
 </nav>
+
+<script>
+  const nav = document.querySelector<HTMLElement>("#section-nav");
+  const links = [
+    ...(nav?.querySelectorAll<HTMLAnchorElement>("a[href^='#']") ?? []),
+  ];
+  const sections = links
+    .map(link => document.querySelector<HTMLElement>(link.hash))
+    .filter((section): section is HTMLElement => section != null);
+
+  if (nav && sections.length === links.length) {
+    const mark = (current: number) =>
+      links.forEach((link, i) => {
+        if (i === current) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      });
+
+    // The last two sections are shorter than the viewport, so their tops never
+    // reach the reading line — a click on them lands at the page bottom. Pin
+    // the clicked link until the reader scrolls under their own steam.
+    let pinned: number | null = null;
+
+    const sync = () => {
+      if (pinned !== null) return;
+
+      const line = Math.max(
+        nav.getBoundingClientRect().height + 8,
+        innerHeight * 0.35
+      );
+      // Nothing can sit at the line once scrolling has bottomed out, so the end
+      // of the page selects the last section outright.
+      const atEnd =
+        scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+
+      let current = sections.length - 1;
+      if (!atEnd) {
+        current = 0;
+        sections.forEach((section, i) => {
+          if (section.getBoundingClientRect().top <= line) current = i;
+        });
+      }
+      mark(current);
+    };
+
+    links.forEach((link, i) =>
+      link.addEventListener("click", () => {
+        pinned = i;
+        mark(i);
+      })
+    );
+
+    for (const event of ["wheel", "touchstart", "keydown"]) {
+      addEventListener(event, () => (pinned = null), { passive: true });
+    }
+
+    addEventListener("scroll", sync, { passive: true });
+    addEventListener("resize", sync, { passive: true });
+    sync();
+  }
+</script>
