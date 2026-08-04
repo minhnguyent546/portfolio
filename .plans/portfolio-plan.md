@@ -510,6 +510,12 @@ Source Serif 4 is 0.475.
    constraint, set the custom domain in repo settings, and add the apex + `www` DNS
    records in Cloudflare (DNS-only).*
 
+### Pending investigations
+
+- Test an almost-white semantic surface token when a component needs a white-on-white
+  boundary. Start with the `zinc-25` technique (`oklch(99.2% 0 0)`). Keep
+  `--paper-alt` for bands, and define a matching dark value.
+
 ## 8. Explicitly rejected (with reasons)
 
 - **Bun** (no declared Astro support), **Biome** (experimental `.astro`), **husky**
