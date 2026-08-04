@@ -13,7 +13,7 @@
   --color-rule: var(--rule);
 
   --font-app: var(--font-newsreader);
-  --font-display: var(--font-archivo);
+  --font-display: var(--font-newsreader);
   --font-mono: var(--font-jetbrains-mono);
 
   /* Fluid scale: 375px -> 1440px, no breakpoint patching.
