@@ -1,6 +1,7 @@
 /**
  * The tty3 shell. Reads the filesystem that the page built at compile time,
- * runs a login that accepts anything, then a command loop over that map.
+ * runs a login that accepts non-whitespace credentials, then a command loop
+ * over that map.
  *
  * Everything prints through `textContent`. The shell echoes what the visitor
  * typed, so building output as HTML would make `echo` an injection point.
@@ -252,7 +253,7 @@ if (root && out && promptEl && input && payload) {
         }
         const all = flags.includes("-a");
         const entries = listDir(dir).filter(n => all || !n.startsWith("."));
-        if (entries.length === 0 && !(dir in fs.files)) {
+        if (entries.length === 0 && !Object.hasOwn(fs.files, dir)) {
           print(
             `ls: cannot access '${rest[0] ?? "."}': No such file or directory`,
             "warn"
@@ -413,8 +414,10 @@ if (root && out && promptEl && input && payload) {
     input!.value = "";
 
     if (phase === "login") {
-      print(`portfolio login: ${value}`);
-      user = value.trim() || "visitor";
+      const name = value.trim();
+      if (!name) return;
+      print(`portfolio login: ${name}`);
+      user = name;
       phase = "password";
       input!.type = "password";
       promptEl!.textContent = "Password:";
@@ -424,10 +427,9 @@ if (root && out && promptEl && input && payload) {
     if (phase === "password") {
       print("Password:");
       input!.type = "text";
-      // The password is never checked, so a locked account is refused here
-      // rather than at the login line: naming one must not tell the visitor
-      // that the name was the reason.
-      if (user in LOCKED) {
+      // A locked name and a blank password share one response, so the failure
+      // does not disclose whether the account itself was the reason.
+      if (!value.trim() || Object.hasOwn(LOCKED, user)) {
         print("Login incorrect", "warn");
         print();
         user = "visitor";
@@ -458,7 +460,7 @@ if (root && out && promptEl && input && payload) {
 
   function welcome() {
     print();
-    print("hint: any password works :)", "muted");
+    print("hint: any non-whitespace password works :)", "muted");
     print();
     print(`Last login: ${new Date().toDateString()} on tty3`, "muted");
     printBlock(fs.files["/etc/motd"] ?? "");
@@ -491,7 +493,11 @@ if (root && out && promptEl && input && payload) {
 
     if (event.ctrlKey && event.key === "c") {
       event.preventDefault();
-      print(`${phase === "shell" ? prompt() : ""} ${input.value}^C`.trim());
+      print(
+        phase === "password"
+          ? "^C"
+          : `${phase === "shell" ? prompt() : ""} ${input.value}^C`.trim()
+      );
       input.value = "";
       return;
     }
@@ -525,9 +531,16 @@ if (root && out && promptEl && input && payload) {
     // parse. A fresh login is the right failure for both.
   }
   // The store is the visitor's to edit, so a resumed name is checked against
-  // the same table the login uses. Nothing is readable either way, but the
+  // the same rules the login uses. Nothing is readable either way, but the
   // prompt must not claim an account the login refuses to hand out.
-  if (resumed && resumed.user in LOCKED) resumed = null;
+  if (resumed) {
+    if (typeof resumed.user !== "string") {
+      resumed = null;
+    } else {
+      resumed.user = resumed.user.trim();
+      if (!resumed.user || Object.hasOwn(LOCKED, resumed.user)) resumed = null;
+    }
+  }
 
   input.disabled = false;
   if (resumed) {
