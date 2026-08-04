@@ -460,8 +460,6 @@ if (root && out && promptEl && input && payload) {
 
   function welcome() {
     print();
-    print("hint: any non-whitespace password works :)", "muted");
-    print();
     print(`Last login: ${new Date().toDateString()} on tty3`, "muted");
     printBlock(fs.files["/etc/motd"] ?? "");
     print();
