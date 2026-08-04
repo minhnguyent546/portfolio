@@ -127,24 +127,25 @@ site theme and the OS theme disagree.
 
 ### Type scale — sized for Newsreader
 
-jimfan.me runs 21 px body / 47 px h1 in Roboto. The user asked for smaller, so the
-first scale set body to 17 px. That was too small: Newsreader's x-height ratio is
-**0.4531** against **0.5313** for Roboto or Arial, so 17 px Newsreader reads like
-14.5 px Arial — below the browser default, not above it. Nominal px understates a
-serif with a small x-height. **Body is now 18.75 px, h1 43 px.**
+The global fluid body scale starts at 17 px and reaches about 18.5 px at 1440 px.
+Newsreader's x-height ratio is **0.4531**, against **0.5313** for Roboto or Arial,
+so nominal pixels overstate its perceived size compared with a sans serif.
 
 | Role | 375 px | 1440 px | `clamp()` |
 |---|---|---|---|
 | h1 | 31 | 43 | `clamp(1.9375rem, 1.6812rem + 1.0939vw, 2.6875rem)` |
 | h2 | 24 | 31 | `clamp(1.5rem, 1.3521rem + 0.6315vw, 1.9375rem)` |
 | h3 | 19 | 21 | `clamp(1.1875rem, 1.1345rem + 0.2264vw, 1.3125rem)` |
-| body | 17 | 18.75 | `clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem)` |
+| body | 17 | 18.5 | `clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem)` |
 | meta | 14 | 15 | `clamp(0.875rem, 0.8562rem + 0.0803vw, 0.9375rem)` |
 
-Fluid via `clamp()` — no breakpoint patching. Body leading **1.6**. Measure capped at
-**36rem** for prose, which gives 62 characters per line — the middle of the 60–75
-optimum, so the measure is not the lever for a page that reads sparse. Heading spread
-is **2.29×**.
+Fluid via `clamp()` — no breakpoint patching. Base body leading is **1.6**, and prose
+blocks use the plugin leading of **1.75**. `max-w-measure` stays **36rem** for
+summaries and other short prose. Heading spread is **2.29×**.
+
+Blog articles set their own reading density: **17 px** text in a **45.5rem** column.
+That column fits the 48rem page container after its padding, so a long post reads
+denser than a summary block without a wider page. Headings keep the fluid scale.
 
 Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-08-03.
 `.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
@@ -158,9 +159,9 @@ stay at 16 px while the rest of the site grows.
   Collapses to stacked below `lg`.
 - **Section padding** `55px 0` equivalent (`3.5rem`), uniform. The bands carry the
   separation, so the padding does not need to.
-- **Container** 80rem max, 1280px of content inside it. The blog keeps the narrow
-  reading column, so the width is a variable (`--app-width`) that the homepage
-  re-points, not a second utility — see Phase 4.
+- **Container** 80rem max, 1280px of content inside it. The blog reads at 45.5rem, so
+  the width is a variable (`--app-width`) that the homepage re-points, not a second
+  utility — see Phase 4.
 - **`scroll-padding-top`** matching nav height, so anchor jumps clear the sticky nav.
 - Deliberate two-line heading breaks where a label reads better stacked.
 
