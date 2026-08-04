@@ -90,6 +90,13 @@ Design direction is "quiet craft": Swiss typography, light default with banded
 sections, restrained motion. Dark mode is a token re-point, not a second design.
 Tokens, type scale, and the band mechanism are specified in plan §2.5.
 
+**Other UI rules:**
+
+- Do not add subtitles, helper text, or descriptive copy beneath headings, labels, cards,
+  or settings by default. Prefer one concise, self-explanatory heading
+  or label. Only add supporting copy when the user explicitly asks for it or when it is
+  necessary to prevent misunderstanding or error, and never use it to restate the heading.
+
 ## Performance bar
 
 Near 0 bytes of JavaScript on page load. Everything runs at build time or loads on
