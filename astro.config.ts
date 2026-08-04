@@ -57,6 +57,11 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        ignored: ["**/.claude/**"],
+      },
+    },
   },
   // Variable ranges, not discrete weights: one file per family covers the range.
   // `opsz` is deliberately omitted from Newsreader — it more than doubles the
