@@ -54,7 +54,7 @@ These are decided. Raise a question before you change one.
 - **Content Layer API** with `glob()` loaders in `src/content.config.ts`.
   Legacy collections were removed in Astro 6.
 - Fonts load through Astro's top-level `fonts` config. No Google Fonts CDN.
-- **English only.** Vietnamese glyph coverage is a later phase.
+- Blog posts declare English or Vietnamese. The site shell stays English, and routes have no locale prefix.
 - Rejected, with reasons in the plan §8: `astro-icon`, `cmdk`, `ClientRouter`,
   Biome, husky, Fontshare fonts (Satoshi, General Sans, Switzer),
   Cloudflare Web Analytics.
