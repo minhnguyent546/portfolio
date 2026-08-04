@@ -4,10 +4,8 @@ Personal portfolio. Static Astro site, deployed to GitHub Pages.
 
 ## Where things live
 
-| Path                                      | Contents                                                                           |
-| ----------------------------------------- | ---------------------------------------------------------------------------------- |
-| `.plans/portfolio-plan.md`                | The plan. Stack, content inventory, phases, rejected options. **Read this first.** |
-| `.research/…synthesis-and-action-plan.md` | Index of the five research reports. Read a full report only when you need it.      |
+- Plan at `.plans/portfolio-plan.md`: The plan. Stack, content inventory, phases, rejected options. **Read this first.**
+- Research at `.research/`: Index of the research reports. Read a full report only when you need it.
 
 Keep the plan current. When a decision changes during implementation, edit
 `.plans/portfolio-plan.md` in the same change.
