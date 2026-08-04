@@ -513,30 +513,21 @@ const TTY_PATH = getRelativeLocaleUrl(
       setTimeout(clear, 600);
     };
 
-    // `t` opens the shell the login prompt implies, rather than dismissing.
-    // Wrapping the shared handler keeps `once: true` doing the work: the
-    // keydown listener is spent either way, so a dismiss can never race the
-    // navigation and repaint the page underneath.
-    const onEvent = (event: Event) => {
+    // `t` opens the shell that the login prompt implies instead of dismissing it.
+    // The listener is removed either way, so a dismiss cannot race the navigation.
+    const onKeydown = (event: KeyboardEvent) => {
       const path = overlay?.dataset.ttyPath;
-      if (path && event instanceof KeyboardEvent && event.key === "t") {
+      if (path && event.key === "t") {
         location.href = path;
         return;
       }
       dismiss();
     };
 
-    // `wheel` covers the trackpad and mouse-wheel path. It is kept even though
-    // the overlay makes the page unscrollable — a wheel event still reaches the
-    // window on the viewports where the page underneath can scroll, and costs
-    // nothing where it cannot.
-    for (const event of ["keydown", "pointerdown", "wheel", "touchstart"]) {
-      window.addEventListener(event, onEvent, {
-        once: true,
-        passive: true,
-        signal: controller.signal,
-      });
-    }
+    window.addEventListener("keydown", onKeydown, {
+      once: true,
+      signal: controller.signal,
+    });
 
     // Computed in the frontmatter, because the row count decides it. This
     // script is bundled, so it cannot read the value any other way.
