@@ -215,13 +215,14 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 
 | Role | Font | CSS variable |
 |---|---|---|
-| Headings / display / UI | **Archivo** (wght 400–700) | `--font-display` |
-| Body / long-form | **Newsreader** (wght 400–700, roman + italic) | `--font-app` |
+| Headings / display / UI | **Newsreader** (wght 400–700, roman + italic) | `--font-display` |
+| Body / long-form | **Newsreader** (same browser family) | `--font-app` |
 | Code / metadata | **JetBrains Mono** (wght 400–600) | `--font-mono` |
 
-All OFL. Loaded through Astro's top-level `fonts` config as variable ranges. Browser
-families include Latin and Vietnamese subsets. A separate Archivo TTF family gives
-Satori the Vietnamese glyphs for OG images.
+All OFL. Astro's top-level `fonts` config loads the browser families as variable ranges
+with Latin and Vietnamese subsets. Newsreader gives headings and body text consistent
+Vietnamese forms. A separate build-only Archivo TTF family gives Satori Vietnamese
+glyphs for OG images; the browser does not load Archivo.
 
 **Decided 2026-08-01.** This replaces Geist + Source Serif 4. Geist is Vercel's house
 font and reads as "deployed", which §1 rejects. hallmark bans Source Serif as a body
@@ -234,9 +235,12 @@ Source Serif 4 is 0.475.
 - **`styles` defaults to `["normal", "italic"]`.** Italic is a second file. Only
   Newsreader declares it.
 - **satori cannot read woff2**, so the OG routes use a separate build-only family,
-  `--font-archivo-og`. Do not add `ttf` to the Archivo family itself: that puts static
+  `--font-archivo-og`. Do not add `ttf` to a browser family: that puts static
   `@font-face` blocks in the browser stylesheet, and a heading at weight 500 then pulls
   a 112 KB TrueType file.
+- **KaTeX must be imported into `layer(base)`.** Unlayered CSS outranks every layer, so
+  an unlayered `katex.min.css` keeps its `font: 1.21em` and renders math a fifth larger
+  than the prose. Math is levelled to `1em`.
 - **Fontshare fonts stay out** (Satoshi, General Sans, Switzer). The FFL bars
   subsetting and self-hosted redistribution.
 - No Google Fonts CDN. In dark mode, set `-webkit-font-smoothing: antialiased` and drop
