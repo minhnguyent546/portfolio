@@ -42,7 +42,7 @@ pnpm lint           # ESLint
 pnpm format         # Prettier
 ```
 
-For serving for testing, use the port range `4330-4340`.
+For serving for testing, use the port range `4330-4340`, e.g., `python3 -m http.server 4331 --directory dist`.
 
 ## Locked stack decisions
 
