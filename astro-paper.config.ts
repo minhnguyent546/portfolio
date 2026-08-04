@@ -29,15 +29,36 @@ export default defineAstroPaperConfig({
     search: "pagefind",
   },
   socials: [
-    { name: "github", url: "https://github.com/minhnguyent546" },
-    { name: "x", url: "https://x.com/minhnguyent546/" },
-    { name: "linkedin", url: "https://www.linkedin.com/in/minhnguyent546/" },
-    { name: "mail", url: "mailto:minhnguyent546@gmail.com" },
+    {
+      name: "github",
+      url: "https://github.com/minhnguyent546",
+      linkTitle: "Browse my repositories on GitHub",
+    },
+    {
+      name: "x",
+      url: "https://x.com/minhnguyent546/",
+      linkTitle: "Read my updates on X",
+    },
+    {
+      name: "linkedin",
+      url: "https://www.linkedin.com/in/minhnguyent546/",
+      linkTitle: "Connect with me on LinkedIn",
+    },
+    {
+      name: "mail",
+      url: "mailto:minhnguyent546@gmail.com",
+      linkTitle: "Send me an email",
+    },
     {
       name: "googleScholar",
       url: "https://scholar.google.com/citations?hl=en&user=0DsVBW4AAAAJ",
+      linkTitle: "Browse my publications on Google Scholar",
     },
-    { name: "hackmd", url: "https://hackmd.io/@minhnguyent546" },
+    {
+      name: "hackmd",
+      url: "https://hackmd.io/@minhnguyent546",
+      linkTitle: "Read my notes on HackMD",
+    },
   ],
   shareLinks: [
     { name: "whatsapp", url: "https://wa.me/?text=" },

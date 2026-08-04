@@ -69,9 +69,9 @@ interface SocialLink {
   name: string;
   url: string;
   /**
-   * Accessible label for the icon link (aria-label, title attribute).
+   * Accessible label and visible tooltip for the icon link.
    * Auto-generated if omitted: "{site.title} on GitHub", "Send an email to {site.title}", etc.
-   * Override when the default wording doesn't fit.
+   * Override when the default wording does not fit.
    */
   linkTitle?: string;
 }

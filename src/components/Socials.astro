@@ -26,26 +26,68 @@ const items = await Promise.all(
 
 <div class="flex flex-wrap items-center gap-1">
   {
-    items.map(({ name, url, title, Icon, isMail }) =>
+    items.map(({ name, url, title, Icon, isMail }, index) =>
       Icon ? (
         <LinkButton
           href={url}
-          class="p-2 hover:rotate-6 sm:p-1"
-          title={title}
+          class="social-link relative p-2 sm:p-1"
           target={isMail ? undefined : "_blank"}
           rel={isMail ? undefined : "noopener noreferrer"}
         >
           <Icon
-            class={
-              // googleScholar is a filled mark; the rest are stroked outlines.
+            class:list={[
+              "inline-block size-8 opacity-90 transition-transform duration-(--dur-micro) ease-(--ease-out) group-hover:rotate-6",
               name === "googleScholar"
-                ? "inline-block size-8 fill-current stroke-none opacity-90"
-                : "inline-block size-8 fill-transparent stroke-current stroke-2 opacity-90 group-hover:fill-transparent"
-            }
+                ? "fill-current stroke-none"
+                : "fill-transparent stroke-current stroke-2 group-hover:fill-transparent",
+            ]}
           />
           <span class="sr-only">{title}</span>
+          <span
+            aria-hidden="true"
+            class:list={[
+              "social-tooltip pointer-events-none absolute bottom-full z-20 mb-2 w-max max-w-36 border border-rule bg-ink px-2.5 py-1.5 font-display text-sm leading-tight text-paper sm:max-w-64 sm:whitespace-nowrap",
+              index === 0
+                ? "left-0"
+                : index === items.length - 1
+                  ? "right-0 max-[349px]:right-auto max-[349px]:left-0"
+                  : "left-1/2 -translate-x-1/2",
+            ]}
+          >
+            {title}
+          </span>
         </LinkButton>
       ) : null
     )
   }
 </div>
+
+<style>
+  .social-tooltip {
+    opacity: 0;
+    transform: translateY(0.25rem);
+    transition:
+      opacity var(--dur-micro) var(--ease-out),
+      transform var(--dur-micro) var(--ease-out);
+    transition-delay: 0ms;
+  }
+
+  .social-link:hover .social-tooltip,
+  .social-link:focus-visible .social-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (hover: hover) {
+    .social-link:hover .social-tooltip {
+      transition-delay: 800ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .social-tooltip {
+      transform: none;
+      transition: opacity var(--dur-micro) var(--ease-out);
+    }
+  }
+</style>
