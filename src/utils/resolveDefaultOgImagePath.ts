@@ -4,7 +4,7 @@ import { getAssetPath } from "./withBase";
 const publicFiles = import.meta.glob("/public/*", { eager: false });
 
 function existsInPublic(filename: string): boolean {
-  return `/public/${filename}` in publicFiles;
+  return Object.hasOwn(publicFiles, `/public/${filename}`);
 }
 
 /**
