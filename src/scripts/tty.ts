@@ -58,6 +58,7 @@ if (root && out && promptEl && input && payload) {
   let home = BUILD_HOME;
   let cwd = home;
   let phase: "login" | "password" | "shell" = "login";
+  let loggingOut = false;
   const cmdLog: string[] = [];
   let logAt = 0;
   /** The scrollback as data. Kept beside the DOM so a save needs no scraping. */
@@ -77,7 +78,7 @@ if (root && out && promptEl && input && payload) {
 
   /** Written on each command rather than each line: one write, not forty. */
   function save() {
-    if (phase !== "shell") return;
+    if (phase !== "shell" || loggingOut) return;
     try {
       sessionStorage.setItem(
         SESSION_KEY,
@@ -344,8 +345,15 @@ if (root && out && promptEl && input && payload) {
         return;
 
       case "exit":
+        loggingOut = true;
+        input!.disabled = true;
+        try {
+          sessionStorage.removeItem(SESSION_KEY);
+        } catch {
+          // Storage can be unavailable. The navigation must still complete.
+        }
         print("logout");
-        setTimeout(() => (location.href = homeUrl), 300);
+        setTimeout(() => location.replace(homeUrl), 300);
         return;
 
       case "sudo":
