@@ -208,6 +208,19 @@ if (root && out && promptEl && input && payload) {
     "rm",
   ];
 
+  function logout() {
+    if (loggingOut) return;
+    loggingOut = true;
+    input!.disabled = true;
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+    } catch {
+      // Storage can be unavailable. The navigation must still complete.
+    }
+    print("logout");
+    setTimeout(() => location.replace(homeUrl), 300);
+  }
+
   function run(line: string) {
     const [cmd, ...args] = line.trim().split(/\s+/);
     if (!cmd) return;
@@ -225,6 +238,7 @@ if (root && out && promptEl && input && payload) {
         print("  pwd whoami date uname -a echo history clear");
         print();
         print("Tab completes. Up and Down walk the history.", "muted");
+        print("Ctrl+D logs out.", "muted");
         return;
 
       case "ls": {
@@ -345,15 +359,7 @@ if (root && out && promptEl && input && payload) {
         return;
 
       case "exit":
-        loggingOut = true;
-        input!.disabled = true;
-        try {
-          sessionStorage.removeItem(SESSION_KEY);
-        } catch {
-          // Storage can be unavailable. The navigation must still complete.
-        }
-        print("logout");
-        setTimeout(() => location.replace(homeUrl), 300);
+        logout();
         return;
 
       case "sudo":
@@ -474,6 +480,12 @@ if (root && out && promptEl && input && payload) {
       logAt += event.key === "ArrowUp" ? -1 : 1;
       logAt = Math.max(0, Math.min(cmdLog.length, logAt));
       input.value = cmdLog[logAt] ?? "";
+      return;
+    }
+
+    if (event.ctrlKey && event.key.toLowerCase() === "d") {
+      event.preventDefault();
+      if (phase === "shell") logout();
       return;
     }
 
