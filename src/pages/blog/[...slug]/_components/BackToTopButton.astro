@@ -3,7 +3,12 @@ import IconArrowLeft from "@/assets/icons/IconArrowLeft.svg";
 import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
 import { useTranslations } from "@/i18n";
 
-const t = useTranslations(Astro.currentLocale);
+interface Props {
+  uiLocale?: "en" | "vi";
+}
+
+const { uiLocale = "en" } = Astro.props;
+const t = useTranslations(uiLocale);
 ---
 
 <div

@@ -7,20 +7,30 @@ type Props = {
   description?: string;
   ogImage?: string;
   canonicalURL?: string;
+  lang?: string;
   pubDatetime?: Date;
   modDatetime?: Date | null;
 };
 
 const { site } = config;
 
-const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime } =
-  Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  canonicalURL,
+  lang,
+  pubDatetime,
+  modDatetime,
+} = Astro.props;
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: title ?? site.title,
+  description,
   image: ogImage,
+  ...(lang && { inLanguage: lang }),
   ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
   author: [
@@ -31,9 +41,14 @@ const structuredData = {
     },
   ],
 };
+
+const structuredDataJson = JSON.stringify(structuredData).replaceAll(
+  "<",
+  "\\u003c"
+);
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL}>
+<Layout {title} {description} {ogImage} {canonicalURL} {lang}>
   <Fragment slot="head">
     <!-- Override og:type for article pages -->
     <meta property="og:type" content="article" />
@@ -58,7 +73,7 @@ const structuredData = {
     <script
       type="application/ld+json"
       is:inline
-      set:html={JSON.stringify(structuredData)}
+      set:html={structuredDataJson}
     />
   </Fragment>
 

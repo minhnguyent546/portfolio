@@ -191,11 +191,14 @@ const contactRows = [
                   <div class="min-w-0 sm:col-span-9">
                     <a
                       href={getPostUrl(post.id, post.filePath, locale)}
+                      lang={post.data.lang}
                       class="inline-block py-1 text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
                     >
                       {post.data.title}
                     </a>
-                    <p class="text-ink-muted">{post.data.description}</p>
+                    <p lang={post.data.lang} class="text-ink-muted">
+                      {post.data.description}
+                    </p>
                   </div>
                 </li>
               );

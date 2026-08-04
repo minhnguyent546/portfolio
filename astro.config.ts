@@ -14,7 +14,9 @@ import {
 } from "@shikijs/transformers";
 import tailwindcss from "@tailwindcss/vite";
 import rehypeCallouts from "rehype-callouts";
+import rehypeKatex from "rehype-katex";
 import remarkCollapse from "remark-collapse";
+import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import config from "./astro-paper.config";
 import { transformerFileName } from "./src/utils/transformers/fileName";
@@ -38,10 +40,15 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [
-        remarkToc,
-        [remarkCollapse, { test: "Table of contents" }],
+        remarkMath,
+        [remarkToc, { heading: "Table of contents|Mục lục" }],
+        [
+          remarkCollapse,
+          { test: "Table of contents", summary: "Open Table of contents" },
+        ],
+        [remarkCollapse, { test: "Mục lục", summary: "Mở Mục lục" }],
       ],
-      rehypePlugins: [rehypeCallouts],
+      rehypePlugins: [rehypeKatex, rehypeCallouts],
     }),
     shikiConfig: {
       themes: { light: "min-light", dark: "night-owl" },
@@ -80,7 +87,7 @@ export default defineConfig({
       fallbacks: ["Georgia", "serif"],
       weights: ["400 700"],
       styles: ["normal", "italic"],
-      subsets: ["latin"],
+      subsets: ["latin", "vietnamese"],
     },
     {
       name: "Archivo",
@@ -89,7 +96,7 @@ export default defineConfig({
       fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
       weights: ["400 700"],
       styles: ["normal"],
-      subsets: ["latin"],
+      subsets: ["latin", "vietnamese"],
     },
     {
       name: "JetBrains Mono",
@@ -98,7 +105,7 @@ export default defineConfig({
       fallbacks: ["ui-monospace", "monospace"],
       weights: ["400 600"],
       styles: ["normal"],
-      subsets: ["latin"],
+      subsets: ["latin", "vietnamese"],
     },
     // Build-time only: satori cannot parse woff2, so the OG routes read these
     // static ttf instances. Kept as a separate family so the `ttf` @font-face
@@ -110,7 +117,7 @@ export default defineConfig({
       provider: fontProviders.google(),
       weights: [400, 700],
       styles: ["normal"],
-      subsets: ["latin"],
+      subsets: ["latin", "vietnamese"],
       formats: ["ttf"],
     },
   ],

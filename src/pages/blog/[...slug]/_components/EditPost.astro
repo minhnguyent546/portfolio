@@ -8,15 +8,21 @@ type Props = {
   hideEditPost?: CollectionEntry<"blog">["data"]["hideEditPost"];
   class?: string;
   post: CollectionEntry<"blog">;
+  uiLocale?: "en" | "vi";
 };
 
-const { hideEditPost, post, class: className = "" } = Astro.props;
+const {
+  hideEditPost,
+  post,
+  uiLocale = "en",
+  class: className = "",
+} = Astro.props;
 
 const editPost = config.features.editPost;
 const href = editPost.enabled ? `${editPost.url}${post.filePath}` : "";
 const showEditPost = editPost.enabled && !hideEditPost && href.trim() !== "";
 
-const t = useTranslations(Astro.currentLocale);
+const t = useTranslations(uiLocale);
 ---
 
 {

@@ -10,7 +10,7 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, ...props } = data;
+const { title, description, lang, ...props } = data;
 ---
 
 <li class="my-6">
@@ -22,10 +22,13 @@ const { title, description, ...props } = data;
       "focus-visible:no-underline focus-visible:underline-offset-0",
     ]}
   >
-    <Heading style={{ viewTransitionName: toTransitionName(title) }}>
+    <Heading
+      lang={lang}
+      style={{ viewTransitionName: toTransitionName(title) }}
+    >
       {title}
     </Heading>
   </a>
   <Datetime {...props} />
-  <p>{description}</p>
+  <p lang={lang}>{description}</p>
 </li>
