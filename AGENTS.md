@@ -44,6 +44,8 @@ pnpm format         # Prettier
 
 For serving for testing, use the port range `4330-4340`, e.g., `python3 -m http.server 4331 --directory dist`.
 
+AVOID using `nohup`
+
 ## Locked stack decisions
 
 These are decided. Raise a question before you change one.
