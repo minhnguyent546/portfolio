@@ -128,8 +128,11 @@
       @apply my-6 overflow-x-auto overflow-y-hidden py-1;
     }
 
+    /* katex.min.css hard-sets `font: 1.21em`, which renders math a fifth larger
+       than the prose around it. Level it with the body text. */
     .katex {
       max-width: 100%;
+      font-size: 1em;
     }
 
     table {

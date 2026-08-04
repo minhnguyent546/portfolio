@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@import "katex/dist/katex.min.css";
+/* Into `base` so the site rules can override it. Unlayered CSS outranks every
+   layer, and katex.min.css sets `font: 1.21em` on `.katex`. */
+@import "katex/dist/katex.min.css" layer(base);
 @import "./theme.css";
 @import "./typography.css";
 @import "rehype-callouts/theme/obsidian";
