@@ -118,6 +118,8 @@ and check the browser console.
 - **Work in place.** If the current directory is inside the repository, work there.
   Do not use `git worktree` unless the user asks for one.
 - **Ask before you branch.** Do not create or switch branches on your own.
+- **Name branches by type.** Use a Conventional Commit prefix, such as `feat/tty` or
+  `fix/boot`.
 - **Safe by default.** `git status`, `git diff`, and `git log` are always fine. Run
   `reset --hard`, `clean`, `restore`, `checkout <file>`, or `rm` only when the user asks.
   Each of these commands can destroy uncommitted work.
