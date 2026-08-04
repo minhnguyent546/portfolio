@@ -108,17 +108,16 @@ and check the browser console.
 
 ## Git
 
-- **Work in place.** If the current directory is inside the repository, work there. Do not
-  create sibling checkouts. Do not use `git worktree` unless the user asks for one.
-- **Ask before you branch.** Do not create or switch branches on your own. End every
-  session on the branch that the user expects.
+- **Work in place.** If the current directory is inside the repository, work there.
+  Do not use `git worktree` unless the user asks for one.
+- **Ask before you branch.** Do not create or switch branches on your own.
 - **Safe by default.** `git status`, `git diff`, and `git log` are always fine. Run
   `reset --hard`, `clean`, `restore`, `checkout <file>`, or `rm` only when the user asks.
   Each of these commands can destroy uncommitted work.
 - **Commit and push only when asked.** A narrow instruction such as "pull and push"
   permits that action only. It does not permit an amend or a branch change.
   A push to `main` starts the GitHub Actions deploy and publishes the site.
-- **Write new commits.** Use `--amend` only when the user asks for it.
+  Keep each commit thin and focused, do not commit a large batch of changes at once.
 - **Follow Conventional Commits**:
   `feat | fix | refactor | build | ci | chore | docs | style | perf | test`.
 - **Keep edits small.** Do not run repository-wide search-and-replace scripts. Keep each
