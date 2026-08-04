@@ -32,15 +32,17 @@ Say what you cut from the plan in your response, so the user can ask for it back
 
 ## Commands
 
-The project uses **pnpm** and **Node 22 LTS** (`>= 22.12`):
+The project uses `pnpm` and `Node 22`:
 
 ```
 pnpm install
-pnpm dev            # local dev server
+pnpm dev            # local dev server on port 4321
 pnpm build          # astro check && astro build (Pagefind runs in this step)
 pnpm lint           # ESLint
 pnpm format         # Prettier
 ```
+
+For serving for testing, use the port range `4330-4340`.
 
 ## Locked stack decisions
 
