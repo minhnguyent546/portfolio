@@ -59,7 +59,13 @@ export default defineConfig({
     plugins: [tailwindcss()],
     server: {
       watch: {
-        ignored: ["**/.claude/**"],
+        ignored: [
+          "**/.agents/**",
+          "**/.claude/**",
+          "**/.plans/**",
+          "**/.playwright-mcp/**",
+          "**/.research/**",
+        ],
       },
     },
   },
