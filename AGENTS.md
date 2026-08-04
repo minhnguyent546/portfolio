@@ -83,6 +83,8 @@ The `hallmark` skill governs all visual work. Two rules matter most here:
 
 - **No invented content.** Every metric, date, rank, and link must come from the
   content inventory in plan §3. A portfolio that fabricates numbers is worthless.
+  The fictional tty3 hardware is the only exception. Each hardware field must say
+  `simulated` so it cannot read as a portfolio claim.
 - **No slop tells.** Inter, purple or blue gradients, bento grids, glassmorphism,
   centred heroes, emoji icons, italic headings, fake browser chrome, `transition: all`.
 
