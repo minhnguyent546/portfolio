@@ -31,12 +31,14 @@ const MAX_LINES = 500;
 
 type Tone = "warn" | "ok" | "muted";
 
+type LineKind = Tone | "" | "link" | "art";
+
 /** `lines` holds text, never markup: `echo` reflects what the visitor typed. */
 type Saved = {
   user: string;
   cwd: string;
   cmdLog: string[];
-  lines: [Tone | "" | "link", string][];
+  lines: [LineKind, string][];
 };
 
 const root = document.querySelector<HTMLElement>("#tty");
@@ -113,13 +115,14 @@ if (root && out && promptEl && input && payload) {
     home = next;
   }
 
-  function print(text = "", tone?: Tone) {
+  function print(text = "", tone?: Tone, kind?: "art") {
     const line = document.createElement("div");
     if (tone) line.className = `tty-${tone}`;
+    if (kind === "art") line.ariaHidden = "true";
     line.textContent = text;
     out!.append(line);
     root!.scrollTop = root!.scrollHeight;
-    record([tone ?? "", text]);
+    record([kind ?? tone ?? "", text]);
     return line;
   }
 
@@ -129,6 +132,35 @@ if (root && out && promptEl && input && payload) {
       .replace(/\n$/, "")
       .split("\n")
       .forEach(l => print(l));
+
+  /**
+   * The logo and the rule under the title are decoration, and `#tty-out` is a
+   * live region, so those rows are hidden from a screen reader rather than
+   * spelled out one slash at a time.
+   */
+  function printFetch() {
+    const title = `${user}@portfolio`;
+    const os = /^PRETTY_NAME="(.*)"$/m.exec(fs.files["/etc/os-release"] ?? "");
+    [
+      "       /\\",
+      "      /  \\",
+      "     /    \\",
+      "    /      \\",
+      "   /   ,,   \\",
+      "  /   |  |   \\",
+      " /_-''    ''-_\\",
+    ].forEach(row => print(row, undefined, "art"));
+    print();
+    print(title);
+    print("-".repeat(title.length), undefined, "art");
+    if (os) print(`OS: ${os[1]}`);
+    print("Host: portfolio");
+    print(`Release: ${root!.dataset.release ?? ""}`);
+    print("Shell: portfolio shell");
+    print("Terminal: tty3");
+    print("CPU [simulated]: AMD EPYC 9354P");
+    print("GPU [simulated]: NVIDIA H100 PCIe 80 GB");
+  }
 
   /** The label is always the URL, so one field restores the whole line. */
   function printLink(url: string) {
@@ -200,6 +232,8 @@ if (root && out && promptEl && input && payload) {
     "open",
     "whoami",
     "uname",
+    "fastfetch",
+    "neofetch",
     "date",
     "echo",
     "history",
@@ -236,6 +270,7 @@ if (root && out && promptEl && input && payload) {
         print("  cd [dir]        change directory");
         print("  cat <file>      print a file");
         print("  open <name>     open a page or link (try: open github)");
+        print("  fastfetch       show system information (alias: neofetch)");
         print("  pwd whoami date uname -a echo history clear");
         print();
         print("Tab completes. Up and Down walk the history.", "muted");
@@ -340,6 +375,11 @@ if (root && out && promptEl && input && payload) {
             ? `portfolio ${root!.dataset.release ?? ""} tty3 static`
             : "portfolio"
         );
+        return;
+
+      case "fastfetch":
+      case "neofetch":
+        printFetch();
         return;
 
       case "date":
@@ -552,9 +592,10 @@ if (root && out && promptEl && input && payload) {
     phase = "shell";
     // Re-printed through the same path that wrote them, so the restored screen
     // carries no markup the shell would not have produced itself.
-    for (const [tone, text] of resumed.lines) {
-      if (tone === "link") printLink(text);
-      else print(text, tone || undefined);
+    for (const [kind, text] of resumed.lines) {
+      if (kind === "link") printLink(text);
+      else if (kind === "art") print(text, undefined, "art");
+      else print(text, kind || undefined);
     }
     promptEl.textContent = prompt();
   } else {
