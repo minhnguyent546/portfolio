@@ -247,7 +247,8 @@ Source Serif 4 is 0.475.
 ### Features
 | Feature | Pick | Notes |
 |---|---|---|
-| Icons | **unplugin-icons** + `@iconify-json/lucide` (UI) + `@iconify-json/simple-icons` (brands) | Simple Icons covers arxiv, huggingface, googlescholar, orcid — no academicons needed. Native `.svg`-as-component imports for custom marks. **`astro-icon` is abandoned — do not use.** |
+| Icons | **unplugin-icons** + `@iconify-json/lucide` (UI) + `@iconify-json/simple-icons` (brands) | Simple Icons covers most brand marks. The Google Scholar mark is a vendored Academicons SVG under SIL OFL 1.1. Native `.svg` imports load custom marks. **`astro-icon` is abandoned — do not use.** |
+| Tooltips | **CSS-only, local to the first use** | Keep the social tooltip in `Socials.astro` while it is the only use. When a second use appears, extract `Tooltip.astro` with start, center, and end alignment. Keep it free of runtime JavaScript. Add Floating UI only if automatic collision handling or portals become necessary. |
 | Search | **Pagefind 1.5** via `astro-pagefind` | Static, indexes built HTML, lazy chunked index. `data-pagefind-body` on articles. |
 | ⌘K palette | **Hand-rolled ~60-line vanilla island** wrapping Pagefind modal UI + a few commands (theme toggle, section jumps) | Lazy-load on first keypress → 0 bytes until ⌘K. Rejected: cmdk (drags React), ninja-keys/astro-command-palette (dead). |
 | Code blocks | **astro-expressive-code** 0.44 | Copy button, line highlight, diff, frames, dual-theme no-FOUC. |
