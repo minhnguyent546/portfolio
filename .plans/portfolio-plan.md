@@ -146,6 +146,8 @@ summaries and other short prose. Heading spread is **2.29×**.
 Blog articles set their own reading density: **17 px** text in a **45.5rem** column.
 That column fits the 48rem page container after its padding, so a long post reads
 denser than a summary block without a wider page. Headings keep the fluid scale.
+The article now fills that container, so the back-to-top control is docked to the
+viewport corner. A floated one has no gutter left to sit in and lands on the text.
 
 Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-08-03.
 `.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
