@@ -220,14 +220,46 @@ function staticRows(query: string): Row[] {
   haystacks.forEach((haystack, i) => {
     if (!words.every(word => haystack.includes(word))) return;
     const entry = entries[i];
+
+    // A row can match on text it never shows: a project's stack chips, a
+    // competition's summary, a paper's authors. Append that text so the row
+    // says why it is here, but only for the words the shown fields miss, or
+    // every project would trail its whole stack.
+    const shown = fold(`${entry.t} ${entry.d}`);
+    const unexplained = words.filter(word => !shown.includes(word));
+    const reason =
+      unexplained.length > 0 && entry.a ? pickReason(entry.a, unexplained) : "";
+
     matched.push({
       title: entry.t,
-      detail: entry.d,
+      detail: reason ? `${entry.d} · ${reason}` : entry.d,
       group: entry.k,
       url: entry.u,
     });
   });
   return matched;
+}
+
+/**
+ * The one span of hidden text that explains the match. The field holds a whole
+ * summary or author list, so the sentence around the first unexplained word is
+ * enough; the rest would push the match off the end of the line again.
+ */
+function pickReason(hidden: string, words: string[]): string {
+  const folded = fold(hidden);
+  const at = folded.indexOf(words[0]);
+  if (at < 0) return "";
+
+  // Widen to the surrounding sentence, then cap it so one long summary cannot
+  // crowd out the description it follows. A period only ends a sentence when
+  // whitespace follows, or the score "13.44/15" would cut the line in half.
+  const before = hidden.slice(0, at).search(/\.\s(?![\s\S]*\.\s)/);
+  const start = before < 0 ? 0 : before + 2;
+  const rest = hidden.slice(at).search(/\.(\s|$)/);
+  const slice = hidden
+    .slice(start, rest < 0 ? hidden.length : at + rest + 1)
+    .trim();
+  return slice.length > 120 ? slice.slice(0, 119).trimEnd() + "…" : slice;
 }
 
 /**
@@ -300,7 +332,8 @@ function render() {
       const query = input?.value ?? "";
       const title = document.createElement("span");
       title.className = "block truncate";
-      withMarks(title, row.title, findMarks(row.title, query));
+      const head = windowToMark(row.title, findMarks(row.title, query));
+      withMarks(title, head.text, head.ranges);
       item.append(title);
 
       if (row.detail) {
