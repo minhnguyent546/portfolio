@@ -24,13 +24,18 @@ import { transformerFileName } from "./src/utils/transformers/fileName";
 /** Matched case-insensitively as `^(…)$` by `mdast-util-heading-range`. */
 const TOC_HEADING = "Table of contents|Mục lục";
 
+/** Easter eggs. No link points at them, so the sitemap must not either. */
+const HIDDEN_ROUTES = ["/photon-sphere/", "/tty3/"];
+
 export default defineConfig({
   site: config.site.url,
   integrations: [
     mdx(),
     sitemap({
       filter: page =>
-        config.features?.showArchives !== false || !page.endsWith("/archives/"),
+        (config.features?.showArchives !== false ||
+          !page.endsWith("/archives/")) &&
+        !HIDDEN_ROUTES.some(route => page.endsWith(route)),
     }),
   ],
   i18n: {
