@@ -230,6 +230,34 @@ function staticRows(query: string): Row[] {
   return matched;
 }
 
+/**
+ * A one-line row shows roughly the first 90 characters, so a match later than
+ * that is rendered but clipped past the ellipsis: "tpu" sits 456px beyond the
+ * visible edge of the pre-training-gpt2 summary. Slide the text so the first
+ * match is in view, the way Pagefind already builds its own excerpts.
+ *
+ * Ranges move with the text, so the marks still cover the same characters.
+ */
+const LEAD = 24;
+
+function windowToMark(
+  text: string,
+  ranges: [number, number][]
+): { text: string; ranges: [number, number][] } {
+  const first = ranges[0]?.[0] ?? 0;
+  if (first <= LEAD + 8) return { text, ranges };
+
+  // Cut on a word boundary so the line does not open mid-word.
+  const space = text.lastIndexOf(" ", first - LEAD);
+  const cut = space > 0 ? space + 1 : first - LEAD;
+  const ellipsis = "…";
+  const shift = cut - ellipsis.length;
+  return {
+    text: ellipsis + text.slice(cut),
+    ranges: ranges.map(([start, end]) => [start - shift, end - shift]),
+  };
+}
+
 function render() {
   list?.replaceChildren();
   active = 0;
@@ -278,11 +306,11 @@ function render() {
       if (row.detail) {
         const detail = document.createElement("span");
         detail.className = "block truncate text-sm text-ink-muted";
-        withMarks(
-          detail,
+        const shown = windowToMark(
           row.detail,
           row.detailMarks ?? findMarks(row.detail, query)
         );
+        withMarks(detail, shown.text, shown.ranges);
         item.append(detail);
       }
 

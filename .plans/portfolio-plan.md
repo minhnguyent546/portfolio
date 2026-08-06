@@ -97,9 +97,9 @@ separate design.
 | `--ink` | `#1a1a18` | `#eceae6` | body text |
 | `--ink-heading` | `#312f2b` | `#eceae6` | headings |
 | `--ink-muted` | `#57544d` | `#a8a49c` | subtitles, metadata |
-| `--accent` | `#2c5f8a` | `#7fb0d4` | links, marks |
+| `--accent` | `#2c5f8a` | `#7fb0d4` | links |
 | `--accent-ink` | `#ffffff` | `#16161a` | text on an accent fill |
-| `--ink-warn` | `#a3382a` | `#e08c74` | failure states |
+| `--ink-warn` | `#a3382a` | `#e08c74` | failure states, search marks |
 | `--ink-ok` | `#24603a` | `#7fc79b` | success states |
 | `--surface` | `#eeece5` | `#26262d` | code blocks, table stripes, chips |
 | `--rule` | `#e6e3dc` | `#2a2a30` | hairlines |
@@ -112,9 +112,10 @@ off-white across the field, and it's kinder for long reading. **`--accent` is a
 desaturated slate blue** (hue 207, sat 52%) — it keeps the calm blue register the user
 liked while stepping away from `#1565c0` Material Blue (sat 80%), which is the
 AI-slop hue family. **Footprint ≤5%:** links, the active nav item, and the award pill.
-Never a button flood, never a gradient. The ⌘K palette is the one place that exceeds the
-cap, because the matched substring in every row is accent — chosen over bold weight for
-the stronger signal, and bounded by the 20-row list.
+Never a button flood, never a gradient. The ⌘K palette marks matches in `--ink-warn` at
+600 weight, not accent: accent blue is too near the body ink to find at a glance in
+light mode. That gives the token two jobs, which is accepted because a failure state and
+a search mark never share a screen (5.63 light / 5.85 dark on the selected row).
 
 **Contrast verified** (WCAG AA needs 4.5 body / 3.0 large), computed both bands:
 
