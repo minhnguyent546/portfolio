@@ -127,9 +127,9 @@ and check the browser console.
 - **Safe by default.** `git status`, `git diff`, and `git log` are always fine. Run
   `reset --hard`, `clean`, `restore`, `checkout <file>`, or `rm` only when the user asks.
   Each of these commands can destroy uncommitted work.
-- **Commit and push only when asked.** A narrow instruction such as "pull and push"
-  permits that action only. It does not permit an amend or a branch change.
-  A push to `main` starts the GitHub Actions deploy and publishes the site.
+- **Commit and push only when asked.** Stage and commit only when asked.
+  A narrow instruction such as "pull and push" permits that action only.
+  It does not permit an amend or a branch change.
   Keep each commit thin and focused, do not commit a large batch of changes at once.
 - **Follow Conventional Commits**:
   `feat | fix | refactor | build | ci | chore | docs | style | perf | test`.
