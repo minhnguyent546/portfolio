@@ -17,7 +17,7 @@ type Row = {
   detail: string;
   group: PaletteGroup | "inPosts";
   url: string;
-  /** Ranges already marked by Pagefind, which the palette does not recompute. */
+  /** Pagefind's whole-word ranges, used only where the substring pass finds none. */
   detailMarks?: [number, number][];
 };
 
@@ -151,38 +151,49 @@ function findMarks(text: string, query: string): [number, number][] {
 }
 
 /**
- * Pagefind escapes the page text it returns, so a C++ excerpt arrives as
- * `vector&lt;int&gt;`. Decoded through the parser rather than a replace list, so
- * every entity is covered; the input is a text node, never markup.
- */
-const decode = (value: string) => {
-  const area = document.createElement("textarea");
-  area.innerHTML = value;
-  return area.value;
-};
-
-/**
- * Splits a Pagefind excerpt into plain text and the ranges it marked. Pagefind
- * has already found the terms, including ones the palette's own substring pass
- * would miss, so its positions are kept rather than recomputed.
+ * Splits a Pagefind excerpt into plain text and the ranges it marked. The
+ * excerpt arrives as markup: the matched terms in `<mark>`, the surrounding
+ * page text escaped. Walked as a parsed tree rather than matched with a
+ * pattern, so a tag nested inside `<mark>` and a bare `<` in the prose both
+ * resolve the way the browser resolves them.
+ *
+ * The ranges are a fallback, not the first choice. Pagefind marks whole words,
+ * so "pro" would highlight all of "problem" while every other row highlights
+ * the three characters the visitor typed. They are used only where the
+ * palette's own substring pass finds nothing, which is how a stemmed match
+ * still shows why it is here.
  */
 function unmark(excerpt: string): {
   text: string;
   marks: [number, number][];
 } {
+  const parsed = document.createElement("template");
+  parsed.innerHTML = excerpt;
+
   const marks: [number, number][] = [];
   let text = "";
-  const pattern = /<mark>([\s\S]*?)<\/mark>|<[^>]*>|([^<]+)/g;
-  for (const [, marked, plain] of excerpt.matchAll(pattern)) {
-    if (marked !== undefined) {
-      const decoded = decode(marked);
-      marks.push([text.length, text.length + decoded.length]);
-      text += decoded;
-    } else if (plain !== undefined) {
-      text += decode(plain);
+  const walk = (node: Node, marked: boolean) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const value = node.nodeValue ?? "";
+      if (marked && value)
+        marks.push([text.length, text.length + value.length]);
+      text += value;
+      return;
     }
+    const inMark =
+      marked || (node as Element).tagName?.toLowerCase() === "mark";
+    for (const child of node.childNodes) walk(child, inMark);
+  };
+  walk(parsed.content, false);
+
+  // A `<mark>` holding more than one text node yields adjacent ranges.
+  const merged: [number, number][] = [];
+  for (const range of marks) {
+    const last = merged[merged.length - 1];
+    if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+    else merged.push(range);
   }
-  return { text, marks };
+  return { text, marks: merged };
 }
 
 let rows: Row[] = [];
@@ -373,9 +384,13 @@ function render() {
       if (row.detail) {
         const detail = document.createElement("span");
         detail.className = "block truncate text-sm text-ink-muted";
+        // The substring pass first, so the highlight is as wide as the query.
+        // Pagefind's own ranges answer for a stemmed hit, where the query
+        // never occurs literally and the row would otherwise look unexplained.
+        const own = findMarks(row.detail, query);
         const shown = windowToMark(
           row.detail,
-          row.detailMarks ?? findMarks(row.detail, query)
+          own.length > 0 ? own : (row.detailMarks ?? [])
         );
         withMarks(detail, shown.text, shown.ranges);
         item.append(detail);
