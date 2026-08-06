@@ -23,7 +23,14 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 
 - **Language:** Blog posts declare English or Vietnamese. The site shell stays English.
   Vietnamese posts localize post controls, dates, and metadata. Routes have no locale
-  prefix.
+  prefix. A `translationOf` reference pairs the two languages of one article. Set it on
+  one post; the site reads the link from either side, and ignores a link to the same
+  language. Every listing shows one row per article and prefers the English side. The
+  post page links the pair from the meta row, and prev/next stays inside one language.
+  The link names the destination language in that language, so it speaks to the reader
+  who cannot read the current page. A post with no published counterpart shows no link.
+  A post's own `translationOf` wins over an inbound one, and two posts that claim the
+  same target stop the build.
 - **Signature flourish:** ⌘K command palette (search + quick actions).
 - **Performance bar:** ~0 bytes of JS on cold page load; everything build-time or
   lazy-loaded on interaction. Lighthouse ~100 across the board.
@@ -505,8 +512,13 @@ Source Serif 4 is 0.475.
    and the index nav are not two sticky bars: `Header` is `position: static` and
    scrolls away, so `scroll-padding-top` stays at the height of the index nav alone.*
 5. **Long-form** — existing Shiki and custom copy controls, build-time KaTeX, and
-   per-post English/Vietnamese support. The first Vietnamese post uses local SVG figures
-   and the stable `/blog/auxiliary-tree/` route.
+   per-post English/Vietnamese support. A translated pair shares one figure folder and
+   splits by slug suffix: English holds `/blog/auxiliary-tree/` and Vietnamese takes
+   `-vi`. `remark-collapse` gets **one** registration whose `summary` reads the matched
+   heading. `unified` keys plugins by function identity, so a second registration merges
+   its options into the first and only the last language collapses. A helper that
+   `getStaticPaths` calls must be declared inside it: Astro extracts the function into
+   its own chunk, and `astro check` passes because the failure is a runtime scope error.
 6. **Per-paper pages** — ViCLIP-OT and ViREx-Bench Nerfies-style pages.
 7. **Features** — Pagefind + ⌘K palette, view transitions, OG images, RSS, sitemap,
    JSON-LD, GoatCounter.
