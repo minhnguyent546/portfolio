@@ -74,6 +74,7 @@ export function buildIndex(content: {
       d: data.venue,
       k: "publication",
       u: `${content.homeUrl}#publications`,
+      a: `${data.title} ${data.authors.join(" ")}`,
     });
   }
 
@@ -83,6 +84,7 @@ export function buildIndex(content: {
       d: data.result ?? data.venue,
       k: "competition",
       u: `${content.homeUrl}#competitions`,
+      a: `${data.summary} ${data.venue}`,
     });
   }
 
@@ -92,6 +94,7 @@ export function buildIndex(content: {
       d: data.summary,
       k: "project",
       u: `${content.homeUrl}#projects`,
+      a: data.stack.join(" "),
     });
   }
 

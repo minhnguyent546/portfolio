@@ -397,6 +397,17 @@ function close() {
   dialog?.close();
 }
 
+/**
+ * Close first, then navigate. A row pointing at a homepage section is only a
+ * hash change when the visitor is already on the homepage, so nothing unloads
+ * the document and the panel would otherwise stay open over the section it
+ * just scrolled to.
+ */
+function go(url: string) {
+  close();
+  location.href = url;
+}
+
 export function open(seed = "") {
   if (!dialog || dialog.open) return;
   dialog.showModal();
@@ -430,7 +441,7 @@ input?.addEventListener("keydown", event => {
     case "Enter": {
       event.preventDefault();
       const row = rows[active];
-      if (row) location.href = row.url;
+      if (row) go(row.url);
       break;
     }
   }
@@ -441,7 +452,7 @@ list?.addEventListener("click", event => {
     '[role="option"]'
   );
   const row = item && rows[Number(item.dataset.index)];
-  if (row) location.href = row.url;
+  if (row) go(row.url);
 });
 
 // A click outside the panel. The dialog fills the viewport, so its own box is
