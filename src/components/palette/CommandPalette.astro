@@ -1,0 +1,136 @@
+---
+/**
+ * ⌘K palette. The markup and the index ship on every page; the behaviour does
+ * not. A ~15-line bootstrap waits for the shortcut and then imports the module,
+ * so a reader who never presses ⌘K downloads no palette JavaScript.
+ */
+import { getCollection } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import config from "@/config";
+import { useTranslations } from "@/i18n";
+import { getAssetPath } from "@/utils/withBase";
+import { buildIndex } from "./buildIndex";
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const byOrder = <T extends { data: { order: number } }>(a: T, b: T) =>
+  a.data.order - b.data.order;
+const published = ({ data }: { data: { draft: boolean } }) => !data.draft;
+
+const homeUrl = getRelativeLocaleUrl(locale, "");
+
+const index = buildIndex({
+  posts: await getCollection("blog", ({ data }) => !data.draft),
+  publications: (await getCollection("publications", published)).sort(byOrder),
+  competitions: (await getCollection("competitions", published)).sort(byOrder),
+  projects: (await getCollection("projects", published)).sort(byOrder),
+  sections: [
+    { id: "about", label: "About" },
+    { id: "news", label: "News" },
+    { id: "publications", label: "Publications" },
+    { id: "competitions", label: "Competitions" },
+    { id: "projects", label: "Projects" },
+    { id: "writing", label: "Writing" },
+    { id: "contact", label: "Contact" },
+  ],
+  homeUrl,
+  routes: [
+    { label: t.nav.about, url: getRelativeLocaleUrl(locale, "about") },
+    { label: t.nav.blog, url: getRelativeLocaleUrl(locale, "blog") },
+    { label: t.nav.tags, url: getRelativeLocaleUrl(locale, "tags") },
+    { label: t.nav.archives, url: getRelativeLocaleUrl(locale, "archives") },
+    { label: t.nav.search, url: getRelativeLocaleUrl(locale, "search") },
+    { label: "tty3", url: getRelativeLocaleUrl(locale, "tty3") },
+  ],
+});
+
+// The module reads these rather than importing the i18n table, which would pull
+// every locale into the lazy chunk.
+const labels = {
+  post: t.palette.posts,
+  publication: t.palette.publications,
+  competition: t.palette.competitions,
+  project: t.palette.projects,
+  page: t.palette.pages,
+  inPosts: t.palette.inPosts,
+  noResults: t.palette.noResults,
+};
+
+/** `<` cannot appear raw in either payload, or it would close the tag early. */
+const escape = (value: unknown) =>
+  JSON.stringify(value).replace(/</g, "\\u003c");
+---
+
+<dialog
+  id="palette"
+  aria-label={t.palette.label}
+  data-bundle-path={getAssetPath("pagefind/")}
+  data-labels={escape(labels)}
+  class="m-auto w-[min(36rem,92vw)] rounded border border-rule bg-paper p-0 text-ink backdrop:bg-black/40"
+>
+  <label class="sr-only" for="palette-input">{t.palette.label}</label>
+  <input
+    id="palette-input"
+    type="text"
+    role="combobox"
+    autocomplete="off"
+    autocapitalize="off"
+    autocorrect="off"
+    spellcheck="false"
+    aria-expanded="true"
+    aria-controls="palette-list"
+    placeholder={t.palette.placeholder}
+    class="w-full border-b border-rule bg-transparent px-4 py-3 outline-none placeholder:text-ink-muted"
+  />
+  <ul
+    id="palette-list"
+    role="listbox"
+    aria-label={t.palette.label}
+    class="max-h-[min(24rem,60vh)] overflow-y-auto pb-2"
+  >
+  </ul>
+  <p id="palette-empty" hidden class="px-4 py-6 text-ink-muted"></p>
+</dialog>
+
+<style is:global>
+  /* The user agent fills <mark> with yellow, which the accent replaces.
+     Global, not scoped: Astro's scoping attribute is stamped on the markup it
+     builds, and these <mark> elements are created by the palette at runtime. */
+  #palette-list mark {
+    background: none;
+    color: var(--accent);
+  }
+</style>
+
+<script
+  type="application/json"
+  id="palette-index"
+  is:inline
+  set:html={escape(index)}
+/>
+
+<script>
+  // A 420-byte module whose only job is to wait. The palette itself is a
+  // separate chunk that no page fetches until one of these listeners fires.
+  let loading: Promise<typeof import("@/scripts/palette")> | null = null;
+
+  function openPalette() {
+    loading ??= import("@/scripts/palette");
+    void loading.then(module => module.open());
+  }
+
+  addEventListener("keydown", event => {
+    if (event.key !== "k" || !(event.metaKey || event.ctrlKey)) return;
+    event.preventDefault();
+    openPalette();
+  });
+
+  // Keeps working without JavaScript, and keeps middle-click, right-click, and
+  // modified clicks pointed at the search page.
+  document.getElementById("search-link")?.addEventListener("click", event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+    event.preventDefault();
+    openPalette();
+  });
+</script>

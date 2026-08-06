@@ -12,6 +12,7 @@ import config from "@/config";
 import { useTranslations } from "@/i18n";
 import { stripBase, stripLocale } from "@/utils/withBase";
 import LinkButton from "./LinkButton.astro";
+import CommandPalette from "./palette/CommandPalette.astro";
 
 const { site, features } = config;
 
@@ -39,6 +40,10 @@ const isActive = (path: string) => {
   const pathArray = path.split("/").filter(p => p.trim());
   return currentPath === path || currentPathArray[0] === pathArray[0];
 };
+
+// The shell binds its own control keys and puts a text input under the
+// visitor's fingers, so ⌘K stays out of its way.
+const showPalette = features.search !== false && !isActive("/tty3");
 ---
 
 <a
@@ -141,6 +146,7 @@ const isActive = (path: string) => {
           features.search !== false && (
             <li class="col-span-1 flex items-center justify-center">
               <LinkButton
+                id="search-link"
                 href={getRelativeLocaleUrl(locale, "search")}
                 class:list={["focus-outline relative size-8"]}
                 title={t.nav.search}
@@ -178,6 +184,8 @@ const isActive = (path: string) => {
     </nav>
   </div>
 </header>
+
+{showPalette && <CommandPalette />}
 
 <script>
   const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn");
