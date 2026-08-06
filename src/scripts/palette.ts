@@ -198,8 +198,13 @@ function unmark(excerpt: string): {
 
 let rows: Row[] = [];
 let active = 0;
-/** The query the in-flight Pagefind search was issued for. */
-let pending = "";
+/**
+ * Identifies the newest search. Compared after every await, so a result that
+ * belongs to a query the visitor has moved on from is dropped. A counter, not
+ * the query text: backspacing and retyping the same string issues two searches
+ * that the text cannot tell apart, and both would then write to `rows`.
+ */
+let issued = 0;
 let pagefind: Pagefind | null = null;
 let pagefindLoad: Promise<Pagefind | null> | null = null;
 
@@ -335,11 +340,18 @@ function windowToMark(
   };
 }
 
-function render() {
+/**
+ * `keep` holds the selection where the rows changed under it: the Pagefind
+ * results land a moment after the static ones, and a visitor who has already
+ * arrowed down would otherwise lose the row, and press Enter on another. A new
+ * query starts at the top instead, the way a fresh list should.
+ */
+function render(keep = false) {
+  const chosen = keep ? rows[active]?.url : undefined;
   list?.replaceChildren();
-  active = 0;
 
   if (rows.length === 0) {
+    active = 0;
     if (empty) {
       empty.textContent = labels.noResults.replace("%s", input?.value ?? "");
       empty.hidden = false;
@@ -357,6 +369,11 @@ function render() {
   })).filter(({ inGroup }) => inGroup.length > 0);
   rows = grouped.flatMap(({ inGroup }) => inGroup);
 
+  // Follow the chosen row into its new position. A row that the new results
+  // dropped falls back to the top, which is where a fresh query starts anyway.
+  const at = chosen ? rows.findIndex(row => row.url === chosen) : -1;
+  active = at < 0 ? 0 : at;
+
   let index = 0;
   for (const { group, inGroup } of grouped) {
     const heading = document.createElement("li");
@@ -372,7 +389,7 @@ function render() {
       item.role = "option";
       item.dataset.index = String(index);
       item.className = "cursor-pointer px-4 py-2 aria-selected:bg-surface";
-      item.ariaSelected = String(index === 0);
+      item.ariaSelected = String(index === active);
 
       const query = input?.value ?? "";
       const title = document.createElement("span");
@@ -401,7 +418,7 @@ function render() {
     }
   }
 
-  input?.setAttribute("aria-activedescendant", "palette-row-0");
+  input?.setAttribute("aria-activedescendant", `palette-row-${active}`);
   scrollActiveIntoView();
 }
 
@@ -424,24 +441,26 @@ function scrollActiveIntoView() {
 }
 
 async function search(query: string) {
+  const token = ++issued;
   rows = staticRows(query);
   render();
 
   if (query.length < FULLTEXT_MIN) return;
 
-  pending = query;
   const module = pagefind ?? (await loadPagefind());
   // Another keystroke landed while the module or the index was loading.
-  if (!module || pending !== query) return;
+  if (!module || token !== issued) return;
 
   const found = await module.debouncedSearch(query);
-  if (!found || pending !== query) return;
+  if (!found || token !== issued) return;
 
-  const seen = new Set(rows.map(row => row.url));
   const details = await Promise.all(
     found.results.slice(0, 5).map(r => r.data())
   );
-  if (pending !== query) return;
+  if (token !== issued) return;
+
+  // Read after the last await, so it reflects the rows this search wrote.
+  const seen = new Set(rows.map(row => row.url));
 
   // Word by word, not the whole phrase: Pagefind matches terms wherever they
   // appear, so "dsu tree" is a fair hit on a page holding both, and requiring
@@ -472,7 +491,7 @@ async function search(query: string) {
       url,
     });
   }
-  render();
+  render(true);
 }
 
 function close() {
