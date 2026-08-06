@@ -15,11 +15,19 @@ void main() {
   gl_Position = vec4(v[gl_VertexID], 0.0, 1.0);
 }`;
 
-// At 280 integration steps per pixel the fragment count is the entire budget.
-// A 4K retina canvas is over 8M pixels, and the output is a smooth gradient
-// field that survives a bilinear upscale invisibly.
+// At up to 520 integration steps per pixel the fragment count is the entire
+// budget. A 4K retina canvas is over 8M pixels, and the output is a smooth
+// gradient field that survives a bilinear upscale invisibly.
 const MAX_DPR = 1.5;
-const MAX_PIXELS = 2_200_000;
+const MAX_PIXELS = 1_600_000;
+
+// The camera orbit takes 90 seconds, so nothing on screen moves fast enough to
+// need display-rate updates. Half the frames means half the GPU load, and at a
+// motion this slow the difference is not visible. The margin stops a display
+// whose refresh is not a multiple of the target from landing just past the
+// deadline every time and halving the rate again.
+const TARGET_FPS = 30;
+const FRAME_MS = 1000 / TARGET_FPS - 2;
 
 // Where the still frame is sampled under `prefers-reduced-motion`. Chosen so
 // the Doppler asymmetry is side-on and clearly visible.
@@ -42,6 +50,7 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
   let raf = 0;
   let start = performance.now();
   let hiddenAt = 0;
+  let lastDraw = 0;
 
   // `no-console` is an error repo-wide, and a driver-specific GLSL rejection is
   // a real failure with nowhere else to go. The message element is the report.
@@ -145,12 +154,19 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
   function draw(t: number) {
     if (!gl) return;
 
-    // Slow orbit with an inclination bob, on periods that do not share a
-    // factor, so the motion never visibly repeats. The camera move also sweeps
-    // the Doppler asymmetry around, which sells the physics for free.
+    // Three motions on periods that share no factor, so the path never visibly
+    // repeats. The orbit already carries the camera through z, but on a circle
+    // of fixed radius that reads as flat sideways drift; the distance drift is
+    // what gives it depth, moving the hole toward and away from the viewer. The
+    // distance rate has to stay clear of the azimuth rate as well as being
+    // incommensurate with it: at a near-equal rate the two would beat in and out
+    // of phase over several minutes, and while in phase the camera approaches
+    // and swings sideways together, which reads as one lopsided move. The
+    // inclination base keeps the sweep away from 0, where the disk would
+    // degenerate to a line. All three also sweep the Doppler asymmetry around.
     const azim = t * 0.07;
-    const incl = 0.34 + 0.07 * Math.sin(t * 0.045);
-    const dist = 17;
+    const incl = 0.4 + 0.3 * Math.sin(t * 0.045);
+    const dist = 17.5 + 4.5 * Math.sin(t * 0.083);
 
     const pos: [number, number, number] = [
       dist * Math.cos(azim) * Math.cos(incl),
@@ -173,7 +189,13 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
   }
 
   function frame(now: number) {
-    draw((now - start) / 1000);
+    // Gate inside the callback rather than scheduling with setTimeout: rAF stays
+    // aligned to the display refresh, so the frames that do run are evenly
+    // spaced instead of tearing against vsync.
+    if (now - lastDraw >= FRAME_MS) {
+      lastDraw = now;
+      draw((now - start) / 1000);
+    }
     raf = requestAnimationFrame(frame);
   }
 
