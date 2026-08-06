@@ -24,6 +24,8 @@ export interface UIStrings {
     zoomImage: string;
     imagePreview: string;
     closeImagePreview: string;
+    /** Names the other language, since a pair is always English plus Vietnamese. */
+    switchLanguage: string;
   };
   pagination: {
     prev: string;

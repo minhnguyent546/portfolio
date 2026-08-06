@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { useTranslations } from "@/i18n";
+import { getPostUrl } from "@/utils/getPostPaths";
+
+type Props = {
+  post: CollectionEntry<"blog">;
+  translation: CollectionEntry<"blog">;
+  class?: string;
+};
+
+const { post, translation, class: className = "" } = Astro.props;
+
+const t = useTranslations(post.data.lang);
+
+/** Each language names itself, so the label reads to the person it is for. */
+const endonyms = { en: "English", vi: "Tiếng Việt" };
+
+const lang = translation.data.lang;
+---
+
+<a
+  href={getPostUrl(translation.id, translation.filePath)}
+  hreflang={lang}
+  title={t.post.switchLanguage}
+  class:list={[
+    "text-ink-muted underline decoration-dashed underline-offset-4",
+    "hover:text-accent",
+    className,
+  ]}
+>
+  <span {lang}>{endonyms[lang]}</span>
+</a>
