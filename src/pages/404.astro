@@ -9,6 +9,12 @@ import Layout from "@/layouts/Layout.astro";
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
+
+// The easter eggs, which no link on the site points to. Listed here rather than
+// imported from the sitemap filter in astro.config.ts, which a page cannot
+// import. Rendered server-side as the first entry so the hint still names a
+// real route without JavaScript; the script below re-picks on every load.
+const hiddenRoutes = ["/tty3", "/photon-sphere"];
 ---
 
 <Layout title={`${t.notFound.title} | ${config.site.title}`}>
@@ -28,8 +34,38 @@ const t = useTranslations(locale);
       >
         {t.notFound.goHome}
       </LinkButton>
+
+      <p
+        class="mt-4 border-t border-rule pt-6 text-center text-meta text-ink-muted"
+      >
+        {t.notFound.hint}{" "}
+        <a
+          id="hidden-route"
+          href={hiddenRoutes[0]}
+          class="font-mono underline decoration-dotted underline-offset-4 hover:text-accent"
+          >{hiddenRoutes[0]}</a
+        >
+      </p>
     </div>
   </main>
 
   <Footer />
+
+  {
+    /*
+      Which egg the hint names is chosen per page load. The site is static, so
+      the server cannot vary it and this is the only place the near-zero-JS rule
+      bends: inline, no bundle, no request. The routes come from the server
+      render above rather than a second literal, so the two cannot drift.
+    */
+  }
+  <script is:inline define:vars={{ hiddenRoutes }}>
+    (function () {
+      const link = document.getElementById("hidden-route");
+      const pick =
+        hiddenRoutes[Math.floor(Math.random() * hiddenRoutes.length)];
+      link.href = pick;
+      link.textContent = pick;
+    })();
+  </script>
 </Layout>

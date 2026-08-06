@@ -177,6 +177,17 @@ export function buildFs(content: {
     "Type 'exit' to return to the site.",
   ]);
 
+  // The other easter egg, reachable only by looking around: `ls /dev` finds it,
+  // `cat` gives the route. Deliberately absent from `help`, which would announce
+  // it. Units of the Schwarzschild radius, matching the legend the page renders.
+  files["/dev/photon_sphere"] = block([
+    "Schwarzschild r_s = 1",
+    "photon sphere   1.5 r_s",
+    "ISCO            3 r_s",
+    "",
+    "render: open photon",
+  ]);
+
   for (const { name, url } of config.socials) links[name] = url;
 
   return { files, links };

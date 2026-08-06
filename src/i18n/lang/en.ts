@@ -75,5 +75,6 @@ export default {
     title: "404 Not Found",
     message: "Page Not Found",
     goHome: "Go back home",
+    hint: "Not everything here is linked.",
   },
 } satisfies UIStrings;

@@ -75,5 +75,6 @@ export interface UIStrings {
     title: string;
     message: string;
     goHome: string;
+    hint: string;
   };
 }

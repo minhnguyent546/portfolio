@@ -71,5 +71,6 @@ export default {
     title: "404 Không tìm thấy",
     message: "Không tìm thấy trang",
     goHome: "Về trang chủ",
+    hint: "Không phải trang nào ở đây cũng có liên kết.",
   },
 } satisfies UIStrings;
