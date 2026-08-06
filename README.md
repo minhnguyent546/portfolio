@@ -2,6 +2,8 @@
 
 A personal portfolio for research, engineering projects, publications, and writing.
 
+![The homepage boot sequence](assets/boot-sequence.gif)
+
 > This site is a work in progress.
 
 ## Development

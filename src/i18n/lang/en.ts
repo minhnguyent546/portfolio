@@ -60,6 +60,17 @@ export default {
     searchTitle: "Search",
     searchDesc: "Search any article ...",
   },
+  palette: {
+    label: "Search or jump to",
+    placeholder: "Search or jump to…",
+    noResults: 'No results for "%s"',
+    posts: "Posts",
+    publications: "Publications",
+    competitions: "Competitions",
+    projects: "Projects",
+    pages: "Pages",
+    inPosts: "In posts",
+  },
   a11y: {
     skipToContent: "Skip to content",
     openMenu: "Open menu",

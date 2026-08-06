@@ -19,6 +19,7 @@ import remarkCollapse from "remark-collapse";
 import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import config from "./astro-paper.config";
+import { rehypeIgnoreMathml } from "./src/utils/rehypeIgnoreMathml";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 
 /** Matched case-insensitively as `^(…)$` by `mdast-util-heading-range`. */
@@ -64,7 +65,7 @@ export default defineConfig({
           },
         ],
       ],
-      rehypePlugins: [rehypeKatex, rehypeCallouts],
+      rehypePlugins: [rehypeKatex, rehypeIgnoreMathml, rehypeCallouts],
     }),
     shikiConfig: {
       themes: { light: "min-light", dark: "night-owl" },

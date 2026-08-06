@@ -60,6 +60,19 @@ export interface UIStrings {
     searchTitle: string;
     searchDesc: string;
   };
+  palette: {
+    label: string;
+    placeholder: string;
+    /** Shown when nothing matches. `%s` is the query. */
+    noResults: string;
+    posts: string;
+    publications: string;
+    competitions: string;
+    projects: string;
+    pages: string;
+    /** Heading for the full-text matches Pagefind returns. */
+    inPosts: string;
+  };
   a11y: {
     skipToContent: string;
     openMenu: string;
