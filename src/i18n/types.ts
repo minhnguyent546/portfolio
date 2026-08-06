@@ -24,6 +24,8 @@ export interface UIStrings {
     zoomImage: string;
     imagePreview: string;
     closeImagePreview: string;
+    /** Accessible name for the anchor beside a heading. `%s` is the heading text. */
+    linkToHeading: string;
     /** Names the other language, since a pair is always English plus Vietnamese. */
     switchLanguage: string;
   };

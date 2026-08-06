@@ -26,6 +26,7 @@ export default {
     zoomImage: "Zoom image",
     imagePreview: "Image preview",
     closeImagePreview: "Close image preview",
+    linkToHeading: "Link to section: %s",
     switchLanguage: "Read this post in Vietnamese",
   },
   pagination: {
