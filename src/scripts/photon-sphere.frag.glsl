@@ -26,6 +26,11 @@ const float PI = 3.14159265359;
 // renderer to fake the bright rim at the shadow edge.
 const int MAX_STEPS = 520;
 const float DPHI = 0.02;
+// Angle subtended by one pixel: the vertical view spans 2/fov radians over
+// uResolution.y pixels. Only the scale matters, so this stays a constant rather
+// than tracking the resolution uniform; it sets where the disk texture starts to
+// fade, and a half-resolution canvas wants that threshold in the same place.
+const float PIXEL_ANGLE = 2.0 / (1.5 * 900.0);
 
 // ---------------------------------------------------------------- noise
 
@@ -50,7 +55,11 @@ vec3 hash33(vec3 p) {
 float valueNoise(vec2 p) {
   vec2 i = floor(p);
   vec2 f = fract(p);
-  f = f * f * (3.0 - 2.0 * f);
+  // Quintic fade, not the cheaper f*f*(3-2f). Both match value and slope across
+  // a cell boundary, but only this one matches curvature, and the disk pushes
+  // this through a power curve that would otherwise expose the second-derivative
+  // break.
+  f = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
   return mix(mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
              mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x),
              f.y);
@@ -59,9 +68,12 @@ float valueNoise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < 4; ++i) {
     v += a * valueNoise(p);
-    p *= 2.17;
+    // Rotate as well as scale. Without the rotation every octave shares the
+    // same axis-aligned lattice, so their cell edges land on top of each other
+    // and reinforce instead of averaging away.
+    p = mat2(0.80, 0.60, -0.60, 0.80) * p * 2.31;
     a *= 0.5;
   }
   return v;
@@ -155,8 +167,24 @@ vec3 diskSample(vec3 hit, float r, vec3 khat) {
   // Anisotropic, so the noise resolves into long filaments wound around the hole
   // rather than round eddies. Differential rotation shears real disk structure
   // this way.
-  vec2 q = vec2(log(r) * 17.0, azim * 1.1 - uTime * orbit * 2.0);
-  float turb = fbm(q) * 0.65 + fbm(q * 2.3 + 4.0) * 0.35;
+  vec2 q = vec2(log(r) * 17.0, azim * 6.0 - uTime * orbit * 2.0);
+
+  // How much of the noise lattice one pixel covers. A pixel subtends a fixed
+  // angle, so its footprint on the disk grows with distance and then divides by
+  // the cosine of the grazing angle: seen edge-on, one pixel smears across a
+  // long chord of the disk. Where that footprint passes a cell the noise is
+  // undersampled, and value noise undersampled on its own lattice reads as
+  // rectangular tiles, not as static. dFdx would measure this directly but is
+  // undefined here, because this function is called from a branch that
+  // neighbouring pixels in a quad do not all take.
+  float grazing = max(abs(khat.y), 0.02);
+  float footprint = length(hit - uCamPos) * PIXEL_ANGLE / grazing;
+
+  // Fade to the mean instead of sharpening. Detail that a pixel cannot resolve
+  // carries no information, so the honest thing to draw is its average, which
+  // is what a wider footprint converges to anyway.
+  float fade = 1.0 / (1.0 + footprint * footprint * 900.0);
+  float turb = mix(0.5, fbm(q) * 0.65 + fbm(q * 2.3 + 4.0) * 0.35, fade);
 
   // Banded hard, so the filaments read as distinct bright threads with dark
   // lanes between them. A plain fbm gives a continuous wash at any amplitude.
@@ -258,8 +286,7 @@ void main() {
       // where the bracket vanishes and the 1/u factor is irrelevant. That has a
       // closed form: the bracket is a single sinusoid, zero at atan2(-e1.y, e2.y)
       // modulo pi. Interpolating y linearly between two steps instead leaves an
-      // error that jumps whenever two neighbouring pixels cross on different
-      // step indices, which tiles the disk into flat-shaded blocks.
+      // error that depends on the step size, which a finer DPHI has to pay for.
       float phiZero = atan(-e1.y, e2.y);
       // Fold that root into this step's bracket. floor() picks the branch, so
       // the result is the crossing inside (phi - DPHI, phi] without a search.
