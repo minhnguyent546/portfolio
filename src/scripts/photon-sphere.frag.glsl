@@ -28,8 +28,8 @@ const int MAX_STEPS = 520;
 const float DPHI = 0.02;
 // Angle subtended by one pixel: the vertical view spans 2/fov radians over
 // uResolution.y pixels. Only the scale matters, so this stays a constant rather
-// than tracking the resolution uniform; it sets where the disk texture starts to
-// fade, and a half-resolution canvas wants that threshold in the same place.
+// than tracking the resolution uniform; it sets which noise octaves survive on
+// the disk, and a half-resolution canvas wants that threshold in the same place.
 const float PIXEL_ANGLE = 2.0 / (1.5 * 900.0);
 
 // ---------------------------------------------------------------- noise
@@ -77,6 +77,27 @@ float fbm(vec2 p) {
     a *= 0.5;
   }
   return v;
+}
+
+// Bandlimited fbm: octaves finer than the pixel footprint are dropped, and the
+// result is renormalized by the surviving weights. Fading them toward the mean
+// instead would lower the contrast of the whole texture, which is the same
+// operation as deleting the noise.
+float fbmLod(vec2 p, float cell) {
+  float v = 0.0;
+  float a = 0.5;
+  float n = 0.0;
+  for (int i = 0; i < 6; ++i) {
+    // The octave's lattice period in domain units halves each step; keep it
+    // while a pixel still spans less than half a cell.
+    float w = smoothstep(0.7, 0.25, cell);
+    v += a * w * valueNoise(p);
+    n += a * w;
+    p = mat2(0.80, 0.60, -0.60, 0.80) * p * 2.31;
+    a *= 0.5;
+    cell *= 2.31;
+  }
+  return v / max(n, 1e-4) * 0.9375;
 }
 
 // ---------------------------------------------------------------- colour
@@ -169,22 +190,19 @@ vec3 diskSample(vec3 hit, float r, vec3 khat) {
   // this way.
   vec2 q = vec2(log(r) * 17.0, azim * 6.0 - uTime * orbit * 2.0);
 
-  // How much of the noise lattice one pixel covers. A pixel subtends a fixed
-  // angle, so its footprint on the disk grows with distance and then divides by
-  // the cosine of the grazing angle: seen edge-on, one pixel smears across a
-  // long chord of the disk. Where that footprint passes a cell the noise is
-  // undersampled, and value noise undersampled on its own lattice reads as
-  // rectangular tiles, not as static. dFdx would measure this directly but is
-  // undefined here, because this function is called from a branch that
-  // neighbouring pixels in a quad do not all take.
+  // How much of the disk one pixel covers. A pixel subtends a fixed angle, so
+  // its footprint grows with distance and then divides by the cosine of the
+  // grazing angle: seen edge-on, one pixel smears across a long chord of the
+  // disk. dFdx would measure this directly but is undefined here, because this
+  // function is called from a branch that neighbouring pixels in a quad do not
+  // all take.
   float grazing = max(abs(khat.y), 0.02);
   float footprint = length(hit - uCamPos) * PIXEL_ANGLE / grazing;
 
-  // Fade to the mean instead of sharpening. Detail that a pixel cannot resolve
-  // carries no information, so the honest thing to draw is its average, which
-  // is what a wider footprint converges to anyway.
-  float fade = 1.0 / (1.0 + footprint * footprint * 900.0);
-  float turb = mix(0.5, fbm(q) * 0.65 + fbm(q * 2.3 + 4.0) * 0.35, fade);
+  // In noise-lattice cells rather than world units: the radial axis of `q` is
+  // log(r) * 17, whose derivative is 17/r.
+  float cell = footprint * 17.0 / r;
+  float turb = fbmLod(q, cell) * 0.65 + fbmLod(q * 2.3 + 4.0, cell * 2.3) * 0.35;
 
   // Banded hard, so the filaments read as distinct bright threads with dark
   // lanes between them. A plain fbm gives a continuous wash at any amplitude.
@@ -342,5 +360,11 @@ void main() {
     col += (1.0 - alpha) * starfield(escapeDir);
   }
 
-  fragColor = vec4(pow(tonemap(col), vec3(1.0 / 2.2)), 1.0);
+  vec3 srgb = pow(tonemap(col), vec3(1.0 / 2.2));
+
+  // Dither before the 8-bit write. The disk is a shallow gradient, so a band of
+  // pixels rounds to one code value and the boundaries between codes read as
+  // contour lines across the disk. Half a code of noise moves each pixel over
+  // the rounding threshold with a probability set by its true value.
+  fragColor = vec4(srgb + (hash21(gl_FragCoord.xy) - 0.5) / 255.0, 1.0);
 }
