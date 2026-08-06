@@ -1,0 +1,98 @@
+---
+/**
+ * An easter egg. Nothing on the site links here, the page is noindex, and the
+ * sitemap filter in `astro.config.ts` drops the route.
+ *
+ * No Header or Footer: tty3 carries the site chrome because it is a surface a
+ * visitor navigates, and this page is one image with nowhere to go.
+ */
+import config from "@/config";
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout
+  title={`Photon sphere | ${config.site.title}`}
+  description="A ray-traced Schwarzschild black hole."
+  noindex
+>
+  <canvas
+    id="photon-sphere"
+    role="img"
+    aria-label="Animated simulation of a Schwarzschild black hole: a dark shadow ringed by a lensed accretion disk against a star field."
+  ></canvas>
+
+  <main id="main-content">
+    <h1 class="sr-only">Photon sphere</h1>
+
+    <p id="photon-sphere-failure" hidden>
+      This page renders a black hole with WebGL 2, which this browser does not
+      support.
+    </p>
+
+    <noscript>
+      <p>This page renders a black hole with WebGL 2 and needs JavaScript.</p>
+    </noscript>
+
+    {
+      /* A legend for quantities the image cannot otherwise show, not a caption. */
+    }
+    <p id="legend" aria-hidden="true">
+      Schwarzschild r<sub>s</sub> = 1 · photon sphere 1.5 r<sub>s</sub> · ISCO 3 r<sub
+        >s</sub
+      >
+    </p>
+  </main>
+</Layout>
+
+<style>
+  /* The page is black under either theme. A light-mode black hole is not a
+     coherent object, so none of this is token-mapped. */
+  :global(body:has(#photon-sphere)) {
+    background: #000;
+  }
+
+  #photon-sphere {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* The buffer is capped below the CSS size, so the browser upscales it. */
+    z-index: -1;
+  }
+
+  #main-content {
+    position: fixed;
+    inset: auto auto 0 0;
+    padding: 1rem 1.25rem;
+  }
+
+  /* Hardcoded, not var(--ink): the ink token goes near-black in light theme and
+     would disappear against the canvas. */
+  #legend,
+  #photon-sphere-failure,
+  noscript p {
+    margin: 0;
+    color: #d8d5cf;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+  }
+
+  #legend {
+    opacity: 0.55;
+  }
+
+  #legend sub {
+    font-size: 0.75em;
+  }
+
+  @media (max-width: 480px) {
+    #legend {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import "@/scripts/photon-sphere";
+</script>

@@ -1,0 +1,280 @@
+#version 300 es
+// Schwarzschild black hole. Every pixel integrates its own null geodesic, so
+// the lensing, the shadow, and the Einstein ring are not drawn anywhere in this
+// file — they fall out of the integration.
+precision highp float;
+
+uniform vec2 uResolution;
+uniform float uTime;
+uniform vec3 uCamPos;
+uniform vec3 uCamRight;
+uniform vec3 uCamUp;
+uniform vec3 uCamFwd;
+
+out vec4 fragColor;
+
+// Units of the Schwarzschild radius: rs = 1. Every constant collapses to a
+// small number and the horizon test becomes `u > 1`.
+const float R_PHOTON = 1.5;   // photon sphere
+const float R_ISCO = 3.0;     // innermost stable circular orbit, disk edge
+const float R_OUT = 8.5;      // outer disk edge
+const float U_ESCAPE = 1.0 / 60.0;
+const int MAX_STEPS = 280;
+const float DPHI = 0.02;
+
+// ---------------------------------------------------------------- noise
+
+float hash11(float p) {
+  p = fract(p * 0.1031);
+  p *= p + 33.33;
+  return fract(p * (p + p));
+}
+
+float hash21(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+vec3 hash33(vec3 p) {
+  p = fract(p * vec3(0.1031, 0.1030, 0.0973));
+  p += dot(p, p.yxz + 33.33);
+  return fract((p.xxy + p.yxx) * p.zyx);
+}
+
+float valueNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
+             mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x),
+             f.y);
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 3; ++i) {
+    v += a * valueNoise(p);
+    p *= 2.17;
+    a *= 0.5;
+  }
+  return v;
+}
+
+// ---------------------------------------------------------------- colour
+
+// Tanner Helland's fit to the Planckian locus, in Neil Bartlett's refinement,
+// with the 0-255 constants divided by 255. A true Planck integral needs the CIE
+// colour matching functions; this is the standard cheap stand-in and is what
+// makes the disk read as hot metal rather than as an orange gradient.
+vec3 blackbody(float kelvin) {
+  float t = clamp(kelvin, 1000.0, 40000.0) / 100.0;
+  vec3 c;
+
+  c.r = t <= 66.0 ? 1.0 : 1.29293618606274509 * pow(t - 60.0, -0.1332047592);
+
+  c.g = t <= 66.0
+    ? 0.39008157876901960 * log(t) - 0.63184144378862000
+    : 1.12989086089529411 * pow(t - 60.0, -0.0755148492);
+
+  c.b = t >= 66.0 ? 1.0
+      : t <= 19.0 ? 0.0
+      : 0.54320678911019607 * log(t - 10.0) - 1.19625408914447844;
+
+  return clamp(c, 0.0, 1.0);
+}
+
+// ACES filmic approximation. The g^4 beaming term drives the approaching limb
+// well past 1.0; without this it clips to a flat white blob and loses all
+// structure.
+vec3 tonemap(vec3 x) {
+  return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14),
+               0.0, 1.0);
+}
+
+// ---------------------------------------------------------------- background
+
+// Sampled by the geodesic's escape direction, not the initial ray direction.
+// That substitution is the whole point: the deflection is the visible effect.
+vec3 starfield(vec3 dir) {
+  vec3 col = vec3(0.0);
+
+  // Two cell scales so the field does not read as a single regular grid.
+  for (int scale = 0; scale < 2; ++scale) {
+    float cells = scale == 0 ? 90.0 : 165.0;
+    vec3 p = dir * cells;
+    vec3 cell = floor(p);
+    vec3 rnd = hash33(cell);
+
+    // Sparse: most cells hold no star at all.
+    if (rnd.x > 0.90) {
+      vec3 centre = cell + 0.15 + 0.7 * hash33(cell + 7.1);
+      float d = length(p - centre);
+      float mag = pow(hash11(rnd.y * 91.7), 6.0);
+      float twinkle = 0.85 + 0.15 * sin(uTime * 1.7 + rnd.z * 43.0);
+      // Compact and clamped to zero at the cell edge. A bare exp() never
+      // reaches zero, which turns every populated cell into a glow patch and
+      // washes the sky out instead of putting a point on it.
+      float star = mag * twinkle * smoothstep(0.42, 0.0, d);
+
+      // Real stellar colours, from the same blackbody fit.
+      vec3 tint = blackbody(mix(3200.0, 11000.0, rnd.z));
+      col += star * tint * 2.2;
+    }
+  }
+
+  // A faint band so the lensing distorts a continuous field and not only
+  // isolated points. A warped point is still a point.
+  float lat = asin(clamp(dir.y, -1.0, 1.0));
+  float lon = atan(dir.z, dir.x);
+  float band = exp(-lat * lat * 22.0);
+  float dust = fbm(vec2(lon * 2.4, lat * 5.0) + 11.0);
+  dust *= dust;
+  col += band * dust * vec3(0.020, 0.019, 0.030);
+
+  return col;
+}
+
+// ---------------------------------------------------------------- disk
+
+// One sample of the accretion disk, with both relativistic shifts applied.
+vec3 diskSample(vec3 hit, float r, vec3 khat) {
+  float azim = atan(hit.z, hit.x);
+
+  // Kepler's third law: inner material visibly outruns outer. The shear is a
+  // strong realism cue and it is free.
+  float orbit = 0.42 * pow(R_ISCO / r, 1.5);
+
+  // log(r) keeps the eddies self-similar across the 4x radius range instead of
+  // stretching them at the outer edge.
+  vec2 q = vec2(log(r) * 3.4, azim * 2.6 - uTime * orbit * 2.0);
+  float turb = fbm(q) * 0.65 + fbm(q * 2.9 + 4.0) * 0.35;
+
+  // Radial falloff, with the inner edge left sharp: material there is about to
+  // cross the ISCO, so a soft inner edge would be wrong.
+  float edge = smoothstep(R_OUT, R_OUT * 0.62, r) * smoothstep(R_ISCO, R_ISCO * 1.06, r);
+  float density = edge * (0.45 + 0.85 * turb);
+  if (density <= 0.001) return vec3(0.0);
+
+  // Keplerian speed in units of c. 0.41c at the ISCO, so the beaming asymmetry
+  // is dramatic rather than a subtle tint.
+  float v = sqrt(0.5 / r);
+  vec3 vdir = normalize(cross(vec3(0.0, 1.0, 0.0), hit));
+  float gamma = 1.0 / sqrt(1.0 - v * v);
+
+  // Special-relativistic Doppler, then gravitational redshift. One combined
+  // factor drives both the colour and the brightness.
+  float doppler = 1.0 / (gamma * (1.0 - v * dot(vdir, khat)));
+  float grav = sqrt(max(1.0 - 1.0 / r, 0.0));
+  float g = doppler * grav;
+
+  // Standard thin-disk profile, ~9000 K at the ISCO.
+  float tEmit = 9000.0 * pow(R_ISCO / r, 0.75);
+
+  // Intensity goes as g^4: Lorentz invariance of I/nu^3 plus the one-power
+  // frequency shift. g or g^2 is the usual way this gets rendered wrong.
+  float g4 = g * g * g * g;
+
+  // The scale is set so the receding limb still has tone after tonemapping.
+  // Higher and g^4 drives the whole disk into the flat top of the curve, which
+  // loses the beaming asymmetry that the g^4 is there to produce.
+  return blackbody(tEmit * g) * g4 * density * 0.30;
+}
+
+// ---------------------------------------------------------------- main
+
+void main() {
+  // Normalized by the height, so the horizontal extent grows with the aspect.
+  vec2 uv = (2.0 * gl_FragCoord.xy - uResolution) / uResolution.y;
+
+  // Multiplies the forward component, so it works as an inverse zoom: larger
+  // narrows the cone and magnifies the subject. 1.5 frames the r = 8.5 disk on
+  // a landscape viewport. A portrait one has less width per unit height, so it
+  // needs a wider cone, not a tighter one, or the disk runs off the sides.
+  float fov = 1.5 * min(uResolution.x / uResolution.y, 1.6) / 1.6;
+  vec3 rd = normalize(uCamFwd * fov + uCamRight * uv.x + uCamUp * uv.y);
+
+  // Every null geodesic in Schwarzschild lies in a plane through the origin.
+  // Building that plane's basis turns a 3D integration into one 2D ODE in
+  // (u, phi), which is what makes this run in real time.
+  vec3 e1 = normalize(uCamPos);
+  vec3 n = cross(uCamPos, rd);
+  // A ray aimed exactly at the centre is coplanar with the camera radius and
+  // leaves the normal undefined. One pixel, but a NaN there is visible.
+  n = length(n) < 1e-6 ? normalize(cross(e1, uCamRight)) : normalize(n);
+  vec3 e2 = normalize(cross(n, e1));
+
+  float u = 1.0 / length(uCamPos);
+  // du/dphi from the ray direction projected onto the plane basis.
+  float du = -u * dot(rd, e1) / dot(rd, e2);
+  float phi = 0.0;
+
+  vec3 col = vec3(0.0);
+  float alpha = 0.0;
+  bool captured = false;
+
+  vec3 pos = uCamPos;
+  float yPrev = uCamPos.y;
+
+  // Leapfrog, not RK4: symplectic and one force evaluation per step, so the
+  // same budget buys about four times the steps. Step count is what resolves
+  // the repeated disk crossings near the hole.
+  du += 0.5 * DPHI * (-u + 1.5 * u * u);
+
+  for (int i = 0; i < MAX_STEPS; ++i) {
+    float uPrev = u;
+    u += DPHI * du;
+    phi += DPHI;
+    du += DPHI * (-u + 1.5 * u * u);
+
+    if (u > 1.0) { captured = true; break; }   // crossed the horizon
+    if (u < U_ESCAPE && du < 0.0) break;       // escaped outward
+
+    float c = cos(phi);
+    float s = sin(phi);
+    vec3 dirp = c * e1 + s * e2;
+    pos = dirp / u;
+
+    // The disk lies in the equatorial plane, so a crossing is a sign change
+    // in y. Not breaking on the first one is what shows the disk bent over the
+    // top and under the bottom of the hole.
+    if (pos.y * yPrev < 0.0 && alpha < 0.99) {
+      float f = yPrev / (yPrev - pos.y);
+      float uc = mix(uPrev, u, f);
+      float rc = 1.0 / uc;
+
+      if (rc > R_ISCO && rc < R_OUT) {
+        float phic = phi - DPHI * (1.0 - f);
+        float cc = cos(phic);
+        float sc = sin(phic);
+        vec3 hit = (cc * e1 + sc * e2) / uc;
+
+        // Photon direction at the hit, from d/dphi of (cos phi e1 + sin phi e2)/u.
+        // Differencing two interpolated positions instead loses precision at the
+        // small step size and puts a divide near zero in the path.
+        float duc = mix(du - DPHI * (-uc + 1.5 * uc * uc), du, f);
+        vec3 khat = normalize((-sc * e1 + cc * e2) / uc
+                              - (cc * e1 + sc * e2) * duc / (uc * uc));
+
+        vec3 emit = diskSample(hit, rc, khat);
+        // Front to back: the first crossing is nearest the camera.
+        col += (1.0 - alpha) * emit;
+        alpha += (1.0 - alpha) * 0.62;
+      }
+    }
+    yPrev = pos.y;
+  }
+
+  if (!captured) {
+    // The escape direction, not the entry direction. This substitution is where
+    // the deflection becomes visible. Same analytic tangent as the disk hit.
+    float c = cos(phi);
+    float s = sin(phi);
+    vec3 escapeDir = normalize((-s * e1 + c * e2) / u
+                               - (c * e1 + s * e2) * du / (u * u));
+    col += (1.0 - alpha) * starfield(escapeDir);
+  }
+
+  fragColor = vec4(pow(tonemap(col), vec3(1.0 / 2.2)), 1.0);
+}

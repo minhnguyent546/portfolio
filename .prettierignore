@@ -19,3 +19,6 @@
 
 # Ignore MDX files
 *.mdx
+
+# Prettier has no GLSL parser, and the allowlist above opts /src back in.
+*.glsl
