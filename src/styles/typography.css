@@ -131,6 +131,8 @@
     /* katex.min.css hard-sets `font: 1.21em`, which renders math a fifth larger
        than the prose around it. Level it with the body text. */
     .katex {
+      @apply text-ink;
+
       max-width: 100%;
       font-size: 1em;
     }
@@ -178,6 +180,18 @@
 
   html[data-theme="dark"] .astro-code {
     @apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+  }
+
+  /* Both themes ship a comment colour below WCAG AA on their own background:
+     min-light #C2C3C5 is 1.76, night-owl #637777 is 3.87. The theme writes the
+     value into an inline `style`, which outranks a rule that re-points the
+     custom property, so set `color` itself. */
+  .astro-code span[style*="--shiki-light:#C2C3C5"] {
+    color: #727376 !important;
+  }
+
+  html[data-theme="dark"] .astro-code span[style*="--shiki-dark:#637777"] {
+    color: #8a9e9e !important;
   }
 
   /* Styles for Shiki transformers */
