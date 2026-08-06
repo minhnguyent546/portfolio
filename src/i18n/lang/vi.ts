@@ -56,6 +56,17 @@ export default {
     searchTitle: "Tìm kiếm",
     searchDesc: "Tìm kiếm bài viết...",
   },
+  palette: {
+    label: "Tìm kiếm hoặc chuyển đến",
+    placeholder: "Tìm kiếm hoặc chuyển đến…",
+    noResults: 'Không có kết quả cho "%s"',
+    posts: "Bài viết",
+    publications: "Công bố",
+    competitions: "Cuộc thi",
+    projects: "Dự án",
+    pages: "Trang",
+    inPosts: "Trong bài viết",
+  },
   a11y: {
     skipToContent: "Chuyển đến nội dung",
     openMenu: "Mở trình đơn",
