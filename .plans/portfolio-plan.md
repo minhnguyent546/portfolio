@@ -39,7 +39,7 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 - `/` — single scannable homepage with sticky anchor nav.
   Section order: **Hero → About → News → Publications → Competitions → Projects → Writing → Contact**
 - `/blog/…` — routed blog posts (Markdown/MDX, math + code support)
-- `/papers/viclip-ot`, `/papers/virex-bench` — per-paper Nerfies-style project pages
+- `/papers/viclip-ot`, `/papers/soups` — per-paper Nerfies-style project pages
   (based on eliahuhorwitz/Academic-project-page-template design, rebuilt in Astro)
 - `/cv` or direct PDF link — CV as PDF (no HTML CV page for v1)
 - 404 page
@@ -519,7 +519,8 @@ Source Serif 4 is 0.475.
    build; `reference()` does not check that the target exists. A helper that
    `getStaticPaths` calls must be declared inside it: Astro extracts the function into
    its own chunk, and `astro check` passes because the failure is a runtime scope error.
-6. **Per-paper pages** — ViCLIP-OT and ViREx-Bench Nerfies-style pages.
+6. **Per-paper pages** — ViCLIP-OT and soups Nerfies-style pages. A paper page needs a
+   preprint, so ViREx-Bench stays a project until one exists.
 7. **Features** — Pagefind + ⌘K palette, view transitions, OG images, RSS, sitemap,
    JSON-LD, GoatCounter.
 8. **Ship** — GitHub Pages deploy (Actions + custom domain DNS), Lighthouse/a11y pass,
