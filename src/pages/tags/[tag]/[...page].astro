@@ -11,6 +11,7 @@ import config from "@/config";
 import { useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
+import { dedupeTranslations } from "@/utils/getTranslation";
 import { getUniqueTags } from "@/utils/getUniqueTags";
 import { slugifyAll } from "@/utils/slugify";
 
@@ -19,8 +20,10 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const tags = getUniqueTags(posts);
 
   return tags.flatMap(({ tag, tagName }) => {
-    const tagPosts = getSortedPosts(
-      posts.filter(({ data }) => slugifyAll(data.tags).includes(tag))
+    const tagPosts = dedupeTranslations(
+      getSortedPosts(
+        posts.filter(({ data }) => slugifyAll(data.tags).includes(tag))
+      )
     );
 
     return paginate(tagPosts, {

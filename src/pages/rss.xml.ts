@@ -3,10 +3,11 @@ import rss from "@astrojs/rss";
 import config from "@/config";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
+import { dedupeTranslations } from "@/utils/getTranslation";
 
 export async function GET() {
   const posts = await getCollection("blog");
-  const sortedPosts = getSortedPosts(posts);
+  const sortedPosts = dedupeTranslations(getSortedPosts(posts));
 
   return rss({
     title: config.site.title,

@@ -19,6 +19,7 @@ import Layout from "@/layouts/Layout.astro";
 import { formatDate } from "@/utils/formatDate";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
+import { dedupeTranslations } from "@/utils/getTranslation";
 import { getUniqueTags } from "@/utils/getUniqueTags";
 
 const { socials } = config;
@@ -46,7 +47,7 @@ const articles = (await getCollection("articles")).sort(
 );
 
 const posts = await getCollection("blog");
-const sortedPosts = getSortedPosts(posts);
+const sortedPosts = dedupeTranslations(getSortedPosts(posts));
 
 const sections = [
   { id: "about", label: "About" },
