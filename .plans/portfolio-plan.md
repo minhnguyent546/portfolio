@@ -21,9 +21,16 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 > is a documented slop tell. Dark mode still ships — it is a token re-point, not a
 > separate design. See §2.5.
 
-- **Language:** English only. **Vietnamese glyph coverage is deferred to a later phase**
-  (user decision, 2026-08-01) — font selection is optimized for English/Latin first.
-  See §4 for the one place this bites (VNOI article titles) and the v1 mitigation.
+- **Language:** Blog posts declare English or Vietnamese. The site shell stays English.
+  Vietnamese posts localize post controls, dates, and metadata. Routes have no locale
+  prefix. A `translationOf` reference pairs the two languages of one article. Set it on
+  one post; the site reads the link from either side, and ignores a link to the same
+  language. Every listing shows one row per article and prefers the English side. The
+  post page links the pair from the meta row, and prev/next stays inside one language.
+  The link names the destination language in that language, so it speaks to the reader
+  who cannot read the current page. A post with no published counterpart shows no link.
+  A post's own `translationOf` wins over an inbound one, and two posts that claim the
+  same target stop the build.
 - **Signature flourish:** ⌘K command palette (search + quick actions).
 - **Performance bar:** ~0 bytes of JS on cold page load; everything build-time or
   lazy-loaded on interaction. Lighthouse ~100 across the board.
@@ -127,24 +134,27 @@ site theme and the OS theme disagree.
 
 ### Type scale — sized for Newsreader
 
-jimfan.me runs 21 px body / 47 px h1 in Roboto. The user asked for smaller, so the
-first scale set body to 17 px. That was too small: Newsreader's x-height ratio is
-**0.4531** against **0.5313** for Roboto or Arial, so 17 px Newsreader reads like
-14.5 px Arial — below the browser default, not above it. Nominal px understates a
-serif with a small x-height. **Body is now 18.75 px, h1 43 px.**
+The global fluid body scale starts at 17 px and reaches about 18.5 px at 1440 px.
+Newsreader's x-height ratio is **0.4531**, against **0.5313** for Roboto or Arial,
+so nominal pixels overstate its perceived size compared with a sans serif.
 
 | Role | 375 px | 1440 px | `clamp()` |
 |---|---|---|---|
 | h1 | 31 | 43 | `clamp(1.9375rem, 1.6812rem + 1.0939vw, 2.6875rem)` |
 | h2 | 24 | 31 | `clamp(1.5rem, 1.3521rem + 0.6315vw, 1.9375rem)` |
 | h3 | 19 | 21 | `clamp(1.1875rem, 1.1345rem + 0.2264vw, 1.3125rem)` |
-| body | 17 | 18.75 | `clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem)` |
+| body | 17 | 18.5 | `clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem)` |
 | meta | 14 | 15 | `clamp(0.875rem, 0.8562rem + 0.0803vw, 0.9375rem)` |
 
-Fluid via `clamp()` — no breakpoint patching. Body leading **1.6**. Measure capped at
-**36rem** for prose, which gives 62 characters per line — the middle of the 60–75
-optimum, so the measure is not the lever for a page that reads sparse. Heading spread
-is **2.29×**.
+Fluid via `clamp()` — no breakpoint patching. Base body leading is **1.6**, and prose
+blocks use the plugin leading of **1.75**. `max-w-measure` stays **36rem** for
+summaries and other short prose. Heading spread is **2.29×**.
+
+Blog articles set their own reading density: **17 px** text in a **45.5rem** column.
+That column fits the 48rem page container after its padding, so a long post reads
+denser than a summary block without a wider page. Headings keep the fluid scale.
+The article now fills that container, so the back-to-top control is docked to the
+viewport corner. A floated one has no gutter left to sit in and lands on the text.
 
 Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-08-03.
 `.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
@@ -158,9 +168,9 @@ stay at 16 px while the rest of the site grows.
   Collapses to stacked below `lg`.
 - **Section padding** `55px 0` equivalent (`3.5rem`), uniform. The bands carry the
   separation, so the padding does not need to.
-- **Container** 80rem max, 1280px of content inside it. The blog keeps the narrow
-  reading column, so the width is a variable (`--app-width`) that the homepage
-  re-points, not a second utility — see Phase 4.
+- **Container** 80rem max, 1280px of content inside it. The blog reads at 45.5rem, so
+  the width is a variable (`--app-width`) that the homepage re-points, not a second
+  utility — see Phase 4.
 - **`scroll-padding-top`** matching nav height, so anchor jumps clear the sticky nav.
 - Deliberate two-line heading breaks where a label reads better stacked.
 
@@ -214,12 +224,14 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 
 | Role | Font | CSS variable |
 |---|---|---|
-| Headings / display / UI | **Archivo** (wght 400–700) | `--font-display` |
-| Body / long-form | **Newsreader** (wght 400–700, roman + italic) | `--font-app` |
+| Headings / display / UI | **Newsreader** (wght 400–700, roman + italic) | `--font-display` |
+| Body / long-form | **Newsreader** (same browser family) | `--font-app` |
 | Code / metadata | **JetBrains Mono** (wght 400–600) | `--font-mono` |
 
-All OFL. Loaded through Astro's top-level `fonts` config as variable ranges. Shipped
-payload is 185 KB of woff2, latin subset only.
+All OFL. Astro's top-level `fonts` config loads the browser families as variable ranges
+with Latin and Vietnamese subsets. Newsreader gives headings and body text consistent
+Vietnamese forms. A separate build-only Archivo TTF family gives Satori Vietnamese
+glyphs for OG images; the browser does not load Archivo.
 
 **Decided 2026-08-01.** This replaces Geist + Source Serif 4. Geist is Vercel's house
 font and reads as "deployed", which §1 rejects. hallmark bans Source Serif as a body
@@ -232,13 +244,12 @@ Source Serif 4 is 0.475.
 - **`styles` defaults to `["normal", "italic"]`.** Italic is a second file. Only
   Newsreader declares it.
 - **satori cannot read woff2**, so the OG routes use a separate build-only family,
-  `--font-archivo-og`. Do not add `ttf` to the Archivo family itself: that puts static
+  `--font-archivo-og`. Do not add `ttf` to a browser family: that puts static
   `@font-face` blocks in the browser stylesheet, and a heading at weight 500 then pulls
   a 112 KB TrueType file.
-- **The latin subset holds no Vietnamese glyphs.** The two VNOI titles fall back to
-  Times. To fix, add `"vietnamese"` to `subsets` and confirm U+1EA0–1EF9 and
-  U+01A0–01B0 reach the emitted woff2. Check the `unicode-range` in the built CSS; a
-  canvas bitmap test gives a false pass, because the fallback face is metric-adjusted.
+- **KaTeX must be imported into `layer(base)`.** Unlayered CSS outranks every layer, so
+  an unlayered `katex.min.css` keeps its `font: 1.21em` and renders math a fifth larger
+  than the prose. Math is levelled to `1em`.
 - **Fontshare fonts stay out** (Satoshi, General Sans, Switzer). The FFL bars
   subsetting and self-hosted redistribution.
 - No Google Fonts CDN. In dark mode, set `-webkit-font-smoothing: antialiased` and drop
@@ -251,12 +262,12 @@ Source Serif 4 is 0.475.
 | Tooltips | **CSS-only, local to the first use** | Keep the social tooltip in `Socials.astro` while it is the only use. When a second use appears, extract `Tooltip.astro` with start, center, and end alignment. Keep it free of runtime JavaScript. Add Floating UI only if automatic collision handling or portals become necessary. |
 | Search | **Pagefind 1.5** via `astro-pagefind` | Static, indexes built HTML, lazy chunked index. `data-pagefind-body` on articles. |
 | ⌘K palette | **Hand-rolled ~60-line vanilla island** wrapping Pagefind modal UI + a few commands (theme toggle, section jumps) | Lazy-load on first keypress → 0 bytes until ⌘K. Rejected: cmdk (drags React), ninja-keys/astro-command-palette (dead). |
-| Code blocks | **astro-expressive-code** 0.44 | Copy button, line highlight, diff, frames, dual-theme no-FOUC. |
+| Code blocks | **Astro Shiki + `@shikijs/transformers` + custom copy button** | Build-time dual themes, filename labels, line and word highlights, and diffs. Expressive Code stays deferred because this pipeline already meets the requirement. |
 | Math | **KaTeX** (`remark-math` + `rehype-katex`) | Fully build-time, 0 runtime JS. Self-host KaTeX fonts. Serif body solves size harmony; MathJax only if exotic LaTeX needed. |
 | Page transitions | **Native CSS `@view-transition`** (Chrome/Edge 126+, Safari 18.2+; **not Firefox**) + CSS micro-interactions (`@starting-style`, 150–250ms, `prefers-reduced-motion` guarded) | **Done (2026-08-01).** `ClientRouter` removed from `Layout.astro`; `@view-transition { navigation: auto }` in `global.css`. Homepage went from a 16KB blocking module fetch to **0 external JS / 1.9KB inline** (2.8KB since the boot intro). Removing it makes every `astro:page-load` / `after-swap` / `before-swap` listener dead — 7 files had to be rewired (see §6 gotcha 9). **Correction:** an earlier draft of this row said "cross-browser now" — that was wrong. MDN rates the at-rule "Limited availability" (lowest Baseline tier); Gecko meta bug 1860854 is still NEW, unassigned, no milestone, 14 open deps. Firefox therefore gets a plain hard navigation, and since `ClientRouter` used the *same-document* API it **would** have animated there — a real if small regression, accepted because 16KB on 100% of loads against the §1 perf bar outweighs animation for ~3–5% of visitors on a site where most visits are 1–2 pages deep. Revisit if Firefox ships. Add `motion/mini` (2.6KB) only if a real need appears. |
 | OG images | **satori** pipeline (ships with AstroPaper) | Alternative if friction: `astro-og-canvas` 0.13 (Astro 7 ready, simpler). |
 | BibTeX / citations | **Hand-rolled**: publication frontmatter + `<details>` Cite toggle + copy button | Optional: single `publications.bib` as source of truth parsed at build with `@citation-js/plugin-bibtex`. Revisit tooling at ~15 papers. |
-| RSS | `@astrojs/rss` — full-content feed; consider separate publications feed | |
+| RSS | `@astrojs/rss` — metadata-only in Phase 5; full-content feed belongs to Phase 7 | |
 | Sitemap | `@astrojs/sitemap` (+ `site` set in config) | |
 | Comments | **Skip for v1** | If wanted later: giscus via lazy plain `<script>` (audience has GitHub accounts). |
 | Section nav | **`SectionNav.astro`** — sticky in-page index on `/`, with the current section marked | The only JS on the homepage that is not the boot log, ~380 B gzipped. CSS cannot do it: `:target` fires on click and never on scroll, and scroll-driven animations style the scrolled element, with no selector that reaches a sibling nav link. Two traps, both found by measuring. The reading line is a third of the way down the viewport, not under the nav: Writing and Contact are shorter than the screen, so their tops never reach it — Writing needs 5511 px of scroll against a 5461 px maximum. A click on either therefore lands at the page bottom, so the clicked link is pinned until a wheel, touch, or key press hands control back to the scroll position. Homepage inline JS goes from 2.8 KB to 3.7 KB raw (1.4 KB gzipped); external JS on `/` stays at 0. |
@@ -500,7 +511,14 @@ Source Serif 4 is 0.475.
    source rendered 819×1063. Both now size from the real source ratios. The masthead
    and the index nav are not two sticky bars: `Header` is `position: static` and
    scrolls away, so `scroll-padding-top` stays at the height of the index nav alone.*
-5. **Long-form** — blog layout (Expressive Code + KaTeX), first post migrated or new.
+5. **Long-form** — existing Shiki and custom copy controls, build-time KaTeX, and
+   per-post English/Vietnamese support. A translated pair shares one figure folder and
+   splits by slug suffix: English holds `/blog/auxiliary-tree/` and Vietnamese takes
+   `-vi`. `remark-collapse` gets **one** registration whose `summary` reads the matched
+   heading. `unified` keys plugins by function identity, so a second registration merges
+   its options into the first and only the last language collapses. A helper that
+   `getStaticPaths` calls must be declared inside it: Astro extracts the function into
+   its own chunk, and `astro check` passes because the failure is a runtime scope error.
 6. **Per-paper pages** — ViCLIP-OT and ViREx-Bench Nerfies-style pages.
 7. **Features** — Pagefind + ⌘K palette, view transitions, OG images, RSS, sitemap,
    JSON-LD, GoatCounter.

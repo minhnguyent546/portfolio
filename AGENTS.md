@@ -44,6 +44,8 @@ pnpm format         # Prettier
 
 For serving for testing, use the port range `4330-4340`, e.g., `python3 -m http.server 4331 --directory dist`.
 
+AVOID using `nohup`
+
 ## Locked stack decisions
 
 These are decided. Raise a question before you change one.
@@ -54,7 +56,7 @@ These are decided. Raise a question before you change one.
 - **Content Layer API** with `glob()` loaders in `src/content.config.ts`.
   Legacy collections were removed in Astro 6.
 - Fonts load through Astro's top-level `fonts` config. No Google Fonts CDN.
-- **English only.** Vietnamese glyph coverage is a later phase.
+- Blog posts declare English or Vietnamese. The site shell stays English, and routes have no locale prefix.
 - Rejected, with reasons in the plan §8: `astro-icon`, `cmdk`, `ClientRouter`,
   Biome, husky, Fontshare fonts (Satoshi, General Sans, Switzer),
   Cloudflare Web Analytics.

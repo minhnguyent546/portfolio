@@ -19,6 +19,13 @@ export interface UIStrings {
     editPage: string;
     previousPost: string;
     nextPost: string;
+    copyCode: string;
+    copiedCode: string;
+    zoomImage: string;
+    imagePreview: string;
+    closeImagePreview: string;
+    /** Names the other language, since a pair is always English plus Vietnamese. */
+    switchLanguage: string;
   };
   pagination: {
     prev: string;

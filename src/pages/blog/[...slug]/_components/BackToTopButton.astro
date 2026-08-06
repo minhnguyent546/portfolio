@@ -3,32 +3,41 @@ import IconArrowLeft from "@/assets/icons/IconArrowLeft.svg";
 import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
 import { useTranslations } from "@/i18n";
 
-const t = useTranslations(Astro.currentLocale);
+interface Props {
+  uiLocale?: "en" | "vi";
+}
+
+const { uiLocale = "en" } = Astro.props;
+const t = useTranslations(uiLocale);
 ---
 
 <div
   id="btt-btn-container"
   class:list={[
     "fixed inset-e-4 bottom-8 z-50",
-    "md:sticky md:inset-e-auto md:float-end md:me-1",
     "translate-y-14 opacity-0 transition duration-500",
   ]}
 >
   <button
     data-button="back-to-top"
     class:list={[
-      "group relative bg-paper px-2 py-1",
+      "group relative border border-rule bg-surface px-2 py-1",
       "size-14 rounded-full shadow-xl",
-      "md:h-8 md:w-fit md:rounded-md md:shadow-none md:focus-visible:rounded-none",
-      "md:bg-paper/35 md:bg-clip-padding md:backdrop-blur-lg",
+      "lg:inline-flex lg:h-8 lg:w-fit lg:items-center lg:justify-center lg:gap-1",
+      "lg:rounded-md lg:shadow-sm lg:focus-visible:rounded-none",
     ]}
   >
     <span
       id="progress-indicator"
-      class="absolute inset-0 -z-10 block size-14 scale-110 rounded-full bg-transparent md:hidden md:h-8 md:rounded-md"
+      class="absolute inset-0 -z-10 block size-14 scale-110 rounded-full bg-transparent lg:hidden"
     ></span>
-    <IconArrowLeft class="inline-block rotate-90 md:hidden" />
-    <span class="sr-only text-sm group-hover:text-accent md:not-sr-only">
+    <IconArrowLeft class="inline-block rotate-90 lg:hidden" />
+    <span
+      class:list={[
+        "sr-only text-sm/none group-hover:text-accent",
+        "lg:not-sr-only lg:inline-flex lg:items-center lg:gap-1",
+      ]}
+    >
       <IconArrowNarrowUp class="inline-block size-4" />
       {t.post.backToTop}
     </span>

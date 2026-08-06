@@ -72,12 +72,46 @@ const t = useTranslations(locale);
           `;
       }
 
+      const resultLanguages = new Map<string, string>();
+      const resultSelector = ".pagefind-ui__result";
+
+      const setResultLanguages = () => {
+        for (const result of pageFindSearch.querySelectorAll(resultSelector)) {
+          const link = result.querySelector<HTMLAnchorElement>(
+            ".pagefind-ui__result-link"
+          );
+          if (!link) continue;
+
+          const url = new URL(link.href, window.location.origin);
+          const language = resultLanguages.get(url.pathname);
+          if (language) result.setAttribute("lang", language);
+        }
+      };
+
+      const resultObserver = new MutationObserver(setResultLanguages);
+      resultObserver.observe(pageFindSearch, {
+        childList: true,
+        subtree: true,
+      });
+
       // Init pagefind ui
       const search = new PagefindUI({
         element: "#pagefind-search",
         bundlePath,
         showImages: false,
         showSubResults: true,
+        processResult: function (result: {
+          meta: Record<string, string>;
+          url: string;
+        }) {
+          const url = new URL(
+            result.meta.url ?? result.url,
+            window.location.origin
+          );
+          resultLanguages.set(url.pathname, result.meta.lang);
+          delete result.meta.lang;
+          return result;
+        },
         processTerm: function (term: string) {
           params.set("q", term); // Update the `q` parameter in the URL
           history.replaceState(history.state, "", "?" + params.toString()); // Push the new URL without reloading

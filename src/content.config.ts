@@ -1,4 +1,4 @@
-import { defineCollection } from "astro:content";
+import { defineCollection, reference } from "astro:content";
 import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 import config from "@/config";
@@ -13,6 +13,10 @@ const blog = defineCollection({
       pubDatetime: z.date(),
       modDatetime: z.date().optional().nullable(),
       title: z.string(),
+      lang: z.enum(["en", "vi"]).default("en"),
+      /** The same article in the other language. Set it on one post of the
+          pair; the site reads the link from either side. */
+      translationOf: reference("blog").optional(),
       featured: z.boolean().optional(),
       draft: z.boolean().optional(),
       tags: z.array(z.string()).default(["others"]),

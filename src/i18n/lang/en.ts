@@ -21,6 +21,12 @@ export default {
     editPage: "Edit page",
     previousPost: "Previous Post",
     nextPost: "Next Post",
+    copyCode: "Copy",
+    copiedCode: "Copied",
+    zoomImage: "Zoom image",
+    imagePreview: "Image preview",
+    closeImagePreview: "Close image preview",
+    switchLanguage: "Read this post in Vietnamese",
   },
   pagination: {
     prev: "Prev",

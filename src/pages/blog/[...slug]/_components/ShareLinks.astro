@@ -4,7 +4,13 @@ import config from "@/config";
 import { tplStr, useTranslations } from "@/i18n";
 
 const { shareLinks } = config;
-const t = useTranslations(Astro.currentLocale);
+
+interface Props {
+  uiLocale?: "en" | "vi";
+}
+
+const { uiLocale = "en" } = Astro.props;
+const t = useTranslations(uiLocale);
 
 const icons = import.meta.glob<{
   default: (_props: Record<string, unknown>) => unknown;

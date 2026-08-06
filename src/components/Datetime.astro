@@ -15,6 +15,7 @@ type Props = {
   pubDatetime: string | Date;
   timezone?: string;
   modDatetime?: string | Date | null;
+  uiLocale?: "en" | "vi";
 };
 
 const {
@@ -23,17 +24,25 @@ const {
   size = "sm",
   class: className = "",
   timezone: postTimezone,
+  uiLocale = "en",
 } = Astro.props;
 
-const t = useTranslations(Astro.currentLocale);
+const t = useTranslations(uiLocale);
 
-const isModified = modDatetime && modDatetime > pubDatetime;
+const isModified =
+  modDatetime &&
+  new Date(modDatetime).getTime() > new Date(pubDatetime).getTime();
 
 const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
   postTimezone ?? config.site.timezone
 );
 
-const date = datetime.format("D MMM, YYYY");
+const date = new Intl.DateTimeFormat(uiLocale === "vi" ? "vi-VN" : "en-US", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: postTimezone ?? config.site.timezone,
+}).format(new Date(isModified ? modDatetime : pubDatetime));
 ---
 
 <div class:list={["flex items-center gap-x-2 text-ink-muted", className]}>

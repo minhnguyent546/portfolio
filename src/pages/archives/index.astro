@@ -9,6 +9,7 @@ import Main from "@/components/Main.astro";
 import config from "@/config";
 import { useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+import { dedupeTranslations } from "@/utils/getTranslation";
 import { postFilter } from "@/utils/postFilter";
 import { getPostsByGroupCondition } from "./_utils/getPostsByGroupCondition";
 
@@ -23,7 +24,7 @@ if (!config.features.showArchives && notFoundUrl) {
 const t = useTranslations(locale);
 
 const posts = await getCollection("blog");
-const filteredPosts = posts.filter(postFilter);
+const filteredPosts = dedupeTranslations(posts.filter(postFilter));
 const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
 ---
 
