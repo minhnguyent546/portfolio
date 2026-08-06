@@ -59,12 +59,14 @@ export function buildIndex(content: {
 
   for (const post of shown) {
     const other = dropped.get(post.id);
+    const tags = post.data.tags.join(" ");
     entries.push({
       t: post.data.title,
       d: post.data.description,
       k: "post",
       u: getPostUrl(post.id, post.filePath),
-      ...(other && { a: other.title, v: other.url }),
+      a: other ? `${other.title} ${tags}` : tags,
+      ...(other && { v: other.url }),
     });
   }
 
@@ -74,7 +76,7 @@ export function buildIndex(content: {
       d: data.venue,
       k: "publication",
       u: `${content.homeUrl}#publications`,
-      a: `${data.title} ${data.authors.join(" ")}`,
+      a: `${data.title} ${data.authors.join(" ")} ${data.abstract}`,
     });
   }
 
