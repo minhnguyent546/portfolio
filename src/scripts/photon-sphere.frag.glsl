@@ -31,6 +31,10 @@ const float DPHI = 0.02;
 // than tracking the resolution uniform; it sets which noise octaves survive on
 // the disk, and a half-resolution canvas wants that threshold in the same place.
 const float PIXEL_ANGLE = 2.0 / (1.5 * 900.0);
+// Noise cells around one turn of the disk. Must be a whole number, or the
+// texture cannot join where atan wraps. Also a power of two, so every octave
+// after the first still divides the turn exactly.
+const float AZIM_CELLS = 32.0;
 
 // ---------------------------------------------------------------- noise
 
@@ -52,7 +56,11 @@ vec3 hash33(vec3 p) {
   return fract((p.xxy + p.yxx) * p.zyx);
 }
 
-float valueNoise(vec2 p) {
+// Tiles in y with a period of `py` cells. Both users of this noise put an angle
+// on the y axis, and atan jumps by 2*pi across its branch cut. Without the wrap
+// the two sides of that cut read unrelated lattice cells, and the join shows as
+// a wedge running out from the hole.
+float valueNoise(vec2 p, float py) {
   vec2 i = floor(p);
   vec2 f = fract(p);
   // Quintic fade, not the cheaper f*f*(3-2f). Both match value and slope across
@@ -60,21 +68,24 @@ float valueNoise(vec2 p) {
   // this through a power curve that would otherwise expose the second-derivative
   // break.
   f = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
-  return mix(mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
-             mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x),
+  float y0 = mod(i.y, py);
+  float y1 = mod(i.y + 1.0, py);
+  return mix(mix(hash21(vec2(i.x, y0)), hash21(vec2(i.x + 1.0, y0)), f.x),
+             mix(hash21(vec2(i.x, y1)), hash21(vec2(i.x + 1.0, y1)), f.x),
              f.y);
 }
 
-float fbm(vec2 p) {
+// Doubling and offsetting per octave, rather than the usual rotate-and-scale. A
+// rotation decorrelates the octaves better, but it mixes the two axes, and that
+// destroys the y period the wrap depends on.
+float fbm(vec2 p, float py) {
   float v = 0.0;
   float a = 0.5;
   for (int i = 0; i < 4; ++i) {
-    v += a * valueNoise(p);
-    // Rotate as well as scale. Without the rotation every octave shares the
-    // same axis-aligned lattice, so their cell edges land on top of each other
-    // and reinforce instead of averaging away.
-    p = mat2(0.80, 0.60, -0.60, 0.80) * p * 2.31;
+    v += a * valueNoise(p, py);
+    p = p * 2.0 + 37.0;
     a *= 0.5;
+    py *= 2.0;
   }
   return v;
 }
@@ -83,7 +94,7 @@ float fbm(vec2 p) {
 // result is renormalized by the surviving weights. Fading them toward the mean
 // instead would lower the contrast of the whole texture, which is the same
 // operation as deleting the noise.
-float fbmLod(vec2 p, float cell) {
+float fbmLod(vec2 p, float cell, float py) {
   float v = 0.0;
   float a = 0.5;
   float n = 0.0;
@@ -91,11 +102,12 @@ float fbmLod(vec2 p, float cell) {
     // The octave's lattice period in domain units halves each step; keep it
     // while a pixel still spans less than half a cell.
     float w = smoothstep(0.7, 0.25, cell);
-    v += a * w * valueNoise(p);
+    v += a * w * valueNoise(p, py);
     n += a * w;
-    p = mat2(0.80, 0.60, -0.60, 0.80) * p * 2.31;
+    p = p * 2.0 + 37.0;
     a *= 0.5;
-    cell *= 2.31;
+    cell *= 2.0;
+    py *= 2.0;
   }
   return v / max(n, 1e-4) * 0.9375;
 }
@@ -168,7 +180,9 @@ vec3 starfield(vec3 dir) {
   float lat = asin(clamp(dir.y, -1.0, 1.0));
   float lon = atan(dir.z, dir.x);
   float band = exp(-lat * lat * 22.0);
-  float dust = fbm(vec2(lon * 2.4, lat * 5.0) + 11.0);
+  // lon is the periodic axis here, so it goes on y where the wrap applies. 16
+  // cells over a full turn, at the same scale the old lon * 2.4 gave.
+  float dust = fbm(vec2(lat * 5.0, lon * (16.0 / (2.0 * PI))) + 11.0, 16.0);
   dust *= dust;
   col += band * dust * vec3(0.020, 0.019, 0.030);
 
@@ -187,8 +201,11 @@ vec3 diskSample(vec3 hit, float r, vec3 khat) {
 
   // Anisotropic, so the noise resolves into long filaments wound around the hole
   // rather than round eddies. Differential rotation shears real disk structure
-  // this way.
-  vec2 q = vec2(log(r) * 17.0, azim * 6.0 - uTime * orbit * 2.0);
+  // this way. AZIM_CELLS is the y period: azim runs over 2*pi, so scaling by
+  // AZIM_CELLS/(2*pi) makes one turn span exactly that many lattice cells and
+  // the wrap lands back on the cell it started from.
+  vec2 q = vec2(log(r) * 17.0,
+                azim * (AZIM_CELLS / (2.0 * PI)) - uTime * orbit * 2.0);
 
   // How much of the disk one pixel covers. A pixel subtends a fixed angle, so
   // its footprint grows with distance and then divides by the cosine of the
@@ -202,7 +219,8 @@ vec3 diskSample(vec3 hit, float r, vec3 khat) {
   // In noise-lattice cells rather than world units: the radial axis of `q` is
   // log(r) * 17, whose derivative is 17/r.
   float cell = footprint * 17.0 / r;
-  float turb = fbmLod(q, cell) * 0.65 + fbmLod(q * 2.3 + 4.0, cell * 2.3) * 0.35;
+  float turb = fbmLod(q, cell, AZIM_CELLS) * 0.65
+             + fbmLod(q * 2.0 + 4.0, cell * 2.0, AZIM_CELLS * 2.0) * 0.35;
 
   // Banded hard, so the filaments read as distinct bright threads with dark
   // lanes between them. A plain fbm gives a continuous wash at any amplitude.
