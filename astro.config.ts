@@ -21,6 +21,9 @@ import remarkToc from "remark-toc";
 import config from "./astro-paper.config";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 
+/** Matched case-insensitively as `^(…)$` by `mdast-util-heading-range`. */
+const TOC_HEADING = "Table of contents|Mục lục";
+
 export default defineConfig({
   site: config.site.url,
   integrations: [
@@ -41,12 +44,20 @@ export default defineConfig({
     processor: unified({
       remarkPlugins: [
         remarkMath,
-        [remarkToc, { heading: "Table of contents|Mục lục" }],
+        [remarkToc, { heading: TOC_HEADING }],
+        // One registration, not one per language: `unified` keys plugins by
+        // function identity, so a second `remarkCollapse` merges its options
+        // into the first instead of running beside it.
         [
           remarkCollapse,
-          { test: "Table of contents", summary: "Open Table of contents" },
+          {
+            test: TOC_HEADING,
+            summary: (heading: string) =>
+              heading.trim() === "Mục lục"
+                ? "Mở Mục lục"
+                : "Open Table of contents",
+          },
         ],
-        [remarkCollapse, { test: "Mục lục", summary: "Mở Mục lục" }],
       ],
       rehypePlugins: [rehypeKatex, rehypeCallouts],
     }),
