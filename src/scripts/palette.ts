@@ -216,7 +216,7 @@ function staticRows(query: string): Row[] {
   // Every word, in any order and any field: "virex bench" and "bench virex"
   // both name the same project, and "viclip ot" spans the title and the venue.
   const words = fold(query).split(/\s+/).filter(Boolean);
-  const matched: Row[] = [];
+  const matched: { row: Row; rank: number }[] = [];
   haystacks.forEach((haystack, i) => {
     if (!words.every(word => haystack.includes(word))) return;
     const entry = entries[i];
@@ -231,18 +231,47 @@ function staticRows(query: string): Row[] {
       unexplained.length > 0 && entry.a ? pickReason(entry.a, unexplained) : "";
 
     matched.push({
-      title: entry.t,
-      detail: reason ? `${entry.d} · ${reason}` : entry.d,
-      group: entry.k,
-      url: entry.u,
+      row: {
+        title: entry.t,
+        detail: reason ? `${entry.d} · ${reason}` : entry.d,
+        group: entry.k,
+        url: entry.u,
+      },
+      rank: rankOf(haystack, fold(entry.t), words),
     });
   });
-  return matched;
+
+  // Stable, so rows of equal rank keep their build order.
+  matched.sort((a, c) => a.rank - c.rank);
+  return matched.map(({ row }) => row);
 }
 
 /**
+ * How well a row answers the query, lower being better. Matching inside a word
+ * is what makes the list useful as the visitor types — "auxi" has to find
+ * "Auxiliary", and "torch" has to find "PyTorch" — but it also means "ot" finds
+ * "chatbot" and "is" finds "Advisory". Those stay findable and sink instead.
+ */
+function rankOf(haystack: string, title: string, words: string[]): number {
+  const starts = (text: string, word: string) =>
+    new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRe(word)}`, "u").test(text);
+
+  const everyWordStarts = words.every(word => starts(haystack, word));
+  const inTitle = words.every(word => title.includes(word));
+  if (everyWordStarts) return inTitle ? 0 : 1;
+  return inTitle ? 2 : 3;
+}
+
+/** The query is user text, so it cannot be spliced into a pattern unescaped. */
+const escapeRe = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Longest reason shown, so one summary cannot crowd out the description. */
+const CAP = 120;
+
+/**
  * The one span of hidden text that explains the match. The field holds a whole
- * summary or author list, so the sentence around the first unexplained word is
+ * summary or author list, so a slice around the first unexplained word is
  * enough; the rest would push the match off the end of the line again.
  */
 function pickReason(hidden: string, words: string[]): string {
@@ -250,16 +279,21 @@ function pickReason(hidden: string, words: string[]): string {
   const at = folded.indexOf(words[0]);
   if (at < 0) return "";
 
-  // Widen to the surrounding sentence, then cap it so one long summary cannot
-  // crowd out the description it follows. A period only ends a sentence when
-  // whitespace follows, or the score "13.44/15" would cut the line in half.
-  const before = hidden.slice(0, at).search(/\.\s(?![\s\S]*\.\s)/);
-  const start = before < 0 ? 0 : before + 2;
+  // Widen to the sentence, but only when its start is near the match. The
+  // field concatenates several values, and a title or author list holds no
+  // period at all, so the sentence can begin hundreds of characters back and
+  // the cap below would then cut the line before it ever reaches the match.
+  const period = hidden.slice(0, at).search(/\.\s(?![\s\S]*\.\s)/);
+  const sentence = period < 0 ? 0 : period + 2;
+  const start =
+    at - sentence <= CAP - 40 ? sentence : hidden.lastIndexOf(" ", at - 24) + 1;
+
   const rest = hidden.slice(at).search(/\.(\s|$)/);
-  const slice = hidden
-    .slice(start, rest < 0 ? hidden.length : at + rest + 1)
-    .trim();
-  return slice.length > 120 ? slice.slice(0, 119).trimEnd() + "…" : slice;
+  const stop = rest < 0 ? hidden.length : at + rest + 1;
+  const slice = hidden.slice(start, stop).trim();
+  // No leading ellipsis: the composed line is windowed again before it is
+  // rendered, and that pass adds one when it slides.
+  return slice.length > CAP ? slice.slice(0, CAP - 1).trimEnd() + "…" : slice;
 }
 
 /**
