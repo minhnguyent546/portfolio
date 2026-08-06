@@ -523,11 +523,12 @@ Source Serif 4 is 0.475.
 7. **Features** — Pagefind + ⌘K palette, view transitions, OG images, RSS, sitemap,
    JSON-LD, GoatCounter.
 8. **Ship** — GitHub Pages deploy (Actions + custom domain DNS), Lighthouse/a11y pass,
-   cross-device QA.
-   *Status (2026-08-01): CI + deploy workflows written and verified (see §5).
-   **Still open:** flip Pages source to "GitHub Actions", resolve the private-repo
-   constraint, set the custom domain in repo settings, and add the apex + `www` DNS
-   records in Cloudflare (DNS-only).*
+   cross-device QA. *Done 2026-08-06.* The site serves on the apex, `www` redirects to
+   it, and HTTPS is enforced. Lighthouse scores 98–100 across all four categories, and
+   axe reports no WCAG violation on nine routes in both themes. Two theme colours needed
+   an override to reach AA: the Shiki comment token, which the theme writes as an inline
+   custom property that only `color` can outrank, and display KaTeX, which sits outside
+   a `<p>` and so missed the prose colour rule.
 
 ### Pending investigations
 
