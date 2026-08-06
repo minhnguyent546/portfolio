@@ -24,13 +24,10 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 - **Language:** Blog posts declare English or Vietnamese. The site shell stays English.
   Vietnamese posts localize post controls, dates, and metadata. Routes have no locale
   prefix. A `translationOf` reference pairs the two languages of one article. Set it on
-  one post; the site reads the link from either side, and ignores a link to the same
-  language. Every listing shows one row per article and prefers the English side. The
-  post page links the pair from the meta row, and prev/next stays inside one language.
-  The link names the destination language in that language, so it speaks to the reader
-  who cannot read the current page. A post with no published counterpart shows no link.
-  A post's own `translationOf` wins over an inbound one, and two posts that claim the
-  same target stop the build.
+  one post; the site reads the link from either side. Every listing shows one row per
+  article and prefers the English side. The post page links the pair from the meta row,
+  and prev/next stays inside one language. The link names the destination language in
+  that language, so it speaks to the reader who cannot read the current page.
 - **Signature flourish:** ⌘K command palette (search + quick actions).
 - **Performance bar:** ~0 bytes of JS on cold page load; everything build-time or
   lazy-loaded on interaction. Lighthouse ~100 across the board.
@@ -206,7 +203,8 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   pre-training-gpt2 (PyTorch/XLA, CUDA + TPU).
 - **Writing:** blog posts (on-site, migrating/linking HackMD) + distinct sub-list for
   **VNOI Magazine** articles: "Virtual Tree / Cây ảo" (2024), "Kỹ thuật tinh tế về
-  phép Xor" (2023).
+  phép Xor" (2023). "Virtual Tree" is migrated and holds both languages; the English
+  side is a partial draft.
 - **Contact:** plain email (no form), GitHub, LinkedIn, X, Google Scholar, HackMD.
 
 ## 4. Stack (verified current, 2026-08)
@@ -516,7 +514,9 @@ Source Serif 4 is 0.475.
    splits by slug suffix: English holds `/blog/auxiliary-tree/` and Vietnamese takes
    `-vi`. `remark-collapse` gets **one** registration whose `summary` reads the matched
    heading. `unified` keys plugins by function identity, so a second registration merges
-   its options into the first and only the last language collapses. A helper that
+   its options into the first and only the last language collapses. A post's own
+   `translationOf` wins over an inbound one, and two posts that claim one target stop the
+   build; `reference()` does not check that the target exists. A helper that
    `getStaticPaths` calls must be declared inside it: Astro extracts the function into
    its own chunk, and `astro check` passes because the failure is a runtime scope error.
 6. **Per-paper pages** — ViCLIP-OT and ViREx-Bench Nerfies-style pages.
