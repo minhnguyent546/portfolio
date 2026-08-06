@@ -19,7 +19,12 @@ const float R_PHOTON = 1.5;   // photon sphere
 const float R_ISCO = 3.0;     // innermost stable circular orbit, disk edge
 const float R_OUT = 8.5;      // outer disk edge
 const float U_ESCAPE = 1.0 / 60.0;
-const int MAX_STEPS = 280;
+const float PI = 3.14159265359;
+// 520 steps at DPHI = 0.02 sweeps about 596 degrees. The direct image needs only
+// ~180, but the n=1 lensing ring is light that made one extra half-loop, so it
+// needs ~540 before it can form at all. Stopping short of that is what forces a
+// renderer to fake the bright rim at the shadow edge.
+const int MAX_STEPS = 520;
 const float DPHI = 0.02;
 
 // ---------------------------------------------------------------- noise
@@ -107,8 +112,9 @@ vec3 starfield(vec3 dir) {
     vec3 cell = floor(p);
     vec3 rnd = hash33(cell);
 
-    // Sparse: most cells hold no star at all.
-    if (rnd.x > 0.90) {
+    // Sparse, but dense enough that the lensing shears a visible field rather
+    // than a few isolated points.
+    if (rnd.x > 0.72) {
       vec3 centre = cell + 0.15 + 0.7 * hash33(cell + 7.1);
       float d = length(p - centre);
       float mag = pow(hash11(rnd.y * 91.7), 6.0);
@@ -146,15 +152,21 @@ vec3 diskSample(vec3 hit, float r, vec3 khat) {
   // strong realism cue and it is free.
   float orbit = 0.42 * pow(R_ISCO / r, 1.5);
 
-  // log(r) keeps the eddies self-similar across the 4x radius range instead of
-  // stretching them at the outer edge.
-  vec2 q = vec2(log(r) * 3.4, azim * 2.6 - uTime * orbit * 2.0);
-  float turb = fbm(q) * 0.65 + fbm(q * 2.9 + 4.0) * 0.35;
+  // Anisotropic, so the noise resolves into long filaments wound around the hole
+  // rather than round eddies. Differential rotation shears real disk structure
+  // this way.
+  vec2 q = vec2(log(r) * 17.0, azim * 1.1 - uTime * orbit * 2.0);
+  float turb = fbm(q) * 0.65 + fbm(q * 2.3 + 4.0) * 0.35;
+
+  // Banded hard, so the filaments read as distinct bright threads with dark
+  // lanes between them. A plain fbm gives a continuous wash at any amplitude.
+  turb = pow(turb, 2.0) * 2.2;
 
   // Radial falloff, with the inner edge left sharp: material there is about to
-  // cross the ISCO, so a soft inner edge would be wrong.
-  float edge = smoothstep(R_OUT, R_OUT * 0.62, r) * smoothstep(R_ISCO, R_ISCO * 1.06, r);
-  float density = edge * (0.45 + 0.85 * turb);
+  // cross the ISCO, so a soft inner edge would be wrong. The outer taper starts
+  // early, which keeps the lit band a narrow ribbon rather than a broad wash.
+  float edge = smoothstep(R_OUT, R_OUT * 0.45, r) * smoothstep(R_ISCO, R_ISCO * 1.06, r);
+  float density = edge * (0.20 + 0.95 * turb);
   if (density <= 0.001) return vec3(0.0);
 
   // Keplerian speed in units of c. 0.41c at the ISCO, so the beaming asymmetry
@@ -169,8 +181,10 @@ vec3 diskSample(vec3 hit, float r, vec3 khat) {
   float grav = sqrt(max(1.0 - 1.0 / r, 0.0));
   float g = doppler * grav;
 
-  // Standard thin-disk profile, ~9000 K at the ISCO.
-  float tEmit = 9000.0 * pow(R_ISCO / r, 0.75);
+  // Standard thin-disk profile. 13000 K at the ISCO puts the inner disk white
+  // and lets the r^-3/4 falloff carry the outer edge down through peach, which
+  // is the colour range the eye reads as hot plasma rather than as fire.
+  float tEmit = 13000.0 * pow(R_ISCO / r, 0.75);
 
   // Intensity goes as g^4: Lorentz invariance of I/nu^3 plus the one-power
   // frequency shift. g or g^2 is the usual way this gets rendered wrong.
@@ -240,32 +254,57 @@ void main() {
     // in y. Not breaking on the first one is what shows the disk bent over the
     // top and under the bottom of the hole.
     if (pos.y * yPrev < 0.0 && alpha < 0.99) {
-      float f = yPrev / (yPrev - pos.y);
-      float uc = mix(uPrev, u, f);
+      // y(phi) = (cos(phi) e1.y + sin(phi) e2.y) / u(phi), so the crossing is
+      // where the bracket vanishes and the 1/u factor is irrelevant. That has a
+      // closed form: the bracket is a single sinusoid, zero at atan2(-e1.y, e2.y)
+      // modulo pi. Interpolating y linearly between two steps instead leaves an
+      // error that jumps whenever two neighbouring pixels cross on different
+      // step indices, which tiles the disk into flat-shaded blocks.
+      float phiZero = atan(-e1.y, e2.y);
+      // Fold that root into this step's bracket. floor() picks the branch, so
+      // the result is the crossing inside (phi - DPHI, phi] without a search.
+      float phic = phiZero + PI * ceil((phi - DPHI - phiZero) / PI);
+
+      float cc = cos(phic);
+      float sc = sin(phic);
+
+      // u at the crossing, from the same leapfrog state. The step is small and
+      // u is smooth in phi, so a linear read is accurate here; it is only y
+      // that needed the exact treatment, because y passes through zero and its
+      // relative error is unbounded there.
+      float fc = (phic - (phi - DPHI)) / DPHI;
+      float uc = mix(uPrev, u, fc);
       float rc = 1.0 / uc;
 
       if (rc > R_ISCO && rc < R_OUT) {
-        float phic = phi - DPHI * (1.0 - f);
-        float cc = cos(phic);
-        float sc = sin(phic);
         vec3 hit = (cc * e1 + sc * e2) / uc;
 
         // Photon direction at the hit, from d/dphi of (cos phi e1 + sin phi e2)/u.
         // Differencing two interpolated positions instead loses precision at the
         // small step size and puts a divide near zero in the path.
-        float duc = mix(du - DPHI * (-uc + 1.5 * uc * uc), du, f);
+        float duc = mix(du - DPHI * (-uc + 1.5 * uc * uc), du, fc);
         vec3 khat = normalize((-sc * e1 + cc * e2) / uc
                               - (cc * e1 + sc * e2) * duc / (uc * uc));
 
         vec3 emit = diskSample(hit, rc, khat);
-        // Front to back: the first crossing is nearest the camera.
+        // Front to back: the first crossing is nearest the camera. The opacity
+        // per crossing has to stay low enough that the second and third ones
+        // still come through: those are the n=1 lensing ring, which is the rim
+        // that actually reads as bright at the shadow edge (Gralla, Holz & Wald
+        // 2019 — the n>=2 photon ring proper diverges only logarithmically and
+        // contributes almost nothing to the flux).
         col += (1.0 - alpha) * emit;
-        alpha += (1.0 - alpha) * 0.62;
+        alpha += (1.0 - alpha) * 0.38;
       }
     }
     yPrev = pos.y;
   }
 
+  // A captured ray contributes nothing more: the horizon emits nothing, and the
+  // bright rim at the shadow edge is not a feature in its own right. It is the
+  // disk seen again through its own lensed higher-order images, so it is already
+  // in `col` from the crossings above, with the disk's colour and its Doppler
+  // asymmetry. Drawing a rim here instead is the standard way this gets faked.
   if (!captured) {
     // The escape direction, not the entry direction. This substitution is where
     // the deflection becomes visible. Same analytic tangent as the disk hit.
