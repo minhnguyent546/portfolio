@@ -133,5 +133,19 @@ const rssHref = getAssetPath("rss.xml");
     <script>
       import "@/scripts/theme";
     </script>
+
+    {
+      /* Production only, so a dev session or a local dist/ test does not count as a
+         visit. `is:inline` keeps Astro from bundling it: the tag must reach the
+         browser as written for GoatCounter to read its own data attribute. */
+      import.meta.env.PROD && (
+        <script
+          is:inline
+          async
+          data-goatcounter="https://minhnguyent546.goatcounter.com/count"
+          src="https://gc.zgo.at/count.js"
+        />
+      )
+    }
   </body>
 </html>
