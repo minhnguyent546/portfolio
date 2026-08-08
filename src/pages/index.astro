@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import IconLinkedin from "@/assets/icons/socials/linkedin.svg";
 import IconMail from "@/assets/icons/socials/mail.svg";
@@ -49,6 +49,14 @@ const articles = (await getCollection("articles")).sort(
 
 const posts = await getCollection("blog");
 const sortedPosts = dedupeTranslations(getSortedPosts(posts));
+
+// Section 01 renders the collection entry, so the prose has one home. tty3
+// reads the same entry for `about.txt`.
+const about = await getEntry("pages", "about");
+if (!about) {
+  throw new Error("Missing content entry: `about.md` in `src/content/pages/`");
+}
+const { Content: AboutContent } = await render(about);
 
 const sections = [
   { id: "about", label: "About" },
@@ -110,18 +118,7 @@ const contactRows = [
 
     <Section id="about" index="01" title="About">
       <div class="max-w-measure space-y-4">
-        <p>
-          I am an independent AI researcher working on natural language
-          processing and deep learning. My research interests are inference-time
-          scaling, symbolic reasoning, high-performance model serving, embedding
-          models, image-text retrieval for Vietnamese, optimal transport,
-          retrieval-augmented generation, and image classification.
-        </p>
-        <p>
-          Alongside that I keep a set of personal projects on distributed
-          training, TPU training, and retrieval-augmented generation for
-          multiple-choice question answering over complex documents.
-        </p>
+        <AboutContent />
       </div>
     </Section>
 

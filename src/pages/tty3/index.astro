@@ -37,7 +37,7 @@ const fs = buildFs({
   about: await getEntry("pages", "about"),
   routes: {
     home: getRelativeLocaleUrl(locale, ""),
-    about: getRelativeLocaleUrl(locale, "about"),
+    about: `${getRelativeLocaleUrl(locale, "")}#about`,
     blog: getRelativeLocaleUrl(locale, "blog"),
     tags: getRelativeLocaleUrl(locale, "tags"),
     search: getRelativeLocaleUrl(locale, "search"),
@@ -46,7 +46,6 @@ const fs = buildFs({
 });
 
 const homeUrl = getRelativeLocaleUrl(locale, "");
-const aboutUrl = getRelativeLocaleUrl(locale, "about");
 ---
 
 {
@@ -93,8 +92,7 @@ const aboutUrl = getRelativeLocaleUrl(locale, "about");
     <noscript>
       <p class="mt-4">
         This page is a simulated terminal and needs JavaScript. The same content
-        is on the <a href={homeUrl}>home page</a> and the
-        <a href={aboutUrl}>about page</a>.
+        is on the <a href={homeUrl}>home page</a>.
       </p>
     </noscript>
   </main>

@@ -44,6 +44,10 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 - `/` — single scannable homepage with sticky anchor nav.
   Section order: **Hero → About → News → Publications → Competitions → Projects → Writing → Contact**
 - `/blog/…` — routed blog posts (Markdown/MDX, math + code support)
+- **No `/about` route (2026-08-08).** It held the same prose as section 01 under a
+  second URL, which showed as two About rows in the palette. Section 01 renders
+  `src/content/pages/about.md`, so the prose has one home and tty3 keeps reading the
+  same entry for `about.txt`.
 - `/papers/viclip-ot`, `/papers/soups` — per-paper Nerfies-style project pages
   (based on eliahuhorwitz/Academic-project-page-template design, rebuilt in Astro)
 - `/cv` or direct PDF link — CV as PDF (no HTML CV page for v1)
