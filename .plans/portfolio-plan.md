@@ -531,8 +531,10 @@ Source Serif 4 is 0.475.
 6. **Per-paper pages** — ViCLIP-OT and soups Nerfies-style pages. A paper page needs a
    preprint, so ViREx-Bench stays a project until one exists.
 7. **Features** — Pagefind, view transitions, OG images, and sitemap are done. The ⌘K
-   palette landed 2026-08-06 (see §4). Open: `Person` JSON-LD, which no page emits;
-   a full-content RSS feed; and GoatCounter.
+   palette landed 2026-08-06 (see §4). `Person` JSON-LD ships on the homepage alone
+   (2026-08-08): `PersonSchema.astro` builds it from the config, so `sameAs` and `email`
+   track the socials with no second source. Open: a full-content RSS feed; and
+   GoatCounter.
 8. **Ship** — GitHub Pages deploy (Actions + custom domain DNS), Lighthouse/a11y pass,
    cross-device QA. *Done 2026-08-06.* The site serves on the apex, `www` redirects to
    it, and HTTPS is enforced. Lighthouse scores 98–100 across all four categories, and
