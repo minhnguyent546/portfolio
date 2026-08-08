@@ -70,6 +70,9 @@ export default {
     projects: "Projects",
     pages: "Pages",
     inPosts: "In posts",
+    navigate: "Navigate",
+    select: "Select",
+    close: "Close",
   },
   a11y: {
     skipToContent: "Skip to content",

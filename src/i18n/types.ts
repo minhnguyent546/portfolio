@@ -72,6 +72,9 @@ export interface UIStrings {
     pages: string;
     /** Heading for the full-text matches Pagefind returns. */
     inPosts: string;
+    navigate: string;
+    select: string;
+    close: string;
   };
   a11y: {
     skipToContent: string;

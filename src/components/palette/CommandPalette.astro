@@ -87,11 +87,43 @@ const escape = (value: unknown) =>
     id="palette-list"
     role="listbox"
     aria-label={t.palette.label}
-    class="max-h-[min(24rem,60vh)] overflow-y-auto pb-2"
+    class="max-h-[min(24rem,60vh)] overflow-y-auto py-2"
   >
   </ul>
   <p id="palette-empty" hidden class="px-4 py-6 text-ink-muted"></p>
+  <footer
+    class="flex items-center gap-x-4 border-t border-rule px-4 py-2 text-meta text-ink-muted"
+  >
+    <span class="flex items-center gap-x-1.5">
+      <kbd>↑</kbd>
+      <kbd>↓</kbd>
+      {t.palette.navigate}
+    </span>
+    <span class="flex items-center gap-x-1.5">
+      <kbd>↵</kbd>
+      {t.palette.select}
+    </span>
+    <span class="ms-auto flex items-center gap-x-1.5">
+      <kbd>esc</kbd>
+      {t.palette.close}
+    </span>
+  </footer>
 </dialog>
+
+<style>
+  footer kbd {
+    display: inline-flex;
+    min-width: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 0.125rem 0.375rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+  }
+</style>
 
 <style is:global>
   /* The user agent fills <mark> with yellow, which the accent replaces.
@@ -115,13 +147,24 @@ const escape = (value: unknown) =>
   // A 420-byte module whose only job is to wait. The palette itself is a
   // separate chunk that no page fetches until one of these listeners fires.
   let loading: Promise<typeof import("@/scripts/palette")> | null = null;
+  // The chunk arrives a moment after the shortcut, and Escape in that gap
+  // reaches no dialog, because none is open yet. Without this the panel opens
+  // after the visitor has already dismissed it.
+  let cancelled = false;
 
   function openPalette() {
+    cancelled = false;
     loading ??= import("@/scripts/palette");
-    void loading.then(module => module.open());
+    void loading.then(module => {
+      if (!cancelled) module.open();
+    });
   }
 
   addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      cancelled = true;
+      return;
+    }
     if (event.key !== "k" || !(event.metaKey || event.ctrlKey)) return;
     event.preventDefault();
     openPalette();

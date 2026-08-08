@@ -66,6 +66,9 @@ export default {
     projects: "Dự án",
     pages: "Trang",
     inPosts: "Trong bài viết",
+    navigate: "Di chuyển",
+    select: "Chọn",
+    close: "Đóng",
   },
   a11y: {
     skipToContent: "Chuyển đến nội dung",
