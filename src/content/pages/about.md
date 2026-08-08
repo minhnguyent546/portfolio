@@ -14,7 +14,6 @@ retrieval-augmented generation for multiple-choice question answering over
 complex documents.
 
 I am familiar with concepts in algorithmic competitions. I wrote two articles for
-VNOI Magazine: virtual trees in 2024, and techniques with the XOR operation in 2023. I was a problem setter and tester for the CICT Collegiate Programming
+[VNOI Magazine](https://oj.vnoi.info/magazine/): virtual trees in 2024, and techniques with the XOR operation in 2023. I was a problem setter and tester for the CICT Collegiate Programming
 Contest at Can Tho University in 2025, and for the CICT selection contests for
-the Vietnam Student Olympiad in Informatics in 2024 and 2025. I wrote the
-problems, the reference solutions, and the test data.
+the Vietnam Student Olympiad in Informatics in 2024 and 2025.
