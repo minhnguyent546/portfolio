@@ -14,6 +14,7 @@ import ProjectRow from "@/components/home/ProjectRow.astro";
 import PublicationRow from "@/components/home/PublicationRow.astro";
 import Section from "@/components/home/Section.astro";
 import SectionNav from "@/components/home/SectionNav.astro";
+import PersonSchema from "@/components/PersonSchema.astro";
 import config from "@/config";
 import Layout from "@/layouts/Layout.astro";
 import { formatDate } from "@/utils/formatDate";
@@ -93,6 +94,7 @@ const contactRows = [
 ---
 
 <Layout class="app-wide">
+  <PersonSchema slot="head" />
   <BootSequence
     postCount={sortedPosts.length}
     tagCount={getUniqueTags(posts).length}

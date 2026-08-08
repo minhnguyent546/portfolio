@@ -1,0 +1,40 @@
+---
+import avatar from "@/assets/images/avatar.jpg";
+import config from "@/config";
+
+const { site, socials } = config;
+
+const mail = socials.find(s => s.name === "mail");
+const sameAs = socials.filter(s => s.name !== "mail").map(s => s.url);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.author,
+  url: site.profile ?? site.url,
+  image: new URL(avatar.src, Astro.site ?? site.url).href,
+  jobTitle: "AI Researcher",
+  description: site.description,
+  ...(mail && { email: mail.url.replace(/^mailto:/, "") }),
+  // Verbatim from the homepage About prose; keep the two in step.
+  knowsAbout: [
+    "Natural language processing",
+    "Deep learning",
+    "Inference-time scaling",
+    "Symbolic reasoning",
+    "High-performance model serving",
+    "Image-text retrieval for Vietnamese",
+    "Optimal transport",
+    "Retrieval-augmented generation",
+    "Image classification",
+  ],
+  sameAs,
+};
+
+const structuredDataJson = JSON.stringify(structuredData).replaceAll(
+  "<",
+  "\\u003c"
+);
+---
+
+<script type="application/ld+json" is:inline set:html={structuredDataJson} />
