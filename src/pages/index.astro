@@ -119,13 +119,13 @@ const contactRows = [
   <main id="main-content" data-layout="index" data-home-path={homePath}>
     <Hero />
 
-    <Section id="about" index="01" title="About">
+    <Section id="about" title="About">
       <div class="max-w-measure space-y-4">
         <AboutContent />
       </div>
     </Section>
 
-    <Section id="news" index="02" title="News">
+    <Section id="news" title="News">
       <ol class="divide-y divide-rule border-y border-rule">
         {
           news.map(({ data: { date, text, links } }) => {
@@ -151,7 +151,6 @@ const contactRows = [
 
     <Section
       id="publications"
-      index="03"
       title="Publications"
       note="Preprints and journal papers. Author lists are as submitted."
     >
@@ -161,19 +160,18 @@ const contactRows = [
       <p class="mt-3 text-meta text-ink-muted">* Equal contribution.</p>
     </Section>
 
-    <Section id="competitions" index="04" title="Competitions">
+    <Section id="competitions" title="Competitions">
       <div class="divide-y divide-rule border-y border-rule">
         {competitions.map(entry => <CompetitionRow {entry} />)}
       </div>
     </Section>
 
-    <Section id="experience" index="05" title="Experience">
+    <Section id="experience" title="Experience">
       <Experience entries={experience} />
     </Section>
 
     <Section
       id="projects"
-      index="06"
       title="Projects"
       note="Personal work, framed around the engineering decision each one turned on."
     >
@@ -182,7 +180,7 @@ const contactRows = [
       </div>
     </Section>
 
-    <Section id="writing" index="07" title="Writing">
+    <Section id="writing" title="Writing">
       {
         sortedPosts.length > 0 && (
           <ol class="divide-y divide-rule border-y border-rule">
@@ -257,7 +255,7 @@ const contactRows = [
       </p>
     </Section>
 
-    <Section id="contact" index="08" title="Contact">
+    <Section id="contact" title="Contact">
       <ul class="flex flex-col gap-y-1">
         {
           contactRows.map(({ Icon, href, text, srSuffix, mono }) => {
