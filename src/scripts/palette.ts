@@ -45,6 +45,7 @@ const GROUPS: (PaletteGroup | "inPosts")[] = [
   "post",
   "publication",
   "competition",
+  "experience",
   "project",
   "page",
   "inPosts",

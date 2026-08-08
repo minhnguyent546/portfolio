@@ -27,6 +27,7 @@ const published = ({ data }: { data: { draft: boolean } }) => !data.draft;
 const fs = buildFs({
   publications: (await getCollection("publications", published)).sort(byOrder),
   competitions: (await getCollection("competitions", published)).sort(byOrder),
+  experience: (await getCollection("experience", published)).sort(byOrder),
   projects: (await getCollection("projects", published)).sort(byOrder),
   news: (await getCollection("news")).sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime()

@@ -1,8 +1,8 @@
 ---
 title: pre-training-gpt2
-summary: An end-to-end workflow for pre-training GPT-2 from scratch, targeting
-  XLA-enabled devices through PyTorch/XLA so the same code path runs on both
-  CUDA and TPU.
+summary: Pre-trained a 124M GPT-2 from scratch on a TPUv3-8, reaching perplexity
+  ~21.02 — ahead of OpenAI's original checkpoints — through one PyTorch/XLA code
+  path that runs on both CUDA and TPU.
 stack:
   - Python
   - PyTorch

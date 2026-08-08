@@ -1,0 +1,98 @@
+---
+/**
+ * Experience: a vertical timeline of roles, one floating card per entry. Each
+ * card carries the role as its title, the organization as the subtitle, the
+ * period in mono beneath, then the focused highlights. A hairline stem joins
+ * the nodes; the dot is filled for the current role and an open ring for past
+ * ones. The card lifts on hover.
+ *
+ * Awards and education are short, fixed content, so they live in code rather
+ * than in a collection of their own. Awards still enter the ⌘K palette, so they
+ * share the `awards` data module with the search index.
+ */
+import type { CollectionEntry } from "astro:content";
+import { awards } from "@/data/awards";
+
+type Props = { entries: CollectionEntry<"experience">[] };
+
+const { entries } = Astro.props;
+
+// Grouped by year so one year's prizes sit under a single node.
+const byYear = new Map<number, string[]>();
+for (const { year, title } of awards) {
+  byYear.set(year, [...(byYear.get(year) ?? []), title]);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+
+<div class="min-w-0">
+  <ol class="relative space-y-4 border-s border-rule">
+    {
+      entries.map(entry => (
+        <li class="relative ps-8">
+          <span
+            aria-hidden="true"
+            class:list={[
+              // Filled for the role that is still running, an open ring for the
+              // ones that ended. Both centre on the stem at the role line.
+              "absolute -start-px top-1/2 size-6.75 -translate-x-1/2 -translate-y-1/2 rounded-full",
+              entry.data.current
+                ? "bg-accent"
+                : "border-2 border-accent bg-paper-alt",
+            ]}
+          />
+          <article class="rounded-lg border border-rule bg-surface p-5 transition-[translate,border-color,box-shadow,background-color] duration-[364ms] ease-in-out hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md">
+            <p class="text-h3 font-semibold text-ink-heading">
+              {entry.data.role}
+            </p>
+            <p class="mt-0.5 text-body font-medium text-ink-heading">
+              {entry.data.organization}
+              {entry.data.orgNote && <> · {entry.data.orgNote}</>}
+            </p>
+            <p class="mt-1 font-mono text-meta text-ink-muted tabular-nums">
+              {entry.data.period}
+            </p>
+            {entry.data.highlights.length > 0 && (
+              <ul class="mt-3 max-w-measure list-disc space-y-1 ps-4 marker:text-ink-muted">
+                {entry.data.highlights.map(highlight => (
+                  <li>{highlight}</li>
+                ))}
+              </ul>
+            )}
+          </article>
+        </li>
+      ))
+    }
+  </ol>
+
+  <h3 class="mt-10 font-mono text-h3 text-ink-heading">Awards</h3>
+  <ul class="relative mt-3 border-s border-rule">
+    {
+      years.map(year => (
+        <li class="relative ps-8 pb-5 last:pb-0">
+          <span
+            aria-hidden="true"
+            class="absolute -start-px top-[0.14rem] size-4.5 -translate-x-1/2 rounded-full border-2 border-accent bg-paper-alt"
+          />
+          <p class="font-mono text-meta text-ink-muted tabular-nums">{year}</p>
+          {byYear.get(year)!.map(title => (
+            <p class="mt-0.5 text-meta text-ink">{title}</p>
+          ))}
+        </li>
+      ))
+    }
+  </ul>
+
+  <h3 class="mt-10 font-mono text-h3 text-ink-heading">Education</h3>
+  <p class="mt-3 max-w-measure text-body text-ink">
+    Engineer's degree, Information Technology, Can Tho University
+    <span class="text-ink-muted"> · GPA 3.91/4.0 · TOEIC 845</span>
+  </p>
+  <p class="mt-2 max-w-measure text-body text-ink">
+    Thesis: <em
+      >Building a Smart Enrollment Advisory System Based on an Automatic
+      Dialogue Model</em
+    >
+    <span class="text-ink-muted"> · grade 9.6/10</span>
+  </p>
+</div>
