@@ -3,6 +3,11 @@
  * In-page index for the homepage sections. Sticks under the masthead so the
  * eight sections stay reachable while scrolling.
  *
+ * The numerals repeat the one in each section's heading rail, which is what
+ * separates this strip from the masthead above it: a numbered row reads as a
+ * table of contents, not as a second site menu. They come from array position,
+ * which the scroll spy below already requires to match DOM order.
+ *
  * `scroll-padding-top` in global.css matches the height of this strip; change
  * one and the anchor jumps land under the other.
  */
@@ -19,16 +24,24 @@ const { items } = Astro.props;
   class="sticky top-0 z-30 border-b border-rule bg-paper/90 backdrop-blur-sm"
 >
   <ul
-    class="app-layout flex snap-x [scrollbar-width:none] gap-x-5 overflow-x-auto py-3 whitespace-nowrap [&::-webkit-scrollbar]:hidden"
+    class="app-layout flex snap-x scroll-px-4 [scrollbar-width:none] gap-x-5 overflow-x-auto py-3 whitespace-nowrap [&::-webkit-scrollbar]:hidden"
   >
     {
-      items.map(({ id, label }) => (
+      items.map(({ id, label }, i) => (
         <li class="snap-start">
           <a
             href={`#${id}`}
-            class="inline-block py-1 text-ink-muted underline decoration-transparent underline-offset-4 hover:text-accent hover:decoration-current aria-[current]:text-accent aria-[current]:decoration-current"
+            class="group inline-flex items-baseline gap-1.5 py-1 text-ink-muted hover:text-accent aria-[current]:text-accent"
           >
-            {label}
+            <span
+              aria-hidden="true"
+              class="font-mono text-[0.6875rem] tracking-[0.1em] tabular-nums opacity-60 group-aria-[current]:opacity-100"
+            >
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span class="underline decoration-transparent underline-offset-4 group-hover:decoration-current group-aria-[current]:decoration-current">
+              {label}
+            </span>
           </a>
         </li>
       ))
