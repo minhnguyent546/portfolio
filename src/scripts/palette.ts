@@ -347,7 +347,7 @@ function windowToMark(
  * query starts at the top instead, the way a fresh list should.
  */
 function render(keep = false) {
-  const chosen = keep ? rows[active]?.url : undefined;
+  const chosen = keep ? rows[active] : undefined;
   list?.replaceChildren();
 
   if (rows.length === 0) {
@@ -369,9 +369,13 @@ function render(keep = false) {
   })).filter(({ inGroup }) => inGroup.length > 0);
   rows = grouped.flatMap(({ inGroup }) => inGroup);
 
-  // Follow the chosen row into its new position. A row that the new results
-  // dropped falls back to the top, which is where a fresh query starts anyway.
-  const at = chosen ? rows.findIndex(row => row.url === chosen) : -1;
+  // Follow the chosen row into its new position. Match by identity, not URL:
+  // the section rows all share one anchor (`#projects`, `#publications`), so a
+  // URL match would snap to the first of them. The static rows survive the
+  // late Pagefind push as the same objects, and the regroup keeps the refs.
+  // A row that the new results dropped falls back to the top, which is where a
+  // fresh query starts anyway.
+  const at = chosen ? rows.indexOf(chosen) : -1;
   active = at < 0 ? 0 : at;
 
   let index = 0;
