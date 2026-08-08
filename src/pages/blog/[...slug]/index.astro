@@ -135,7 +135,7 @@ const ogImage = ogImageUrl
   >
     <h1
       style={{ viewTransitionName: toTransitionName(title) }}
-      class="inline-block font-bold text-accent"
+      class="inline-block font-medium text-accent"
     >
       {title}
     </h1>
@@ -202,6 +202,10 @@ const ogImage = ogImageUrl
 
 <script is:inline data-astro-rerun>
   function createProgressBar() {
+    // A scroll-position read is motion; skip it entirely for reduced-motion
+    // readers instead of animating behind their backs.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const progressContainer = document.createElement("div");
     progressContainer.className =
       "progress-container fixed top-0 z-10 h-1 w-full bg-paper";
@@ -216,20 +220,30 @@ const ogImage = ogImageUrl
   createProgressBar();
 
   function updateScrollProgress() {
-    document.addEventListener("scroll", () => {
+    // Throttle the width write to one paint per scroll, not one per event.
+    let ticking = false;
+    const draw = () => {
       const winScroll =
         document.body.scrollTop || document.documentElement.scrollTop;
       const height =
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      if (document) {
-        const myBar = document.getElementById("myBar");
-        if (myBar) {
-          myBar.style.width = scrolled + "%";
-        }
+      const myBar = document.getElementById("myBar");
+      if (myBar) {
+        myBar.style.width = (winScroll / height) * 100 + "%";
       }
-    });
+      ticking = false;
+    };
+    document.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(draw);
+        }
+      },
+      { passive: true }
+    );
   }
   updateScrollProgress();
 
