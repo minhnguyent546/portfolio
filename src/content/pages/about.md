@@ -13,13 +13,9 @@ I also build personal projects on distributed training, TPU training, and
 retrieval-augmented generation for multiple-choice question answering over
 complex documents.
 
-Most of this work is algorithmic. I come to it from competitive programming,
-where I spent years on complexity bounds, data structures, and exact
-implementations.
-
-I still work in that field, now as a writer and a problem setter. I wrote two
-articles for VNOI Magazine: virtual trees in 2024, and techniques with the XOR
-operation in 2023. I set and tested problems for the CICT Collegiate Programming
+I am familiar with the algorithms and data structures that competitive
+programming uses, and I took part in various contests. I wrote two articles for
+VNOI Magazine: virtual trees in 2024, and techniques with the XOR operation in 2023. I was a problem setter and tester for the CICT Collegiate Programming
 Contest at Can Tho University in 2025, and for the CICT selection contests for
 the Vietnam Student Olympiad in Informatics in 2024 and 2025. I wrote the
 problems, the reference solutions, and the test data.
