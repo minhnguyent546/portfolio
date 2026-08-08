@@ -10,24 +10,17 @@ import type { HTMLAttributes } from "astro/types";
 
 type Props = {
   id: string;
-  /** Two digits, shown above the heading in the rail. */
-  index: string;
   title: string;
   /** Sits under the heading in the rail, at meta size. */
   note?: string;
 } & HTMLAttributes<"section">;
 
-const { id, index, title, note, class: className, ...attrs } = Astro.props;
+const { id, title, note, class: className, ...attrs } = Astro.props;
 ---
 
 <section id={id} class:list={["band", className]} {...attrs}>
   <div class="app-layout grid gap-x-10 gap-y-5 py-14 lg:grid-cols-12">
     <header class="lg:col-span-4 lg:pe-8">
-      <p
-        class="font-mono text-meta tracking-[0.18em] text-ink-muted tabular-nums"
-      >
-        {index}
-      </p>
       <h2 class="mt-1 wrap-anywhere text-ink-heading">{title}</h2>
       {
         note && (

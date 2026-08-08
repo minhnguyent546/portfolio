@@ -82,4 +82,14 @@
   ::view-transition-new(*) {
     animation: none !important;
   }
+
+  /* Collapse every transition and animation to an instant step. This covers
+     the hover tilts, the tooltip slide, and the back-to-top glide in one rule;
+     state changes still happen, just without motion. */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

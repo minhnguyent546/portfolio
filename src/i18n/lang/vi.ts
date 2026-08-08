@@ -62,6 +62,7 @@ export default {
     posts: "Bài viết",
     publications: "Công bố",
     competitions: "Cuộc thi",
+    experience: "Kinh nghiệm",
     projects: "Dự án",
     pages: "Trang",
     inPosts: "Trong bài viết",

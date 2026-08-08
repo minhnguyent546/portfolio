@@ -112,11 +112,34 @@ const projects = defineCollection({
     summary: z.string(),
     /** Languages, frameworks, and hardware targets shown as chips. */
     stack: z.array(z.string()).default([]),
+    /** Extra search terms, matched in the palette but never shown. */
+    aliases: z.array(z.string()).default([]),
     repo: z.url().optional(),
     links: linkList.default([]),
     order: z.number(),
     /** Gives the project its own page in Phase 6. */
     featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
+const experience = defineCollection({
+  loader: glob({
+    pattern: "**/[^_]*.{md,mdx}",
+    base: "./src/content/experience",
+  }),
+  schema: z.object({
+    role: z.string(),
+    organization: z.string(),
+    /** Second line under the organization, e.g. the collaboration context. */
+    orgNote: z.string().optional(),
+    /** Display range, e.g. "08/2025 – present". Month precision, no fabricated day. */
+    period: z.string(),
+    /** True for the one role still running; the timeline marks it with a filled dot. */
+    current: z.boolean().default(false),
+    /** Short, focused achievements. One topic each. */
+    highlights: z.array(z.string()).default([]),
+    order: z.number(),
     draft: z.boolean().default(false),
   }),
 });
@@ -147,6 +170,7 @@ export const collections = {
   pages,
   publications,
   competitions,
+  experience,
   projects,
   news,
   articles,

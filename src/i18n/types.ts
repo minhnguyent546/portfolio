@@ -67,6 +67,7 @@ export interface UIStrings {
     posts: string;
     publications: string;
     competitions: string;
+    experience: string;
     projects: string;
     pages: string;
     /** Heading for the full-text matches Pagefind returns. */

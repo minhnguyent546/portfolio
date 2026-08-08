@@ -13,6 +13,7 @@
   h5,
   h6 {
     font-family: var(--font-display);
+    font-weight: 500;
     text-wrap: balance;
     line-height: 1.2;
   }
@@ -50,7 +51,7 @@
     h3,
     h4,
     th {
-      @apply mb-3 text-ink-heading;
+      @apply mb-3 font-medium text-ink-heading;
     }
 
     /* The `prose` plugin ships its own sizes; defer to the fluid scale. */

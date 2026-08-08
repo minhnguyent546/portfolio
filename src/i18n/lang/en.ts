@@ -66,6 +66,7 @@ export default {
     posts: "Posts",
     publications: "Publications",
     competitions: "Competitions",
+    experience: "Experience",
     projects: "Projects",
     pages: "Pages",
     inPosts: "In posts",

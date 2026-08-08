@@ -3,11 +3,6 @@
  * In-page index for the homepage sections. Sticks under the masthead so the
  * eight sections stay reachable while scrolling.
  *
- * The numerals repeat the one in each section's heading rail, which is what
- * separates this strip from the masthead above it: a numbered row reads as a
- * table of contents, not as a second site menu. They come from array position,
- * which the scroll spy below already requires to match DOM order.
- *
  * `scroll-padding-top` in global.css matches the height of this strip; change
  * one and the anchor jumps land under the other.
  */
@@ -27,18 +22,12 @@ const { items } = Astro.props;
     class="app-layout flex snap-x scroll-px-4 [scrollbar-width:none] gap-x-5 overflow-x-auto py-3 whitespace-nowrap [&::-webkit-scrollbar]:hidden"
   >
     {
-      items.map(({ id, label }, i) => (
+      items.map(({ id, label }) => (
         <li class="snap-start">
           <a
             href={`#${id}`}
-            class="group inline-flex items-baseline gap-1.5 py-1 text-ink-muted hover:text-accent aria-[current]:text-accent"
+            class="group inline-flex py-1 text-ink-muted hover:text-accent aria-[current]:text-accent"
           >
-            <span
-              aria-hidden="true"
-              class="font-mono text-[0.6875rem] tracking-[0.1em] tabular-nums opacity-60 group-aria-[current]:opacity-100"
-            >
-              {String(i + 1).padStart(2, "0")}
-            </span>
             <span class="underline decoration-transparent underline-offset-4 group-hover:decoration-current group-aria-[current]:decoration-current">
               {label}
             </span>

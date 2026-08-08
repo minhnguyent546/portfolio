@@ -42,6 +42,7 @@ const bodyLines = (body: string | undefined) => {
 export function buildFs(content: {
   publications: CollectionEntry<"publications">[];
   competitions: CollectionEntry<"competitions">[];
+  experience: CollectionEntry<"experience">[];
   projects: CollectionEntry<"projects">[];
   news: CollectionEntry<"news">[];
   articles: CollectionEntry<"articles">[];
@@ -94,6 +95,18 @@ export function buildFs(content: {
       data.summary.trim(),
       ...bodyLines(body),
       ...linkLines(data.links),
+    ]);
+  }
+
+  for (const { id, data } of content.experience) {
+    files[`${HOME}/experience/${id}.txt`] = block([
+      data.role,
+      "",
+      `Organization:  ${data.organization}`,
+      data.orgNote !== undefined && `               ${data.orgNote}`,
+      `Period:        ${data.period}`,
+      "",
+      ...data.highlights,
     ]);
   }
 

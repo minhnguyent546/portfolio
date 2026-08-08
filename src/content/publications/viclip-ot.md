@@ -2,10 +2,10 @@
 title: "ViCLIP-OT: The First Foundation Vision-Language Model for Vietnamese Image-Text Retrieval with Optimal Transport"
 shortTitle: ViCLIP-OT
 authors:
-  - Quoc-Khang Tran
-  - Minh-Thien Nguyen
+  - Quoc-Khang Tran*
+  - Minh-Thien Nguyen*
   - Nguyen-Khang Pham
-venue: Preprint, submitted to The Visual Computer
+venue: Under review at The Visual Computer
 date: 2026-02-26
 arxivId: "2602.22678"
 links:

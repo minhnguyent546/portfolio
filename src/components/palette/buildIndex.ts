@@ -1,4 +1,5 @@
 import type { CollectionEntry } from "astro:content";
+import { awards } from "@/data/awards";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { dedupeTranslations, getTranslation } from "@/utils/getTranslation";
 
@@ -23,7 +24,7 @@ export type PaletteEntry = {
 };
 
 export type PaletteGroup =
-  "post" | "publication" | "competition" | "project" | "page";
+  "post" | "publication" | "competition" | "experience" | "project" | "page";
 
 /** A homepage section, keyed by the anchor it scrolls to. */
 type Section = { id: string; label: string };
@@ -35,6 +36,7 @@ export function buildIndex(content: {
   posts: CollectionEntry<"blog">[];
   publications: CollectionEntry<"publications">[];
   competitions: CollectionEntry<"competitions">[];
+  experience: CollectionEntry<"experience">[];
   projects: CollectionEntry<"projects">[];
   sections: Section[];
   /** Prepended with the homepage path to make each section anchor. */
@@ -90,13 +92,35 @@ export function buildIndex(content: {
     });
   }
 
+  for (const { data } of content.experience) {
+    entries.push({
+      t: data.role,
+      d: data.organization,
+      k: "experience",
+      u: `${content.homeUrl}#experience`,
+      a: `${data.period} ${data.orgNote ?? ""} ${data.highlights.join(" ")}`,
+    });
+  }
+
+  // The awards have no rows of their own, so they ride the Experience group
+  // and keep the same anchor. A search for "Super Cup" or "ICPC" then lands
+  // on the section instead of a full-text hit that opens at the page top.
+  for (const award of awards) {
+    entries.push({
+      t: award.title,
+      d: String(award.year),
+      k: "experience",
+      u: `${content.homeUrl}#experience`,
+    });
+  }
+
   for (const { data } of content.projects) {
     entries.push({
       t: data.title,
       d: data.summary,
       k: "project",
       u: `${content.homeUrl}#projects`,
-      a: data.stack.join(" "),
+      a: [...data.stack, ...data.aliases].join(" "),
     });
   }
 

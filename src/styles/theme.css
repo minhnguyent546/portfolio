@@ -49,7 +49,7 @@
   --ink-warn: #a3382a;
   --ink-ok: #24603a;
   --surface: #eeece5;
-  --rule: #e6e3dc;
+  --rule: #dcd8d0;
 }
 
 /* Dark theme values */
@@ -66,5 +66,5 @@
   --ink-warn: #e08c74;
   --ink-ok: #7fc79b;
   --surface: #26262d;
-  --rule: #2a2a30;
+  --rule: #34343c;
 }

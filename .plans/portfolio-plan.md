@@ -42,7 +42,8 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 **Hybrid single-page + routed long-form:**
 
 - `/` — single scannable homepage with sticky anchor nav.
-  Section order: **Hero → About → News → Publications → Competitions → Projects → Writing → Contact**
+  Section order: **Hero → About → News → Publications → Competitions → Experience → Projects → Writing → Contact**
+  (Experience added 2026-08-09, between Competitions and Projects — see §3.)
 - `/blog/…` — routed blog posts (Markdown/MDX, math + code support)
 - **No `/about` route (2026-08-08).** It held the same prose as section 01 under a
   second URL, which showed as two About rows in the palette. Section 01 renders
@@ -169,6 +170,12 @@ Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-0
 `.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
 sets sizes that win over the base layer, so without that one line the reading pages
 stay at 16 px while the rest of the site grows.
+**Heading weight is 500 site-wide (2026-08-09).** The base layer sets
+`h1–h6 { font-weight: 500 }` and `.app-prose` overrides the typography plugin's 700.
+The hero name stays 600 (a deliberate display moment, per the 2026-08-09 audit). Sub-heads
+that label technical blocks — project titles, "VNOI Magazine", "Awards" — use JetBrains Mono.
+The footer drops the repeated hero social row for a quiet colophon, and `--rule` was darkened
+to ~1.6:1 so container borders read as intentional.
 
 ### Layout
 
@@ -202,6 +209,20 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
     Transport. arXiv 2602.22678 · code.
   - **soups** — model soups for Mekong Delta intangible-cultural-heritage image
     classification. arXiv 2603.02181 · code.
+  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational
+    QA. arXiv 2607.14735 · code. Added 2026-08-09.
+  - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
+- **Experience** (added 2026-08-09): a `src/content/experience/` collection rendered as
+  floating cards on a timeline (role title, org subtitle in full ink, period in mono,
+  1–2 highlights; hover lifts the card). Cards sit on `--surface` so they read against the
+  `--paper-alt` band; the timeline dot is filled for the current role and an open ring for
+  past ones. Awards group by year into a matching mini timeline, share a `src/data/awards.ts`
+  module with the ⌘K palette (search "Super Cup" lands on `#experience`), and the education
+  block adds the thesis title + grade 9.6/10. The section lives at index 05,
+  wired through the section nav, ⌘K palette, and tty3 `~/experience/`. Role label unified
+  to **AI Researcher** across hero, About, config, and the CV (2026-08-08 build).
+- **Project summaries** now carry one number + the engineering decision each turned on
+  (GPT-2 perplexity ~21.02, SEAS MRR 0.18→0.70, MCQA 91.2%/4×, medical-llama2 QLoRA).
 - **Competitions** (own section; precise, verifiable claims with leaderboard links):
   - **EXACT 2026** (IEEE IJCNN) — *highest technical score 13.44/15, 3rd overall*,
     announced 2026-06-25. Code · tech report (arXiv 2607.14735) · leaderboard. The
@@ -271,7 +292,7 @@ Source Serif 4 is 0.475.
 | Icons | **unplugin-icons** + `@iconify-json/lucide` (UI) + `@iconify-json/simple-icons` (brands) | Simple Icons covers most brand marks. The Google Scholar mark is a vendored Academicons SVG under SIL OFL 1.1. Native `.svg` imports load custom marks. **`astro-icon` is abandoned — do not use.** |
 | Tooltips | **CSS-only, local to the first use** | Keep the social tooltip in `Socials.astro` while it is the only use. When a second use appears, extract `Tooltip.astro` with start, center, and end alignment. Keep it free of runtime JavaScript. Add Floating UI only if automatic collision handling or portals become necessary. |
 | Search | **Pagefind 1.5** via `astro-pagefind` | Static, indexes built HTML, lazy chunked index. `data-pagefind-body` on articles. |
-| ⌘K palette | **Hand-rolled vanilla island** over a build-time index, with Pagefind for post bodies | **Done (2026-08-06).** `data-pagefind-body` sits on the post route alone, so Pagefind can see 2 pages of 12 and finds no publication, project, or section. The palette therefore carries its own JSON index (23 rows, 1.6KB gz), inlined as `application/json` on every page, and loads Pagefind core (12.8KB gz, not the 29.6KB UI) only when a query reaches 3 characters. Each row also indexes the fields it does not display — a paper's full title, authors, and abstract, a competition's summary, a project's stack, a post's tags — because searching only the two shown fields missed "CoTu", which appears in the summary alone. A row that matches on one of those appends the matched span to its detail line, so it always shows why it is listed, and a match late in a long line slides into view rather than sitting past the ellipsis. Matching runs inside words, since "auxi" has to find "Auxiliary" as the visitor types; word-start matches are ranked above interior ones so "ot" finds ViCLIP-OT before "chatbot". A translated pair contributes one row; the dropped title rides along in the same hidden field so a Vietnamese query still matches. The bootstrap costs 2 eager requests (1.1KB gz) because Astro externalizes any `<script>` that holds an import, and Vite adds its preload helper. `<dialog>` + `showModal()` gives the focus trap, the top layer, and Escape. Escape needs three parts, because the native path alone did not hold. The keydown handler on the input calls `close()` itself: the `cancel` event never arrived in one real Chrome session, although the keydown did, which is what an extension that binds Escape at the browser level does. `closedby="any"` states the intent to the browser. The bootstrap holds a cancel flag, since Escape in the gap between the shortcut and the lazy chunk reaches no dialog and the panel would open after the visitor dismissed it. A footer names the four keys, because a palette that opens on a shortcut has to say how to leave. Rejected: cmdk (drags React), ninja-keys/astro-command-palette (dead). |
+| ⌘K palette | **Hand-rolled vanilla island** over a build-time index, with Pagefind for post bodies | **Done (2026-08-06).** `data-pagefind-body` sat on the post route alone (Pagefind saw 2 pages of 12) until 2026-08-09, when it moved onto the homepage `<main>` (Pagefind saw 3 pages). Homepage full-text was reverted the same day: it surfaced snippets in the palette whose URL was `/`, so selecting them jumped to the page top. The build-time index now carries every homepage section — including the Awards, which share `src/data/awards.ts` — so full-text stays on post bodies. The palette therefore carries its own JSON index (23 rows, 1.6KB gz), inlined as `application/json` on every page, and loads Pagefind core (12.8KB gz, not the 29.6KB UI) only when a query reaches 3 characters. Each row also indexes the fields it does not display — a paper's full title, authors, and abstract, a competition's summary, a project's stack, a post's tags — because searching only the two shown fields missed "CoTu", which appears in the summary alone. A row that matches on one of those appends the matched span to its detail line, so it always shows why it is listed, and a match late in a long line slides into view rather than sitting past the ellipsis. Matching runs inside words, since "auxi" has to find "Auxiliary" as the visitor types; word-start matches are ranked above interior ones so "ot" finds ViCLIP-OT before "chatbot". A translated pair contributes one row; the dropped title rides along in the same hidden field so a Vietnamese query still matches. The bootstrap costs 2 eager requests (1.1KB gz) because Astro externalizes any `<script>` that holds an import, and Vite adds its preload helper. `<dialog>` + `showModal()` gives the focus trap, the top layer, and Escape. Escape needs three parts, because the native path alone did not hold. The keydown handler on the input calls `close()` itself: the `cancel` event never arrived in one real Chrome session, although the keydown did, which is what an extension that binds Escape at the browser level does. `closedby="any"` states the intent to the browser. The bootstrap holds a cancel flag, since Escape in the gap between the shortcut and the lazy chunk reaches no dialog and the panel would open after the visitor dismissed it. A footer names the four keys, because a palette that opens on a shortcut has to say how to leave. Rejected: cmdk (drags React), ninja-keys/astro-command-palette (dead). |
 | Code blocks | **Astro Shiki + `@shikijs/transformers` + custom copy button** | Build-time dual themes, filename labels, line and word highlights, and diffs. Expressive Code stays deferred because this pipeline already meets the requirement. |
 | Math | **KaTeX** (`remark-math` + `rehype-katex`) | Fully build-time, 0 runtime JS. Self-host KaTeX fonts. Serif body solves size harmony; MathJax only if exotic LaTeX needed. |
 | Page transitions | **Native CSS `@view-transition`** (Chrome/Edge 126+, Safari 18.2+; **not Firefox**) + CSS micro-interactions (`@starting-style`, 150–250ms, `prefers-reduced-motion` guarded) | **Done (2026-08-01).** `ClientRouter` removed from `Layout.astro`; `@view-transition { navigation: auto }` in `global.css`. Homepage went from a 16KB blocking module fetch to **0 external JS / 1.9KB inline** (2.8KB since the boot intro). Removing it makes every `astro:page-load` / `after-swap` / `before-swap` listener dead — 7 files had to be rewired (see §6 gotcha 9). **Correction:** an earlier draft of this row said "cross-browser now" — that was wrong. MDN rates the at-rule "Limited availability" (lowest Baseline tier); Gecko meta bug 1860854 is still NEW, unassigned, no milestone, 14 open deps. Firefox therefore gets a plain hard navigation, and since `ClientRouter` used the *same-document* API it **would** have animated there — a real if small regression, accepted because 16KB on 100% of loads against the §1 perf bar outweighs animation for ~3–5% of visitors on a site where most visits are 1–2 pages deep. Revisit if Firefox ships. Add `motion/mini` (2.6KB) only if a real need appears. |
