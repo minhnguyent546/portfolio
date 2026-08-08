@@ -63,11 +63,33 @@ function persist(): void {
   reflect();
 }
 
+/**
+ * Applies the theme inside a same-document View Transition so the browser
+ * crossfades between the old and new colour stops instead of snapping. Browsers
+ * without View Transitions fall back to the instant switch (the `reflect` call
+ * still runs). Reduced-motion readers get the instant switch too, so the toggle
+ * stays usable without animating behind their backs.
+ */
+function apply(update: () => void): void {
+  const noMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (noMotion || typeof document.startViewTransition !== "function") {
+    update();
+    return;
+  }
+  document.startViewTransition(() => {
+    update();
+  });
+}
+
 // Cycle the mode on each click: system → light → dark → system.
 function cycle(): void {
   mode = mode === LIGHT ? DARK : mode === DARK ? SYSTEM : LIGHT;
   effective = effectiveOf(mode);
-  persist();
+  apply(() => {
+    persist();
+  });
 }
 
 document.querySelector("#theme-btn")?.addEventListener("click", cycle);

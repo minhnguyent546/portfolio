@@ -150,4 +150,13 @@ const showPalette = features.search !== false && !isActive("/tty3");
     scale: 0;
     rotate: -90deg;
   }
+
+  /* The visible icon rotates and scales into place smoothly rather than
+     clicking between two states. The page crossfade comes from the View
+     Transition wrapping the toggle in theme.ts. */
+  .theme-icon {
+    transition:
+      scale var(--dur-micro) ease,
+      rotate var(--dur-long) ease;
+  }
 </style>
