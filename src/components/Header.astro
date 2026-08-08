@@ -1,13 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
-import IconArchive from "@/assets/icons/IconArchive.svg";
-import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconUnderline from "@/assets/icons/IconUnderline.svg";
-import IconX from "@/assets/icons/IconX.svg";
 import config from "@/config";
 import { useTranslations } from "@/i18n";
 import { stripBase, stripLocale } from "@/utils/withBase";
@@ -16,9 +13,8 @@ import CommandPalette from "./palette/CommandPalette.astro";
 
 const { site, features } = config;
 
-// Blog, Tags, and Archives all read the same collection, so they are all empty
-// until the first post exists. Hiding them keeps the nav honest, and they come
-// back on their own with the first post.
+// Blog reads the collection, so the link is dead until the first post exists.
+// Hiding it keeps the nav honest, and it comes back with the first post.
 const hasPosts =
   (await getCollection("blog", ({ data }) => !data.draft)).length > 0;
 
@@ -55,158 +51,66 @@ const showPalette = features.search !== false && !isActive("/tty3");
   {t.a11y.skipToContent}
 </a>
 
-<header
-  lang="en"
-  class="app-layout flex flex-col items-center justify-between sm:flex-row"
->
+<header lang="en" class="app-layout">
   <div
-    class="relative flex w-full items-baseline justify-between border-b border-rule bg-paper py-4 sm:items-center sm:py-6"
+    class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-rule bg-paper py-4 sm:py-6"
   >
     <a
       href={getRelativeLocaleUrl(locale, "")}
-      class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
+      class="text-xl leading-none font-semibold whitespace-nowrap hover:text-accent sm:text-2xl"
     >
       {site.title}
     </a>
-    <nav
-      id="nav-menu"
-      class="flex w-full flex-col items-center sm:ms-2 sm:flex-row sm:justify-end sm:space-x-4 sm:py-0"
-    >
-      <button
-        id="menu-btn"
-        class="focus-outline self-end p-2 sm:hidden"
-        aria-label={t.a11y.openMenu}
-        aria-expanded="false"
-        aria-controls="menu-items"
-        data-label-open={t.a11y.openMenu}
-        data-label-close={t.a11y.closeMenu}
-      >
-        <IconX id="close-icon" class="hidden" />
-        <IconMenuDeep id="menu-icon" />
-      </button>
-      <ul
-        id="menu-items"
-        class="mt-4 hidden w-44 grid-cols-2 place-content-center gap-2 sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8 [&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium [&>li>a]:hover:text-accent sm:[&>li>a]:px-2 sm:[&>li>a]:py-1"
-      >
-        {
-          hasPosts && (
-            <>
-              <li class="col-span-2">
-                <a
-                  href={getRelativeLocaleUrl(locale, "blog")}
-                  class:list={{ "active-nav": isActive("/blog") }}
-                >
-                  {t.nav.blog}
-                </a>
-              </li>
-              <li class="col-span-2">
-                <a
-                  href={getRelativeLocaleUrl(locale, "tags")}
-                  class:list={{ "active-nav": isActive("/tags") }}
-                >
-                  {t.nav.tags}
-                </a>
-              </li>
-            </>
-          )
-        }
-        <li class="col-span-2">
+    <nav id="nav-menu" class="flex items-center gap-x-5">
+      {
+        hasPosts && (
           <a
-            href={getRelativeLocaleUrl(locale, "about")}
-            class:list={{ "active-nav": isActive("/about") }}
+            href={getRelativeLocaleUrl(locale, "blog")}
+            class:list={[
+              "py-1 font-medium hover:text-accent",
+              { "active-nav": isActive("/blog") },
+            ]}
           >
-            {t.nav.about}
+            {t.nav.blog}
           </a>
-        </li>
-        {
-          hasPosts && features.showArchives && (
-            <li class="col-span-2">
-              <LinkButton
-                href={getRelativeLocaleUrl(locale, "archives")}
-                class:list={[
-                  "focus-outline flex size-full justify-center p-3 sm:relative sm:size-8 sm:p-0",
-                  { "active-nav": isActive("/archives") },
-                ]}
-                title={t.nav.archives}
-                aria-label={t.nav.archives}
-              >
-                <IconArchive class="hidden sm:absolute sm:top-1/2 sm:left-1/2 sm:block sm:size-6 sm:-translate-x-1/2 sm:-translate-y-1/2" />
-                <span class="sm:sr-only">{t.nav.archives}</span>
-                {isActive("/archives") && (
-                  <IconUnderline
-                    aria-hidden="true"
-                    class="scale-125 max-sm:hidden sm:absolute sm:bottom-0 sm:w-6"
-                  />
-                )}
-              </LinkButton>
-            </li>
-          )
-        }
-        {
-          features.search !== false && (
-            <li class="col-span-1 flex items-center justify-center">
-              <LinkButton
-                id="search-link"
-                href={getRelativeLocaleUrl(locale, "search")}
-                class:list={["focus-outline relative size-8"]}
-                title={t.nav.search}
-                aria-label={t.nav.search}
-              >
-                <IconSearch class="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2" />
-                <span class="sr-only">{t.nav.search}</span>
-                {isActive("/search") && (
-                  <IconUnderline
-                    aria-hidden="true"
-                    class="absolute bottom-0 w-6 scale-125 max-sm:inset-s-2"
-                  />
-                )}
-              </LinkButton>
-            </li>
-          )
-        }
-        {
-          features.lightAndDarkMode && (
-            <li class="col-span-1 flex items-center justify-center">
-              <button
-                id="theme-btn"
-                class="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-accent"
-                title={t.a11y.toggleTheme}
-                aria-label="auto"
-                aria-live="polite"
-              >
-                <IconMoon class="absolute top-[50%] left-[50%] translate-[-50%] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                <IconSunHigh class="absolute top-[50%] left-[50%] translate-[-50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-              </button>
-            </li>
-          )
-        }
-      </ul>
+        )
+      }
+      {
+        features.search !== false && (
+          <LinkButton
+            id="search-link"
+            href={getRelativeLocaleUrl(locale, "search")}
+            class="focus-outline relative size-8"
+            title={t.nav.search}
+            aria-label={t.nav.search}
+          >
+            <IconSearch class="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2" />
+            <span class="sr-only">{t.nav.search}</span>
+            {isActive("/search") && (
+              <IconUnderline
+                aria-hidden="true"
+                class="absolute bottom-0 w-6 scale-125"
+              />
+            )}
+          </LinkButton>
+        )
+      }
+      {
+        features.lightAndDarkMode && (
+          <button
+            id="theme-btn"
+            class="focus-outline relative size-8 hover:[&>svg]:stroke-accent"
+            title={t.a11y.toggleTheme}
+            aria-label="auto"
+            aria-live="polite"
+          >
+            <IconMoon class="absolute top-[50%] left-[50%] translate-[-50%] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <IconSunHigh class="absolute top-[50%] left-[50%] translate-[-50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          </button>
+        )
+      }
     </nav>
   </div>
 </header>
 
 {showPalette && <CommandPalette />}
-
-<script>
-  const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn");
-  const menuItems = document.querySelector("#menu-items");
-  const menuIcon = document.querySelector("#menu-icon");
-  const closeIcon = document.querySelector("#close-icon");
-
-  if (menuBtn && menuItems && menuIcon && closeIcon) {
-    const openLabel = menuBtn.dataset.labelOpen ?? "Open menu";
-    const closeLabel = menuBtn.dataset.labelClose ?? "Close menu";
-
-    menuBtn.addEventListener("click", () => {
-      const openMenu = menuBtn.getAttribute("aria-expanded") === "true";
-
-      menuBtn.setAttribute("aria-expanded", openMenu ? "false" : "true");
-      menuBtn.setAttribute("aria-label", openMenu ? openLabel : closeLabel);
-
-      menuItems.classList.toggle("hidden");
-      menuItems.classList.toggle("grid");
-      menuIcon.classList.toggle("hidden");
-      closeIcon.classList.toggle("hidden");
-    });
-  }
-</script>
