@@ -1,32 +1,54 @@
 const THEME_KEY = "theme";
 const LIGHT = "light";
 const DARK = "dark";
+const SYSTEM = "system";
+const QUERY = "(prefers-color-scheme: dark)";
 
-function getPreferredTheme(): string {
-  const stored = localStorage.getItem(THEME_KEY);
-  if (stored) return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? DARK
-    : LIGHT;
+type ThemeMode = typeof LIGHT | typeof DARK | typeof SYSTEM;
+
+const prefersDarkQuery = window.matchMedia(QUERY);
+
+function effectiveOf(mode: ThemeMode): string {
+  return mode === SYSTEM ? (prefersDarkQuery.matches ? DARK : LIGHT) : mode;
 }
 
-// Reuse the value already set by the inline FOUC-prevention script if available.
-let themeValue: string =
-  (window as unknown as { __theme?: { value: string } }).__theme?.value ??
-  getPreferredTheme();
-
-function persist(): void {
-  localStorage.setItem(THEME_KEY, themeValue);
-  reflect();
+// A stored "system" (or nothing) means follow the OS; a stored light/dark is a
+// manual choice.
+function storedMode(): ThemeMode {
+  return (localStorage.getItem(THEME_KEY) as ThemeMode) ?? SYSTEM;
 }
+
+// Reuse the values already computed by the inline FOUC-prevention script.
+const boot = (
+  window as unknown as {
+    __theme?: { value: ThemeMode; effective: string };
+  }
+).__theme;
+
+let mode: ThemeMode = boot?.value ?? storedMode();
+let effective: string = boot?.effective ?? effectiveOf(mode);
 
 function reflect(): void {
   const root = document.firstElementChild;
-  root?.setAttribute("data-theme", themeValue);
-  root?.classList.toggle("dark", themeValue === DARK);
-  document
-    .querySelector("#theme-btn")
-    ?.setAttribute("aria-pressed", themeValue === DARK ? "true" : "false");
+  root?.setAttribute("data-theme", effective);
+  root?.setAttribute("data-theme-mode", mode);
+  root?.classList.toggle("dark", effective === DARK);
+
+  const btn = document.querySelector<HTMLElement>("#theme-btn");
+  if (btn) {
+    const label =
+      btn.dataset[
+        mode === SYSTEM
+          ? "modeSystem"
+          : mode === DARK
+            ? "modeDark"
+            : "modeLight"
+      ];
+    btn.setAttribute(
+      "aria-label",
+      label ?? btn.getAttribute("aria-label") ?? mode
+    );
+  }
 
   // Fill <meta name="theme-color"> with the computed background colour so
   // Android's browser chrome matches the page background.
@@ -36,20 +58,24 @@ function reflect(): void {
     ?.setAttribute("content", bg);
 }
 
-function setup(): void {
+function persist(): void {
+  localStorage.setItem(THEME_KEY, mode);
   reflect();
-  document.querySelector("#theme-btn")?.addEventListener("click", () => {
-    themeValue = themeValue === LIGHT ? DARK : LIGHT;
-    persist();
-  });
 }
 
-setup();
+// Cycle the mode on each click: system → light → dark → system.
+function cycle(): void {
+  mode = mode === LIGHT ? DARK : mode === DARK ? SYSTEM : LIGHT;
+  effective = effectiveOf(mode);
+  persist();
+}
 
-// Sync with OS-level dark/light preference changes.
-window
-  .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", ({ matches }) => {
-    themeValue = matches ? DARK : LIGHT;
-    persist();
-  });
+document.querySelector("#theme-btn")?.addEventListener("click", cycle);
+reflect();
+
+// Follow OS-level dark/light changes, but only while the mode is "system".
+prefersDarkQuery.addEventListener("change", ({ matches }) => {
+  if (mode !== SYSTEM) return;
+  effective = matches ? DARK : LIGHT;
+  reflect();
+});

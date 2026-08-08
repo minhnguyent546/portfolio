@@ -95,6 +95,11 @@ Light is the **default**. All five studied references are light; report 3 found
 dark-SaaS-by-default is itself a slop tell. Dark mode is a token re-point, not a
 separate design.
 
+The theme toggle has three states: light, dark, and system. `system` is the
+default and follows `prefers-color-scheme` live. A stored `light` or `dark` is a
+manual choice; the OS-change listener applies only in `system` mode. The inline
+FOUC script and `theme.ts` share the same mode/effective split.
+
 | Token | Light | Dark | Role |
 |---|---|---|---|
 | `--paper` | `#fdfcfa` | `#16161a` | odd sections |

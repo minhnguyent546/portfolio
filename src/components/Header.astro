@@ -4,6 +4,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
+import IconSystem from "@/assets/icons/IconSystem.svg";
 import IconUnderline from "@/assets/icons/IconUnderline.svg";
 import config from "@/config";
 import { useTranslations } from "@/i18n";
@@ -102,9 +103,13 @@ const showPalette = features.search !== false && !isActive("/tty3");
             class="relative size-8 hover:[&>svg]:stroke-accent"
             title={t.a11y.toggleTheme}
             aria-label={t.a11y.toggleTheme}
+            data-mode-light={t.a11y.themeModeLight}
+            data-mode-dark={t.a11y.themeModeDark}
+            data-mode-system={t.a11y.themeModeSystem}
           >
-            <IconMoon class="absolute top-[50%] left-[50%] translate-[-50%] scale-100 rotate-0 transition-transform dark:scale-0 dark:-rotate-90" />
-            <IconSunHigh class="absolute top-[50%] left-[50%] translate-[-50%] scale-0 rotate-90 transition-transform dark:scale-100 dark:rotate-0" />
+            <IconSunHigh class="theme-icon theme-icon-sun absolute top-[50%] left-[50%] translate-[-50%] transition-transform" />
+            <IconMoon class="theme-icon theme-icon-moon absolute top-[50%] left-[50%] translate-[-50%] transition-transform" />
+            <IconSystem class="theme-icon theme-icon-system absolute top-[50%] left-[50%] translate-[-50%] transition-transform" />
           </button>
         )
       }
@@ -113,3 +118,36 @@ const showPalette = features.search !== false && !isActive("/tty3");
 </header>
 
 {showPalette && <CommandPalette />}
+
+<style>
+  /* Three-state theme icon: sun in light, moon in dark, the auto mark in system
+     mode. `data-theme-mode` is set on <html> by the FOUC script before paint
+     and kept in sync by theme.ts, so the icon never flashes a wrong state. */
+  .theme-icon-sun,
+  .theme-icon-moon {
+    scale: 0;
+    rotate: -90deg;
+  }
+  .theme-icon-system {
+    scale: 1;
+    rotate: 0;
+  }
+  html[data-theme-mode="light"] .theme-icon-sun {
+    scale: 1;
+    rotate: 0;
+  }
+  html[data-theme-mode="light"] .theme-icon-moon,
+  html[data-theme-mode="light"] .theme-icon-system {
+    scale: 0;
+    rotate: -90deg;
+  }
+  html[data-theme-mode="dark"] .theme-icon-moon {
+    scale: 1;
+    rotate: 0;
+  }
+  html[data-theme-mode="dark"] .theme-icon-sun,
+  html[data-theme-mode="dark"] .theme-icon-system {
+    scale: 0;
+    rotate: -90deg;
+  }
+</style>
