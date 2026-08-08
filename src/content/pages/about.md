@@ -1,9 +1,9 @@
 ---
 title: About
-description: Independent AI Researcher working on inference-time scaling, symbolic reasoning, and high-performance model serving.
+description: AI Researcher working on inference-time scaling, symbolic reasoning, and high-performance model serving.
 ---
 
-I am an Independent AI Researcher. I work on natural language processing and deep
+I am an AI Researcher. I work on natural language processing and deep
 learning. My research interests are inference-time scaling, symbolic reasoning,
 high-performance model serving, embedding models, image-text retrieval for
 Vietnamese, optimal transport, retrieval-augmented generation, and image

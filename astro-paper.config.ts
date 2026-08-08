@@ -5,7 +5,7 @@ export default defineAstroPaperConfig({
     url: "https://minhnguyent546.io.vn",
     title: "Minh-Thien Nguyen",
     description:
-      "Independent AI Researcher — inference-time scaling, symbolic reasoning, and high-performance model serving.",
+      "AI Researcher — inference-time scaling, symbolic reasoning, and high-performance model serving.",
     author: "Minh-Thien Nguyen",
     profile: "https://minhnguyent546.io.vn",
     ogImage: "default-og.jpg",
