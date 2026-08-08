@@ -527,6 +527,14 @@ input?.addEventListener("input", () => void search(input.value));
 
 input?.addEventListener("keydown", event => {
   switch (event.key) {
+    // A modal dialog closes itself on Escape, but the `cancel` event does not
+    // always arrive: an extension that binds Escape at the browser level takes
+    // the key before the close request is made. The keydown still reaches the
+    // input, so the panel closes from here instead of relying on that path.
+    case "Escape":
+      event.preventDefault();
+      close();
+      break;
     case "ArrowDown":
       event.preventDefault();
       mark(active + 1);
