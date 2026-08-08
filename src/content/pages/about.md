@@ -12,3 +12,7 @@ classification.
 Alongside that I keep a set of personal projects on distributed training, TPU
 training, and retrieval-augmented generation for multiple-choice question
 answering over complex documents.
+
+Before that I competed in programming contests for a long time. Writing for VNOI
+Magazine came out of those years — virtual trees in 2024, and techniques with
+the XOR operation in 2023.
