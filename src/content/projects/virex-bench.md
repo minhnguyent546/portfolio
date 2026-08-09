@@ -1,10 +1,13 @@
 ---
 title: ViREx-Bench
 summary: >
-  A framework for inference-time scaling on Vietnamese reasoning tasks,
-  benchmarking 8 LLMs across 9 reasoning strategies. The finding that drove it:
-  search-based methods spend up to 32× more tokens without beating plain
-  chain-of-thought.
+  An evaluation framework for inference-time scaling on Vietnamese reasoning.
+  It supports 9 reasoning strategies on any OpenAI-compatible model and was
+  benchmarked against 8 models, from chain-of-thought and self-consistency to
+  tree-of-thought and the proposed symbolic-reasoning pipeline
+  (program-of-thought + Z3). Search-based methods spend up to 32× more tokens
+  without beating plain chain-of-thought; the proposed pipeline led them in
+  accuracy at 3.3 model calls per item, versus 18–28 for the others.
 stack:
   - Python
   - Inference-time scaling
