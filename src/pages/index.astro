@@ -4,6 +4,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import IconLinkedin from "@/assets/icons/socials/linkedin.svg";
 import IconMail from "@/assets/icons/socials/mail.svg";
 import IconX from "@/assets/icons/socials/x.svg";
+import BackToTopButton from "@/components/BackToTopButton.astro";
 import BootSequence from "@/components/BootSequence.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
@@ -284,6 +285,8 @@ const contactRows = [
         }
       </ul>
     </Section>
+
+    <BackToTopButton uiLocale={locale as "en" | "vi"} />
   </main>
 
   <Footer />
