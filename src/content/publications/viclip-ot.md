@@ -6,7 +6,7 @@ authors:
   - Minh-Thien Nguyen*
   - Nguyen-Khang Pham
 venue: Under review at The Visual Computer
-date: 2026-02-26
+date: 2026-05-09
 arxivId: "2602.22678"
 links:
   - label: Code
