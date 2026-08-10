@@ -214,7 +214,9 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   About section is gone (2026-08-10). `about.md` keeps one home, so tty3 `about.txt` still works.
   Removing the section flipped every band's parity (see Section.astro); moving Experience
   before Competitions (same day) restored it to the `--paper-alt` band. The bio reads at
-  42rem, ragged-right with `text-wrap: pretty` (justify read as a Word document); the
+  42rem, ragged-right with `text-wrap: pretty` (justify read as a Word document); it
+  renders through `.app-prose` (2026-08-11), so `about.md` can carry links, bold, and
+  italic — the trial before the treatment spreads to other markdown bodies; the
   identity card is centred under a square avatar scaled ~1.15×.
 - **News:** manually curated dated list (paper releases, competition results) — recency signal.
 - **Publications** (label clearly as *arXiv preprints*; BibTeX behind "Cite" toggle;

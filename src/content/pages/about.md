@@ -7,12 +7,12 @@ I am an AI researcher working on language models, reasoning, and deep learning.
 My research interests include inference-time scaling, symbolic reasoning,
 high-performance model serving, embedding models, Vietnamese image-text
 retrieval, and retrieval-augmented generation. My work centers on
-inference-time scaling and neuro-symbolic reasoning, alongside serving large
-models efficiently enough to be practical.
+**inference-time scaling** and **neuro-symbolic reasoning**, alongside serving
+large models efficiently enough to be practical.
 
-My papers cover a foundation vision-language model for Vietnamese image-text
-retrieval, model soups for image classification, and explainable educational
-question answering. On the engineering side, I have built personal projects on
+My papers cover a **foundation vision-language model** for Vietnamese
+image-text retrieval, _model soups_ for image classification, and explainable
+educational question answering. On the engineering side, I have built personal projects on
 distributed and TPU training and on retrieval-augmented question answering over
 dense technical documents.
 
