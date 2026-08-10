@@ -36,10 +36,7 @@ const items = await Promise.all(
         >
           <Icon
             class:list={[
-              "inline-block size-8 opacity-90 transition-transform duration-(--dur-micro) ease-(--ease-out) group-hover:rotate-6",
-              name === "googleScholar"
-                ? "fill-current stroke-none"
-                : "fill-transparent stroke-current stroke-2 group-hover:fill-transparent",
+              "inline-block size-8 fill-current stroke-none opacity-90 transition-transform duration-(--dur-micro) ease-(--ease-out) group-hover:rotate-6",
             ]}
           />
           <span class="sr-only">{title}</span>

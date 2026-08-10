@@ -30,9 +30,9 @@ export default defineAstroPaperConfig({
   },
   socials: [
     {
-      name: "github",
-      url: "https://github.com/minhnguyent546",
-      linkTitle: "Browse my repositories on GitHub",
+      name: "mail",
+      url: "mailto:minhnguyent546@gmail.com",
+      linkTitle: "Send me an email",
     },
     {
       name: "x",
@@ -45,11 +45,6 @@ export default defineAstroPaperConfig({
       linkTitle: "Connect with me on LinkedIn",
     },
     {
-      name: "mail",
-      url: "mailto:minhnguyent546@gmail.com",
-      linkTitle: "Send me an email",
-    },
-    {
       name: "googleScholar",
       url: "https://scholar.google.com/citations?hl=en&user=0DsVBW4AAAAJ",
       linkTitle: "Browse my publications on Google Scholar",
@@ -58,6 +53,11 @@ export default defineAstroPaperConfig({
       name: "hackmd",
       url: "https://hackmd.io/@minhnguyent546",
       linkTitle: "Read my notes on HackMD",
+    },
+    {
+      name: "github",
+      url: "https://github.com/minhnguyent546",
+      linkTitle: "Browse my repositories on GitHub",
     },
   ],
   shareLinks: [
