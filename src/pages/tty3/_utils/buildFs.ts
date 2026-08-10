@@ -27,15 +27,20 @@ const linkLines = (links: Link[]) =>
     : [];
 
 /**
- * Markdown link syntax is noise in a terminal. `[text](url)` becomes
- * `text <url>`, which is how a plain-text mail body would carry the same link.
+ * Markdown syntax is noise in a terminal. `[text](url)` becomes `text <url>`,
+ * which is how a plain-text mail body would carry the same link, and emphasis
+ * markers (`**`/`*`, `_`, and inline backticks) are dropped outright.
  */
-const flattenLinks = (markdown: string) =>
-  markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 <$2>");
+const flattenMarkdown = (markdown: string) =>
+  markdown
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 <$2>")
+    .replace(/(\*\*|__)([^*_]+)\1/g, "$2")
+    .replace(/(\*|_)([^*_]+)\1/g, "$2")
+    .replace(/`([^`]+)`/g, "$1");
 
 /** The entry body without frontmatter, or nothing when the entry has none. */
 const bodyLines = (body: string | undefined) => {
-  const text = flattenLinks(body?.trim() ?? "");
+  const text = flattenMarkdown(body?.trim() ?? "");
   return text ? ["", text] : [];
 };
 
@@ -146,7 +151,7 @@ export function buildFs(content: {
     files[`${HOME}/about.txt`] = block([
       content.about.data.title,
       "",
-      flattenLinks(content.about.body?.trim() ?? ""),
+      flattenMarkdown(content.about.body?.trim() ?? ""),
     ]);
   }
 
