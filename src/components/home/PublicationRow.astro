@@ -62,7 +62,9 @@ const idLinks = [
             {i > 0 && ", "}
             <span
               class:list={{
-                "font-semibold text-ink": name === config.site.author,
+                // The `*` marks equal contribution; the name must still match.
+                "font-semibold text-ink":
+                  name.replace(/\*+$/, "") === config.site.author,
               }}
             >
               {name}
