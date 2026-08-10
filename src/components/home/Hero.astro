@@ -1,7 +1,8 @@
 ---
 /**
- * H2 split diptych — statement left, portrait right, at 7/5.
- * Sits above the first band and carries no tone of its own.
+ * Hero diptych — About prose left, identity card right (avatar, name, title,
+ * CV, socials) at 7/5. Sits above the first band and carries no tone of its
+ * own. The prose comes in through the slot; index.astro passes AboutContent.
  */
 import { Image } from "astro:assets";
 import avatar from "@/assets/images/avatar.jpg";
@@ -14,7 +15,33 @@ const { site } = config;
 
 <section id="hero" class="app-layout grid gap-8 py-14 lg:grid-cols-12">
   <div class="lg:col-span-8">
-    <h1 class="font-semibold tracking-[-0.02em] wrap-anywhere text-ink-heading">
+    {
+      /* Ragged-right, not justified: justify + hyphens reads as a Word
+        document. `text-wrap: pretty` keeps the flush-left rail but breaks
+        lines deliberately — no orphan words or widows, and no stretched
+        word gaps on narrow widths. */
+    }
+    <div class="max-w-[42rem] space-y-4 text-pretty">
+      <slot />
+    </div>
+  </div>
+
+  {
+    /* The identity card leads on mobile (name first, as before) and sits in
+      the right rail at lg, where DOM order puts the prose first. */
+  }
+  <div
+    class="order-first flex flex-col items-center text-center lg:order-none lg:col-span-4"
+  >
+    <Image
+      src={avatar}
+      alt={`Portrait of ${site.author}`}
+      width={220}
+      densities={[1, 2]}
+      loading="eager"
+      class="size-46 border border-rule object-cover lg:size-63"
+    />
+    <h1 class="mt-4 text-h2 tracking-[-0.02em] wrap-anywhere text-ink-heading">
       {site.author}
     </h1>
     <p
@@ -22,31 +49,14 @@ const { site } = config;
     >
       AI Researcher
     </p>
-
-    <p class="mt-5 max-w-measure">
-      Working on inference-time scaling, symbolic reasoning, and
-      high-performance model serving.
-    </p>
-
-    <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-      <a
-        href={getAssetPath("cv.pdf")}
-        class="inline-block border border-accent px-4 py-2 text-meta text-accent hover:bg-accent hover:text-accent-ink"
-      >
-        Curriculum vitae
-      </a>
+    <a
+      href={getAssetPath("cv.pdf")}
+      class="mt-4 inline-block border border-accent px-4 py-2 text-meta text-accent hover:bg-accent hover:text-accent-ink"
+    >
+      Curriculum vitae
+    </a>
+    <div class="mt-[1.6875rem]">
       <Socials />
     </div>
-  </div>
-
-  <div class="lg:col-span-4">
-    <Image
-      src={avatar}
-      alt={`Portrait of ${site.author}`}
-      width={220}
-      densities={[1, 2]}
-      loading="eager"
-      class="size-40 border border-rule object-cover lg:size-full lg:max-w-55"
-    />
   </div>
 </section>

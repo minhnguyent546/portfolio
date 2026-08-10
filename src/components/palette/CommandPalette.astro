@@ -27,11 +27,10 @@ const index = buildIndex({
   experience: (await getCollection("experience", published)).sort(byOrder),
   projects: (await getCollection("projects", published)).sort(byOrder),
   sections: [
-    { id: "about", label: "About" },
     { id: "news", label: "News" },
     { id: "publications", label: "Publications" },
-    { id: "competitions", label: "Competitions" },
     { id: "experience", label: "Experience" },
+    { id: "competitions", label: "Competitions" },
     { id: "projects", label: "Projects" },
     { id: "writing", label: "Writing" },
     { id: "contact", label: "Contact" },

@@ -42,8 +42,9 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 **Hybrid single-page + routed long-form:**
 
 - `/` — single scannable homepage with sticky anchor nav.
-  Section order: **Hero → About → News → Publications → Competitions → Experience → Projects → Writing → Contact**
-  (Experience added 2026-08-09, between Competitions and Projects — see §3.)
+  Section order: **Hero → News → Publications → Experience → Competitions → Projects → Writing → Contact**
+  (About merged into the hero 2026-08-10; Experience moved ahead of Competitions the
+  same day to keep its cards on the alt band. Experience added 2026-08-09.)
 - `/blog/…` — routed blog posts (Markdown/MDX, math + code support)
 - **No `/about` route (2026-08-08).** It held the same prose as section 01 under a
   second URL, which showed as two About rows in the palette. Section 01 renders
@@ -177,7 +178,8 @@ sets sizes that win over the base layer, so without that one line the reading pa
 stay at 16 px while the rest of the site grows.
 **Heading weight is 500 site-wide (2026-08-09).** The base layer sets
 `h1–h6 { font-weight: 500 }` and `.app-prose` overrides the typography plugin's 700.
-The hero name stays 600 (a deliberate display moment, per the 2026-08-09 audit). Sub-heads
+The hero name is a card label under the avatar at `text-h2` / 500 (2026-08-10,
+when About merged into the hero; it was 600 before). Sub-heads
 that label technical blocks — project titles, "VNOI Magazine", "Awards" — use JetBrains Mono.
 The footer drops the repeated hero social row for a quiet colophon, and `--rule` was darkened
 to ~1.6:1 so container borders read as intentional.
@@ -207,6 +209,13 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 
 - **Hero/About:** AI Research Engineer; inference-time scaling, symbolic reasoning,
   high-performance model serving; personal work on distributed/TPU training and RAG.
+  The About prose renders inside the hero (left column, full three paragraphs) with the
+  identity card (avatar, name, title, CV, socials) on the right under the avatar; the
+  About section is gone (2026-08-10). `about.md` keeps one home, so tty3 `about.txt` still works.
+  Removing the section flipped every band's parity (see Section.astro); moving Experience
+  before Competitions (same day) restored it to the `--paper-alt` band. The bio reads at
+  42rem, ragged-right with `text-wrap: pretty` (justify read as a Word document); the
+  identity card is centred under a square avatar scaled ~1.15×.
 - **News:** manually curated dated list (paper releases, competition results) — recency signal.
 - **Publications** (label clearly as *arXiv preprints*; BibTeX behind "Cite" toggle;
   arXiv/Code/Demo link rows; thumbnails):
@@ -220,11 +229,11 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 - **Experience** (added 2026-08-09): a `src/content/experience/` collection rendered as
   floating cards on a timeline (role title, org subtitle in full ink, period in mono,
   three focused highlights; hover lifts the card). Cards sit on `--surface` so they read
-  against the `--paper-alt` band; the timeline dot is filled for the current role and an
+  against the band; the timeline dot is filled for the current role and an
   open ring for past ones. Awards group by year into a matching mini timeline, share a
   `src/data/awards.ts` module with the ⌘K palette (search "Super Cup" lands on
   `#experience`), and the education block adds the thesis title + grade 9.6/10. The
-  section lives at index 05, wired through the section nav, ⌘K palette, and tty3
+  section lives at index 04, wired through the section nav, ⌘K palette, and tty3
   `~/experience/`. Role label unified to **AI Researcher** across hero, About, config,
   and the CV (2026-08-08 build). Reworded 2026-08-09: highlights restored to three per
   role, matching the CV, and award titles keep the full official division names (Super

@@ -38,7 +38,9 @@ const fs = buildFs({
   about: await getEntry("pages", "about"),
   routes: {
     home: getRelativeLocaleUrl(locale, ""),
-    about: `${getRelativeLocaleUrl(locale, "")}#about`,
+    // About prose now lives at the top of the homepage, so `open about` opens
+    // the homepage itself.
+    about: getRelativeLocaleUrl(locale, ""),
     blog: getRelativeLocaleUrl(locale, "blog"),
     tags: getRelativeLocaleUrl(locale, "tags"),
     search: getRelativeLocaleUrl(locale, "search"),

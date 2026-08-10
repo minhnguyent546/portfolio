@@ -53,7 +53,7 @@ const articles = (await getCollection("articles")).sort(
 const posts = await getCollection("blog");
 const sortedPosts = dedupeTranslations(getSortedPosts(posts));
 
-// Section 01 renders the collection entry, so the prose has one home. tty3
+// The hero renders the collection entry, so the prose has one home. tty3
 // reads the same entry for `about.txt`.
 const about = await getEntry("pages", "about");
 if (!about) {
@@ -62,11 +62,10 @@ if (!about) {
 const { Content: AboutContent } = await render(about);
 
 const sections = [
-  { id: "about", label: "About" },
   { id: "news", label: "News" },
   { id: "publications", label: "Publications" },
-  { id: "competitions", label: "Competitions" },
   { id: "experience", label: "Experience" },
+  { id: "competitions", label: "Competitions" },
   { id: "projects", label: "Projects" },
   { id: "writing", label: "Writing" },
   { id: "contact", label: "Contact" },
@@ -118,13 +117,9 @@ const contactRows = [
   <SectionNav items={sections} />
 
   <main id="main-content" data-layout="index" data-home-path={homePath}>
-    <Hero />
-
-    <Section id="about" title="About">
-      <div class="max-w-measure space-y-4">
-        <AboutContent />
-      </div>
-    </Section>
+    <Hero>
+      <AboutContent />
+    </Hero>
 
     <Section id="news" title="News">
       <ol class="divide-y divide-rule border-y border-rule">
@@ -161,14 +156,14 @@ const contactRows = [
       <p class="mt-3 text-meta text-ink-muted">* Equal contribution.</p>
     </Section>
 
+    <Section id="experience" title="Experience">
+      <Experience entries={experience} />
+    </Section>
+
     <Section id="competitions" title="Competitions">
       <div class="divide-y divide-rule border-y border-rule">
         {competitions.map(entry => <CompetitionRow {entry} />)}
       </div>
-    </Section>
-
-    <Section id="experience" title="Experience">
-      <Experience entries={experience} />
     </Section>
 
     <Section

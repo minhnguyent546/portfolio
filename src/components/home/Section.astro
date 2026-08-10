@@ -36,7 +36,10 @@ const { id, title, note, class: className, ...attrs } = Astro.props;
 
 <style>
   /* The tone change *is* the section boundary — adjacent sections touch at
-     0px. Scoped to `main` so only the homepage bands alternate. */
+     0px. Scoped to `main` so only the homepage bands alternate.
+     `nth-of-type` counts every `<section>` sibling, including the hero (a
+     section without the band class), so the first band lands on the alt tone
+     and adding or removing a section flips every band's parity. */
   :global(main > .band:nth-of-type(even)) {
     background: var(--paper-alt);
   }
