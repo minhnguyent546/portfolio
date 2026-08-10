@@ -1,10 +1,10 @@
 ---
 title: seas
 summary: >
-  A Smart Enrollment Advisory System for Can Tho University. Async throughout —
-  FastAPI, SQLAlchemy, and Qdrant — so retrieval and database work overlap
-  instead of serialising behind each other. Reranking was the lever: it lifted
-  MRR@10 from 0.18 to 0.70.
+  A RAG chatbot that answers enrollment questions for Can Tho University, built
+  with LangChain and Qdrant on an async FastAPI backend. Comparing retrieval
+  strategies showed reranking drove most of the gain: MRR@10 rose from 0.18 to
+  0.70, so the final system paired reranking with query expansion.
 stack:
   - Python
   - FastAPI

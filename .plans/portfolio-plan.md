@@ -219,22 +219,29 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
 - **Experience** (added 2026-08-09): a `src/content/experience/` collection rendered as
   floating cards on a timeline (role title, org subtitle in full ink, period in mono,
-  1–2 highlights; hover lifts the card). Cards sit on `--surface` so they read against the
-  `--paper-alt` band; the timeline dot is filled for the current role and an open ring for
-  past ones. Awards group by year into a matching mini timeline, share a `src/data/awards.ts`
-  module with the ⌘K palette (search "Super Cup" lands on `#experience`), and the education
-  block adds the thesis title + grade 9.6/10. The section lives at index 05,
-  wired through the section nav, ⌘K palette, and tty3 `~/experience/`. Role label unified
-  to **AI Researcher** across hero, About, config, and the CV (2026-08-08 build).
-- **Project summaries** now carry one number + the engineering decision each turned on
-  (GPT-2 perplexity ~21.02, SEAS MRR 0.18→0.70, MCQA 91.2%/4×, medical-llama2 QLoRA).
+  three focused highlights; hover lifts the card). Cards sit on `--surface` so they read
+  against the `--paper-alt` band; the timeline dot is filled for the current role and an
+  open ring for past ones. Awards group by year into a matching mini timeline, share a
+  `src/data/awards.ts` module with the ⌘K palette (search "Super Cup" lands on
+  `#experience`), and the education block adds the thesis title + grade 9.6/10. The
+  section lives at index 05, wired through the section nav, ⌘K palette, and tty3
+  `~/experience/`. Role label unified to **AI Researcher** across hero, About, config,
+  and the CV (2026-08-08 build). Reworded 2026-08-09: highlights restored to three per
+  role, matching the CV, and award titles keep the full official division names (Super
+  Cup division; Specialized / Non-specialized Informatics division).
+- **Project summaries** state what each project does and the result it produced, with one
+  number and the decision behind it (GPT-2 perplexity ~21.02, SEAS MRR 0.18→0.70, MCQA
+  91.2%/4×, medical-llama2 QLoRA). Reworded 2026-08-09 so each row is self-explanatory
+  to a hiring manager, not just the number.
 - **Competitions** (own section; precise, verifiable claims with leaderboard links):
   - **EXACT 2026** (IEEE IJCNN) — *highest technical score 13.44/15, 3rd overall*,
     announced 2026-06-25. Code · tech report (arXiv 2607.14735) · leaderboard. The
     leaderboard is on free Vercel hosting and the owner expects it to disappear; the
     claim must stand on the tech report alone once it does.
   - **Viettel AI Race 2025** — MCQA pipeline for complex technical documents. Code.
-    Month-only date (2025-10); no full contest schedule exists.
+    Month-only date (2025-10); no full contest schedule exists. Result pill: top 3 on
+    the public leaderboard; summary states the per-round placements and 91.2% round-3
+    accuracy (added 2026-08-09).
 - **Projects** (framed around engineering decisions & scale):
   ViREx-Bench (inference-time scaling, Vietnamese reasoning) · seas (async
   FastAPI/SQLAlchemy/Qdrant) · medical-llama2 (LLaMA-2 7B fine-tune + HF Spaces demo) ·

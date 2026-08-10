@@ -9,7 +9,8 @@ export type Award = { year: number; title: string };
 export const awards: Award[] = [
   {
     year: 2024,
-    title: "3rd prize, Vietnam Student Olympiad in Informatics (Super Cup)",
+    title:
+      "3rd prize, Vietnam Student Olympiad in Informatics (Super Cup division)",
   },
   {
     year: 2023,
@@ -17,11 +18,16 @@ export const awards: Award[] = [
   },
   {
     year: 2022,
-    title: "2nd prize, Vietnam Student Olympiad in Informatics (Specialized)",
+    title:
+      "2nd prize, Vietnam Student Olympiad in Informatics (Specialized Informatics division)",
   },
   {
     year: 2022,
     title: "3rd prize, ICPC Vietnam National Programming Contest",
   },
-  { year: 2021, title: "3rd prize, Vietnam Student Olympiad in Informatics" },
+  {
+    year: 2021,
+    title:
+      "3rd prize, Vietnam Student Olympiad in Informatics (Non-specialized Informatics division)",
+  },
 ];
