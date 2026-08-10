@@ -30,8 +30,14 @@ const TARGET_FPS = 30;
 const FRAME_MS = 1000 / TARGET_FPS - 2;
 
 // Where the still frame is sampled under `prefers-reduced-motion`. Chosen so
-// the Doppler asymmetry is side-on and clearly visible.
+// the Doppler asymmetry is side-on and clearly visible. It is a path time: the
+// camera path runs backward (see draw), so the reduced-motion calls pass
+// ORBIT - STILL_TIME to land on this frame.
 const STILL_TIME = 42;
+// One full azimuth orbit. The camera path is reversed around this point, so
+// the angles in the orbit's second half — where the lensing reads best —
+// lead instead of trailing.
+const ORBIT = (2 * Math.PI) / 0.07;
 
 const canvas = document.querySelector<HTMLCanvasElement>("#photon-sphere");
 const failure = document.querySelector<HTMLElement>("#photon-sphere-failure");
@@ -113,7 +119,7 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
 
     resize(true);
     if (reduced) {
-      draw(STILL_TIME);
+      draw(ORBIT - STILL_TIME);
     } else {
       // stop() first: a context restore re-enters init() while the previous
       // loop may still be scheduled, and two loops would double the frame rate.
@@ -148,10 +154,10 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
     canvas.height = h;
     gl.viewport(0, 0, w, h);
     gl.uniform2f(uniforms.uResolution ?? null, w, h);
-    if (reduced) draw(STILL_TIME);
+    if (reduced) draw(ORBIT - STILL_TIME);
   }
 
-  function draw(t: number) {
+  function draw(elapsed: number) {
     if (!gl) return;
 
     // Three motions on periods that share no factor, so the path never visibly
@@ -164,6 +170,11 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
     // and swings sideways together, which reads as one lopsided move. The
     // inclination base keeps the sweep away from 0, where the disk would
     // degenerate to a line. All three also sweep the Doppler asymmetry around.
+
+    // The camera path runs backward from ORBIT, so the second half's angles
+    // lead. uTime still gets `elapsed` below, so the disk keeps its established
+    // spin direction — only the camera journey is reversed.
+    const t = ORBIT - elapsed;
     const azim = t * 0.07;
     const incl = 0.4 + 0.3 * Math.sin(t * 0.045);
     const dist = 17.5 + 4.5 * Math.sin(t * 0.083);
@@ -180,7 +191,7 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
     const right = normalize(cross(fwd, [0, 1, 0]));
     const up = cross(right, fwd);
 
-    gl.uniform1f(uniforms.uTime ?? null, t);
+    gl.uniform1f(uniforms.uTime ?? null, elapsed);
     gl.uniform3fv(uniforms.uCamPos ?? null, pos);
     gl.uniform3fv(uniforms.uCamRight ?? null, right);
     gl.uniform3fv(uniforms.uCamUp ?? null, up);
