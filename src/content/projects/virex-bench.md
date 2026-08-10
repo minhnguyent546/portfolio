@@ -2,7 +2,7 @@
 title: ViREx-Bench
 summary: >
   An evaluation framework for inference-time scaling on Vietnamese reasoning.
-  It supports 9 reasoning strategies on any OpenAI-compatible model and was
+  It supports 7 reasoning strategies on any OpenAI-compatible model and was
   benchmarked against 8 models, from chain-of-thought and self-consistency to
   tree-of-thought and the proposed symbolic-reasoning pipeline
   (program-of-thought + Z3). Search-based methods spend up to 32× more tokens
