@@ -34,10 +34,13 @@ const FRAME_MS = 1000 / TARGET_FPS - 2;
 // camera path runs backward (see draw), so the reduced-motion calls pass
 // ORBIT - STILL_TIME to land on this frame.
 const STILL_TIME = 42;
+// Camera azimuth rate in radians per second. Incommensurate with the other
+// two camera periods, so the path never visibly repeats.
+const AZIM_RATE = 0.07;
 // One full azimuth orbit. The camera path is reversed around this point, so
 // the angles in the orbit's second half — where the lensing reads best —
 // lead instead of trailing.
-const ORBIT = (2 * Math.PI) / 0.07;
+const ORBIT = (2 * Math.PI) / AZIM_RATE;
 
 const canvas = document.querySelector<HTMLCanvasElement>("#photon-sphere");
 const failure = document.querySelector<HTMLElement>("#photon-sphere-failure");
@@ -175,7 +178,7 @@ function run(canvas: HTMLCanvasElement, failure: HTMLElement) {
     // lead. uTime still gets `elapsed` below, so the disk keeps its established
     // spin direction — only the camera journey is reversed.
     const t = ORBIT - elapsed;
-    const azim = t * 0.07;
+    const azim = t * AZIM_RATE;
     const incl = 0.4 + 0.3 * Math.sin(t * 0.045);
     const dist = 17.5 + 4.5 * Math.sin(t * 0.083);
 
