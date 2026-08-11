@@ -22,8 +22,8 @@ const backUrl = config.features.showBackButton
   class:list={["app-layout pb-4", className]}
 >
   <h1 class="font-medium">{pageTitle}</h1>
-  <p class="mt-2 mb-6 italic">{pageDesc}</p>
-  <slot />
+  {pageDesc && <p class="mt-2 italic">{pageDesc}</p>}
+  <div class="mt-6"><slot /></div>
 </main>
 
 <script>
