@@ -261,6 +261,18 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   ViREx-Bench (inference-time scaling, Vietnamese reasoning) · seas (async
   FastAPI/SQLAlchemy/Qdrant) · medical-llama2 (LLaMA-2 7B fine-tune + HF Spaces demo) ·
   pre-training-gpt2 (PyTorch/XLA, CUDA + TPU).
+- **Blog taxonomy** (2026-08-11): every post declares one `topic` from a closed enum —
+  `algorithms`, `llm`, `nlp`, `systems` — in `src/data/topics.ts`, beside the free
+  `tags`. The field is required with no default, so the build stops until a new post
+  picks one. `/blog` lists every post as a year-grouped ledger with a mono date and a
+  right-aligned topic mark; each populated topic also gets `/blog/topic/<name>/`. A
+  topic joins `BlogNav` and gets a page once it has a post, so the row never offers an
+  empty list. `BlogNav` also carries Tags and Archives on the right, as the secondary
+  axes. Filters are real routes, which keeps
+  the page at 0 bytes of JavaScript. Pagination is gone: `/archives` already holds the
+  full history, and a year heading split across pages stops grouping. Sorting is on
+  `pubDatetime` alone, not the `modDatetime` that `getSortedPosts` prefers, or an
+  edited old post would head the list while sitting in an older year group.
 - **Writing:** blog posts (on-site, migrating/linking HackMD) + distinct sub-list for
   **VNOI Magazine** articles: "Virtual Tree / Cây ảo" (2024), "Kỹ thuật tinh tế về
   phép Xor" (2023). "Virtual Tree" and "Parallel Binary Search" are migrated and hold
@@ -587,6 +599,9 @@ Source Serif 4 is 0.475.
    build; `reference()` does not check that the target exists. A helper that
    `getStaticPaths` calls must be declared inside it: Astro extracts the function into
    its own chunk, and `astro check` passes because the failure is a runtime scope error.
+   The blog index became a ledger with a topic axis on 2026-08-11 (see §3). `blog/topic/`
+   is now a reserved segment: a static path outranks the `[...slug]` rest param, so a
+   post folder of that name would be unreachable.
 6. **Per-paper pages** — ViCLIP-OT and soups Nerfies-style pages. A paper page needs a
    preprint, so ViREx-Bench stays a project until one exists.
 7. **Features** — Pagefind, view transitions, OG images, and sitemap are done. The ⌘K
