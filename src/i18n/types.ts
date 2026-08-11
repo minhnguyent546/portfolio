@@ -33,12 +33,6 @@ export interface UIStrings {
     next: string;
     page: string;
   };
-  home: {
-    socialLinks: string;
-    featured: string;
-    recentPosts: string;
-    allPosts: string;
-  };
   footer: {
     copyright: string;
     allRightsReserved: string;
@@ -51,7 +45,8 @@ export interface UIStrings {
     tagsDesc: string;
 
     blogTitle: string;
-    blogDesc: string;
+
+    topicTitle: string;
 
     archivesTitle: string;
     archivesDesc: string;
