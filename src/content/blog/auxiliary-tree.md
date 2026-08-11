@@ -4,6 +4,7 @@ description: A technique for answering queries over a subset of a tree's vertice
 tags:
   - auxiliary-tree
   - virtual-tree
+topic: algorithms
 author: Minh Thien Nguyen
 pubDatetime: 2023-02-01
 lang: en

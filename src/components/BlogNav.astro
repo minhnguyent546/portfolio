@@ -1,0 +1,92 @@
+---
+/**
+ * The one navigation band above the ledger: topic chips on the left, the
+ * secondary axes on the right.
+ *
+ * A topic appears once it has a post and never before, so the row can only
+ * promise a list that exists.
+ */
+import { getRelativeLocaleUrl } from "astro:i18n";
+import config from "@/config";
+import { TOPIC_LABELS, TOPICS, type Topic } from "@/data/topics";
+import { useTranslations } from "@/i18n";
+
+type Props = {
+  counts: Map<Topic, number>;
+  total: number;
+  /** Omitted on the blog index, where "All" is the current view. */
+  current?: Topic;
+};
+
+const { counts, total, current } = Astro.props;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const chips = [
+  {
+    href: getRelativeLocaleUrl(locale, "blog"),
+    label: "All",
+    count: total,
+    active: current === undefined,
+  },
+  ...TOPICS.filter(topic => counts.has(topic)).map(topic => ({
+    href: getRelativeLocaleUrl(locale, `blog/topic/${topic}`),
+    label: TOPIC_LABELS[topic],
+    count: counts.get(topic)!,
+    active: current === topic,
+  })),
+];
+
+const links = [
+  { href: getRelativeLocaleUrl(locale, "tags"), label: t.nav.tags },
+  ...(config.features.showArchives
+    ? [
+        {
+          href: getRelativeLocaleUrl(locale, "archives"),
+          label: t.nav.archives,
+        },
+      ]
+    : []),
+];
+---
+
+<nav
+  class="mb-6 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-y border-rule py-3"
+  aria-label="Blog"
+>
+  <ul class="flex flex-wrap gap-x-5 gap-y-2">
+    {
+      chips.map(chip => (
+        <li>
+          <a
+            href={chip.href}
+            aria-current={chip.active ? "page" : undefined}
+            class:list={[
+              "font-mono text-meta whitespace-nowrap underline-offset-4 hover:underline",
+              chip.active ? "text-ink-heading" : "text-accent",
+            ]}
+          >
+            {chip.label}
+            <span class="text-ink-muted tabular-nums"> {chip.count}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ul class="flex flex-wrap gap-x-4 gap-y-2">
+    {
+      links.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class="font-mono text-meta whitespace-nowrap text-ink-muted underline-offset-4 hover:text-accent hover:underline"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

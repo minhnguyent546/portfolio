@@ -4,6 +4,7 @@ description: Kĩ thuật giúp trả lời nhiều truy vấn cùng lúc bằng 
 tags:
   - binary-search
   - parallel-binary-search
+topic: algorithms
 author: Minh Thien Nguyen
 pubDatetime: 2023-08-26
 lang: vi

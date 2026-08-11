@@ -1,0 +1,38 @@
+---
+/**
+ * The blog ledger: posts grouped under a year heading, newest year first.
+ *
+ * Grouping is on `pubDatetime`, not the `modDatetime ?? pubDatetime` that
+ * `getSortedPosts` sorts by — under that sort an old post edited recently
+ * would head the list while belonging to an older year group.
+ */
+import type { CollectionEntry } from "astro:content";
+import { getPostsByGroupCondition } from "@/utils/groupPosts";
+import PostRow from "./PostRow.astro";
+
+type Props = {
+  posts: CollectionEntry<"blog">[];
+  showTopic?: boolean;
+};
+
+const { posts, showTopic = true } = Astro.props;
+
+const byYear = Object.entries(
+  getPostsByGroupCondition(posts, post => post.data.pubDatetime.getFullYear())
+).sort(([a], [b]) => Number(b) - Number(a));
+---
+
+{
+  byYear.map(([year, yearPosts]) => (
+    <section class="mt-8 first:mt-0">
+      <h2 class="border-b border-rule pb-2 font-mono text-meta text-ink-muted tabular-nums">
+        {year}
+      </h2>
+      <ol class="divide-y divide-rule border-b border-rule">
+        {yearPosts.map(post => (
+          <PostRow {post} {showTopic} />
+        ))}
+      </ol>
+    </section>
+  ))
+}

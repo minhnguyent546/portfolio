@@ -2,6 +2,7 @@ import { defineCollection, reference } from "astro:content";
 import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 import config from "@/config";
+import { TOPICS } from "@/data/topics";
 
 export const BLOG_PATH = "src/content/blog";
 
@@ -20,6 +21,9 @@ const blog = defineCollection({
       featured: z.boolean().optional(),
       draft: z.boolean().optional(),
       tags: z.array(z.string()).default(["others"]),
+      /** Required, with no default: the build fails rather than bucket a new
+          post into whichever topic happened to be first. */
+      topic: z.enum(TOPICS),
       ogImage: image().or(z.string()).optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),

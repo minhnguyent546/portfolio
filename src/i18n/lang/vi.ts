@@ -33,12 +33,6 @@ export default {
     next: "Tiếp",
     page: "Trang",
   },
-  home: {
-    socialLinks: "Liên kết mạng xã hội",
-    featured: "Nổi bật",
-    recentPosts: "Bài viết gần đây",
-    allPosts: "Tất cả bài viết",
-  },
   footer: {
     copyright: "Bản quyền",
     allRightsReserved: "Đã đăng ký mọi quyền.",
@@ -49,7 +43,7 @@ export default {
     tagsTitle: "Thẻ",
     tagsDesc: "Tất cả thẻ được dùng trong bài viết.",
     blogTitle: "Bài viết",
-    blogDesc: "Tất cả bài viết tôi đã đăng.",
+    topicTitle: "Chủ đề",
     archivesTitle: "Lưu trữ",
     archivesDesc: "Tất cả bài viết đã lưu trữ.",
     searchTitle: "Tìm kiếm",

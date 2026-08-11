@@ -4,6 +4,7 @@ description: Introduces the xor basis technique — representing integers as vec
 tags:
   - xor-basis
   - linear-algebra
+topic: algorithms
 author: Minh Thien Nguyen
 pubDatetime: 2022-12-30
 lang: en

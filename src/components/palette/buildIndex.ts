@@ -1,5 +1,8 @@
 import type { CollectionEntry } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import { awards } from "@/data/awards";
+import { TOPIC_LABELS, TOPICS } from "@/data/topics";
+import { getTopicCounts } from "@/utils/getLedgerPosts";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { dedupeTranslations, getTranslation } from "@/utils/getTranslation";
 
@@ -42,6 +45,7 @@ export function buildIndex(content: {
   /** Prepended with the homepage path to make each section anchor. */
   homeUrl: string;
   routes: Route[];
+  locale: string;
 }): PaletteEntry[] {
   const entries: PaletteEntry[] = [];
 
@@ -61,14 +65,25 @@ export function buildIndex(content: {
 
   for (const post of shown) {
     const other = dropped.get(post.id);
-    const tags = post.data.tags.join(" ");
+    const terms = [...post.data.tags, TOPIC_LABELS[post.data.topic]].join(" ");
     entries.push({
       t: post.data.title,
       d: post.data.description,
       k: "post",
       u: getPostUrl(post.id, post.filePath),
-      a: other ? `${other.title} ${tags}` : tags,
+      a: other ? `${other.title} ${terms}` : terms,
       ...(other && { v: other.url }),
+    });
+  }
+
+  // A topic with no post has no page, so it gets no row either.
+  const topicCounts = getTopicCounts(shown);
+  for (const topic of TOPICS.filter(topic => topicCounts.has(topic))) {
+    entries.push({
+      t: TOPIC_LABELS[topic],
+      d: "",
+      k: "page",
+      u: getRelativeLocaleUrl(content.locale, `blog/topic/${topic}`),
     });
   }
 

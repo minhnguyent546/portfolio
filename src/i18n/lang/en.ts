@@ -33,12 +33,6 @@ export default {
     next: "Next",
     page: "Page",
   },
-  home: {
-    socialLinks: "Social Links",
-    featured: "Featured",
-    recentPosts: "Recent Posts",
-    allPosts: "All Posts",
-  },
   footer: {
     copyright: "Copyright",
     allRightsReserved: "All rights reserved.",
@@ -51,7 +45,8 @@ export default {
     tagsDesc: "All the tags used in posts.",
 
     blogTitle: "Blog",
-    blogDesc: "All the articles I've posted.",
+
+    topicTitle: "Topic",
 
     archivesTitle: "Archives",
     archivesDesc: "All the articles I've archived.",

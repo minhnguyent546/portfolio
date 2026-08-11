@@ -6,7 +6,18 @@ import config from "@/config";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export type DatePrecision = "day" | "month";
+export type DatePrecision = "day" | "day-short" | "month";
+
+/**
+ * `day-short` drops the year from the label alone: the blog ledger prints the
+ * year once in the group heading, but each row still needs the full date in
+ * its `datetime` attribute.
+ */
+const FORMATS: Record<DatePrecision, { label: string; datetime: string }> = {
+  day: { label: "D MMMM YYYY", datetime: "YYYY-MM-DD" },
+  "day-short": { label: "D MMM", datetime: "YYYY-MM-DD" },
+  month: { label: "MMMM YYYY", datetime: "YYYY-MM" },
+};
 
 /**
  * A YAML date always materialises a day. `precision: "month"` keeps that day
@@ -15,8 +26,9 @@ export type DatePrecision = "day" | "month";
  */
 export function formatDate(date: Date, precision: DatePrecision = "day") {
   const d = dayjs(date).tz(config.site.timezone);
+  const format = FORMATS[precision];
   return {
-    label: d.format(precision === "month" ? "MMMM YYYY" : "D MMMM YYYY"),
-    datetime: d.format(precision === "month" ? "YYYY-MM" : "YYYY-MM-DD"),
+    label: d.format(format.label),
+    datetime: d.format(format.datetime),
   };
 }

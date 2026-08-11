@@ -1,0 +1,51 @@
+---
+/**
+ * One row of the blog ledger: date, title + description, topic mark.
+ *
+ * The year is printed once in the group heading above, so the date drops it
+ * here. `showTopic` is off on a topic page, where every row carries the same
+ * mark and the column says nothing.
+ */
+import type { CollectionEntry } from "astro:content";
+import { TOPIC_LABELS } from "@/data/topics";
+import { formatDate } from "@/utils/formatDate";
+import { getPostUrl } from "@/utils/getPostPaths";
+import { toTransitionName } from "@/utils/toTransitionName";
+
+type Props = {
+  post: CollectionEntry<"blog">;
+  showTopic?: boolean;
+};
+
+const { post, showTopic = true } = Astro.props;
+const { title, description, lang, pubDatetime, topic } = post.data;
+
+const { label, datetime } = formatDate(pubDatetime, "day-short");
+---
+
+<li class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-12">
+  <time
+    {datetime}
+    class="font-mono text-meta text-ink-muted tabular-nums sm:col-span-2"
+  >
+    {label}
+  </time>
+  <div class:list={["min-w-0", showTopic ? "sm:col-span-8" : "sm:col-span-10"]}>
+    <a
+      href={getPostUrl(post.id, post.filePath, Astro.currentLocale)}
+      {lang}
+      class="inline-block text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
+      style={{ viewTransitionName: toTransitionName(title) }}
+    >
+      {title}
+    </a>
+    <p {lang} class="text-ink-muted">{description}</p>
+  </div>
+  {
+    showTopic && (
+      <span class="font-mono text-meta text-ink-muted uppercase sm:col-span-2 sm:text-end">
+        {TOPIC_LABELS[topic]}
+      </span>
+    )
+  }
+</li>

@@ -4,6 +4,7 @@ description: Giới thiệu kỹ thuật xor basis — biểu diễn số nguyê
 tags:
   - xor-basis
   - linear-algebra
+topic: algorithms
 author: Minh Thien Nguyen
 pubDatetime: 2022-12-30
 lang: vi

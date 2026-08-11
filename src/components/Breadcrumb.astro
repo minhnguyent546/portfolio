@@ -1,6 +1,7 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
 import config from "@/config";
+import { TOPIC_LABELS, type Topic } from "@/data/topics";
 import { useTranslations } from "@/i18n";
 import { stripBase, stripLocale } from "@/utils/withBase";
 
@@ -31,14 +32,14 @@ const navLabels: Record<string, string> = {
   search: t.nav.search,
 };
 
-// if breadcrumb is Home > Blog > [page] <etc>
-// replace Blog with localized "Blog (page number)"
-if (breadcrumbList[0] === "blog") {
-  breadcrumbList.splice(
-    0,
-    2,
-    `${t.nav.blog} (${t.pagination.page.toLowerCase()} ${breadcrumbList[1] || 1})`
-  );
+// if breadcrumb is Home > Blog > topic > [topic]
+// replace the two trailing segments with the topic's own label
+let preserveCase = false;
+if (breadcrumbList[0] === "blog" && breadcrumbList[1] === "topic") {
+  const topic = decodeSegment(breadcrumbList[2] ?? "");
+  breadcrumbList.splice(1, 2, TOPIC_LABELS[topic as Topic] ?? topic);
+  // "LLM" and "NLP" are acronyms; the tag-slug lowercasing below would eat them.
+  preserveCase = true;
 }
 
 // if breadcrumb is Home > Tags > [tag] > [page] <etc>
@@ -74,7 +75,10 @@ if (breadcrumbList[0] === "tags" && !isNaN(Number(breadcrumbList[2]))) {
         index + 1 === breadcrumbList.length ? (
           <li>
             <span
-              class:list={["capitalize opacity-75", { lowercase: index > 0 }]}
+              class:list={[
+                "capitalize opacity-75",
+                { lowercase: index > 0 && !preserveCase },
+              ]}
               aria-current="page"
             >
               {/* make the last part lowercase in Home > Tags > some-tag */}
