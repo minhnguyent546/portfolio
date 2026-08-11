@@ -159,7 +159,7 @@
       }
 
       th {
-        @apply py-1.5;
+        @apply bg-surface py-1.5;
       }
     }
 
