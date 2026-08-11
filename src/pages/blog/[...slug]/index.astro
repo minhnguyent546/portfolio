@@ -1,11 +1,13 @@
 ---
 import { getCollection, render, type CollectionEntry } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import Datetime from "@/components/Datetime.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
 import Tag from "@/components/Tag.astro";
 import config from "@/config";
+import { TOPIC_LABELS } from "@/data/topics";
 import { useTranslations } from "@/i18n";
 import PostLayout from "@/layouts/PostLayout.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
@@ -79,6 +81,7 @@ const {
   modDatetime,
   timezone,
   tags,
+  topic,
   hideEditPost,
   lang,
 } = post.data;
@@ -170,7 +173,15 @@ const ogImage = ogImageUrl
       }
     </div>
 
-    <ul class="my-4 flex flex-wrap gap-4">
+    <ul class="my-4 flex flex-wrap items-center gap-4">
+      <li>
+        <a
+          href={getRelativeLocaleUrl(locale, `blog/topic/${topic}`)}
+          class="font-mono text-meta text-ink-muted uppercase underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-current"
+        >
+          {TOPIC_LABELS[topic]}
+        </a>
+      </li>
       {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
     </ul>
 

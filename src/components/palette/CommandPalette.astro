@@ -43,6 +43,7 @@ const index = buildIndex({
     { label: t.nav.search, url: getRelativeLocaleUrl(locale, "search") },
     { label: "tty3", url: getRelativeLocaleUrl(locale, "tty3") },
   ],
+  locale,
 });
 
 // The module reads these rather than importing the i18n table, which would pull
