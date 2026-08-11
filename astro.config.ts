@@ -50,7 +50,9 @@ export default defineConfig({
     processor: unified({
       remarkPlugins: [
         remarkMath,
-        [remarkToc, { heading: TOC_HEADING }],
+        // Three levels of heading, not the default six: h4+ (sub-subsections,
+        // problem titles) clutter the collapsible and are reachable by scroll.
+        [remarkToc, { heading: TOC_HEADING, maxDepth: 3 }],
         // One registration, not one per language: `unified` keys plugins by
         // function identity, so a second `remarkCollapse` merges its options
         // into the first instead of running beside it.

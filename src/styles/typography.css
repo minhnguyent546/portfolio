@@ -46,12 +46,26 @@
        everything inside sizes in `em`, so the whole block scales with it. */
     font-size: var(--text-body);
 
+    /* Headings are heavier than bold text so a section title never reads
+       lighter than the emphasis inside it. Table headers stay at the label
+       weight (500). */
     h1,
     h2,
     h3,
     h4,
     th {
-      @apply mb-3 font-medium text-ink-heading;
+      @apply mb-3 text-ink-heading;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      @apply font-bold;
+    }
+
+    th {
+      @apply font-medium;
     }
 
     /* The `prose` plugin ships its own sizes; defer to the fluid scale. */
@@ -151,10 +165,22 @@
 
     code {
       @apply rounded bg-surface/75 p-1 wrap-break-word text-ink before:content-none after:content-none;
+
+      /* JetBrains Mono's tall x-height makes 0.875em read larger than the
+         Newsreader body around it. 0.8em matches the serif optically. */
+      font-size: 0.8em;
     }
 
     .astro-code code {
       @apply flex-[1_0_100%] bg-inherit p-0;
+
+      /* The pre already sizes to 0.8em; keep the code inside it at 1em so the
+         two 0.8em rules above don't compound to 0.64em. */
+      font-size: 1em;
+    }
+
+    pre {
+      font-size: 0.8em;
     }
 
     blockquote {
@@ -163,6 +189,13 @@
 
     details:not(.callout) {
       @apply inline-block cursor-pointer text-ink select-none [&_p]:hidden [&_ul]:my-0!;
+    }
+
+    /* Code spoilers hold a wide <pre>. Inline-block would let it grow to its
+       content width and clip at the page edge; block keeps it inside the
+       article column, so the pre's own overflow-x scrolls it. */
+    details:not(.callout).spoiler {
+      @apply block;
     }
 
     summary {

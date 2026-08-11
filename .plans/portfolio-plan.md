@@ -176,13 +176,17 @@ Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-0
 `.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
 sets sizes that win over the base layer, so without that one line the reading pages
 stay at 16 px while the rest of the site grows.
-**Heading weight is 500 site-wide (2026-08-09).** The base layer sets
-`h1–h6 { font-weight: 500 }` and `.app-prose` overrides the typography plugin's 700.
-The hero name is a card label under the avatar at `text-h2` / 500 (2026-08-10,
-when About merged into the hero; it was 600 before). Sub-heads
+**Heading weight is 500 site-wide (2026-08-09), except article headings.** The base
+layer sets `h1–h6 { font-weight: 500 }`; `.app-prose` headings are `font-bold` (700)
+so a section title never reads lighter than the `<strong>` (600) inside it (2026-08-11).
+Table headers stay at 500. The hero name is a card label under the avatar at
+`text-h2` / 500 (2026-08-10, when About merged into the hero; it was 600 before). Sub-heads
 that label technical blocks — project titles, "VNOI Magazine", "Awards" — use JetBrains Mono.
 The footer drops the repeated hero social row for a quiet colophon, and `--rule` was darkened
 to ~1.6:1 so container borders read as intentional.
+**Prose code is 0.8em (2026-08-11).** The typography plugin's 0.875em makes JetBrains
+Mono read larger than the Newsreader body around it, whose x-height sits ~15% under a
+typical sans. Block code is 1em of the 0.8em `pre`, so the two 0.8em rules don't compound.
 
 ### Layout
 
@@ -259,8 +263,10 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   pre-training-gpt2 (PyTorch/XLA, CUDA + TPU).
 - **Writing:** blog posts (on-site, migrating/linking HackMD) + distinct sub-list for
   **VNOI Magazine** articles: "Virtual Tree / Cây ảo" (2024), "Kỹ thuật tinh tế về
-  phép Xor" (2023). "Virtual Tree" is migrated and holds both languages; the English
-  side is a partial draft.
+  phép Xor" (2023). "Virtual Tree" and "Parallel Binary Search" are migrated and hold
+  both languages; each English side is a partial draft. HackMD `:::spoiler` containers
+  port to `<details><summary>` — a code fence inside a raw HTML block still parses, so
+  no markdown plugin is needed for it.
 - **Contact:** plain email (no form), GitHub, LinkedIn, X, Google Scholar, HackMD.
 
 ## 4. Stack (verified current, 2026-08)
@@ -304,6 +310,10 @@ Source Serif 4 is 0.475.
 - **KaTeX must be imported into `layer(base)`.** Unlayered CSS outranks every layer, so
   an unlayered `katex.min.css` keeps its `font: 1.21em` and renders math a fifth larger
   than the prose. Math is levelled to `1em`.
+- **Pin `katex` to `^0.16.0`, matching rehype-katex's renderer.** rehype-katex@7.0.1
+  renders with katex 0.16.x (DOM classes `.sizing`); a 0.18.x CSS sizes `.katex-sizing`
+  instead, so the sub/sup sizing rules never match and scripts render at full size and
+  overlap. The CSS must come from the same katex the HTML was rendered with.
 - **Fontshare fonts stay out** (Satoshi, General Sans, Switzer). The FFL bars
   subsetting and self-hosted redistribution.
 - No Google Fonts CDN. In dark mode, set `-webkit-font-smoothing: antialiased` and drop
@@ -478,7 +488,8 @@ Source Serif 4 is 0.475.
 
 1. Default markdown pipeline is now **Sätteri**; any remark/rehype plugin (remark-toc,
    rehype-katex, …) requires `@astrojs/markdown-remark` + `markdown.processor: 'unified'`
-   (AstroPaper already does this).
+   (AstroPaper already does this). remark-toc runs with `maxDepth: 3` — h4+ (problem
+   titles, sub-subsections) clutter the collapsible and are reachable by scroll (2026-08-11).
 2. `compressHTML` default is `'jsx'` — watch for eaten inline whitespace; use `{" "}`.
 3. Rust compiler is strict: unclosed tags/invalid nesting are errors now.
 4. `src/fetch.ts` is a reserved filename.
