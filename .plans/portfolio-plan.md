@@ -275,8 +275,8 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   edited old post would head the list while sitting in an older year group.
 - **Writing:** blog posts (on-site, migrating/linking HackMD) + distinct sub-list for
   **VNOI Magazine** articles: "Virtual Tree / Cây ảo" (2024), "Kỹ thuật tinh tế về
-  phép Xor" (2023). "Virtual Tree" and "Parallel Binary Search" are migrated and hold
-  both languages; each English side is a partial draft. HackMD `:::spoiler` containers
+  phép Xor" (2023). "Virtual Tree", "Parallel Binary Search", and "Bit compression" are
+  migrated and hold both languages; each English side is a partial draft. HackMD `:::spoiler` containers
   port to `<details><summary>` — a code fence inside a raw HTML block still parses, so
   no markdown plugin is needed for it.
 - **Contact:** plain email (no form), GitHub, LinkedIn, X, Google Scholar, HackMD.
