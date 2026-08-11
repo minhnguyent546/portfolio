@@ -4,6 +4,7 @@ description: Kĩ thuật giải quyết các bài toán truy vấn trên một t
 tags:
   - auxiliary-tree
   - virtual-tree
+topic: algorithms
 author: Minh Thien Nguyen
 pubDatetime: 2023-02-01
 lang: vi

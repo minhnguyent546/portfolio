@@ -4,6 +4,7 @@ description: A technique that answers many binary-searchable queries at once, sh
 tags:
   - binary-search
   - parallel-binary-search
+topic: algorithms
 author: Minh Thien Nguyen
 pubDatetime: 2023-08-26
 lang: en
