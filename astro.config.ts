@@ -20,6 +20,7 @@ import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import config from "./astro-paper.config";
 import { rehypeIgnoreMathml } from "./src/utils/rehypeIgnoreMathml";
+import { remarkHeadingIds } from "./src/utils/remarkHeadingIds";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 
 /** Matched case-insensitively as `^(…)$` by `mdast-util-heading-range`. */
@@ -50,6 +51,9 @@ export default defineConfig({
     processor: unified({
       remarkPlugins: [
         remarkMath,
+        // After remark-math so inline math is parsed, before remark-toc so the
+        // TOC hrefs and the heading ids agree on math-bearing headings.
+        remarkHeadingIds,
         // Three levels of heading, not the default six: h4+ (sub-subsections,
         // problem titles) clutter the collapsible and are reachable by scroll.
         [remarkToc, { heading: TOC_HEADING, maxDepth: 3 }],
