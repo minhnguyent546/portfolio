@@ -1,6 +1,7 @@
 ---
 name: generate-release-notes
 description: Generate grouped, user-facing release notes from a range of git commits.
+disable-model-invocation: true
 version: 0.1.0
 ---
 
