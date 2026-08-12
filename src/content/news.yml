@@ -27,7 +27,7 @@
 
 - id: viclip-ot-preprint
   date: 2026-02-26
-  text: Preprint of ViCLIP-OT, a foundation vision-language model for Vietnamese
+  text: Preprint of ViCLIP-OT, a vision-language model for Vietnamese
     image-text retrieval.
   links:
     - label: arXiv

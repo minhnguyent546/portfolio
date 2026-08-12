@@ -10,7 +10,7 @@ retrieval, and retrieval-augmented generation. My work centers on
 **inference-time scaling** and **neuro-symbolic reasoning**, alongside serving
 large models efficiently enough to be practical.
 
-My papers cover a **foundation vision-language model** for Vietnamese
+My papers cover a **vision-language model** for Vietnamese
 image-text retrieval, _model soups_ for image classification, and explainable
 educational question answering. On the engineering side, I have built personal projects on
 distributed and TPU training and on retrieval-augmented question answering over

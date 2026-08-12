@@ -1,25 +1,24 @@
 ---
-title: "ViCLIP-OT: The First Foundation Vision-Language Model for Vietnamese Image-Text Retrieval with Optimal Transport"
+title: "ViCLIP-OT: A Structure-Aware Vision-Language Model for Vietnamese Image-Text Retrieval"
 shortTitle: ViCLIP-OT
 authors:
   - Quoc-Khang Tran*
   - Minh-Thien Nguyen*
   - Nguyen-Khang Pham
-venue: Under review at The Visual Computer
-date: 2026-05-09
+venue: Under review at Machine Vision and Applications
+date: 2026-05-26
 arxivId: "2602.22678"
 links:
   - label: Code
     url: https://github.com/minhnguyent546/ViCLIP-OT
 thumbnail: ./viclip-ot-thumbnail.png
-abstract:
-  A foundation vision-language model for Vietnamese image-text retrieval. It
+abstract: A vision-language model for Vietnamese image-text retrieval. It
   pairs CLIP-style contrastive learning with a Similarity-Graph Regularized
   Optimal Transport (SIGROT) loss to improve cross-modal consistency and reduce
   the modality gap.
 bibtex: |
   @misc{tran2026viclipot,
-    title        = {ViCLIP-OT: The First Foundation Vision-Language Model for Vietnamese Image-Text Retrieval with Optimal Transport},
+    title        = {ViCLIP-OT: A Structure-Aware Vision-Language Model for Vietnamese Image-Text Retrieval},
     author       = {Tran, Quoc-Khang and Nguyen, Minh-Thien and Pham, Nguyen-Khang},
     year         = {2026},
     eprint       = {2602.22678},
