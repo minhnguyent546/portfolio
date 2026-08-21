@@ -52,10 +52,10 @@ const links = [
 ---
 
 <nav
-  class="mb-6 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-y border-rule py-3"
+  class="mb-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-y border-rule py-2.5"
   aria-label="Blog"
 >
-  <ul class="flex flex-wrap gap-x-5 gap-y-2">
+  <ul class="flex flex-wrap gap-2">
     {
       chips.map(chip => (
         <li>
@@ -63,12 +63,23 @@ const links = [
             href={chip.href}
             aria-current={chip.active ? "page" : undefined}
             class:list={[
-              "font-mono text-meta whitespace-nowrap underline-offset-4 hover:underline",
-              chip.active ? "text-ink-heading" : "text-accent",
+              "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[0.92rem] leading-5 whitespace-nowrap transition-colors duration-(--dur-micro)",
+              chip.active
+                ? "border-ink-heading bg-ink-heading text-paper"
+                : "border-rule text-ink-muted hover:border-ink-muted hover:text-ink-heading",
             ]}
           >
             {chip.label}
-            <span class="text-ink-muted tabular-nums"> {chip.count}</span>
+            <span
+              class:list={[
+                "self-center rounded-full px-1.5 py-[2px] font-mono text-[0.68rem] leading-none tabular-nums",
+                chip.active
+                  ? "bg-white/15 text-paper"
+                  : "bg-surface text-ink-muted",
+              ]}
+            >
+              {chip.count}
+            </span>
           </a>
         </li>
       ))
@@ -81,7 +92,7 @@ const links = [
         <li>
           <a
             href={link.href}
-            class="font-mono text-meta whitespace-nowrap text-ink-muted underline-offset-4 hover:text-accent hover:underline"
+            class="text-sm whitespace-nowrap text-ink-muted underline-offset-4 hover:text-accent hover:underline"
           >
             {link.label}
           </a>
