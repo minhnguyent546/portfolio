@@ -5,6 +5,7 @@ import BackToTopButton from "@/components/BackToTopButton.astro";
 import Datetime from "@/components/Datetime.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
+import PostTOC from "@/components/PostTOC.astro";
 import Tag from "@/components/Tag.astro";
 import config from "@/config";
 import { TOPIC_LABELS } from "@/data/topics";
@@ -14,6 +15,7 @@ import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { getTranslation } from "@/utils/getTranslation";
 import { slugifyStr } from "@/utils/slugify";
+import { tocHeadingPattern } from "@/utils/tocHeading";
 import { toTransitionName } from "@/utils/toTransitionName";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import BackButton from "./_components/BackButton.astro";
@@ -88,7 +90,10 @@ const {
 
 const t = useTranslations(lang);
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter(
+  h => (h.depth === 2 || h.depth === 3) && !tocHeadingPattern.test(h.text)
+);
 
 let ogImageUrl: string | undefined;
 
@@ -121,6 +126,8 @@ const ogImage = ogImageUrl
   modDatetime={modDatetime}
 >
   <Header />
+
+  <PostTOC headings={tocHeadings} label={t.post.onThisPage} />
 
   <BackButton uiLocale={lang} />
 

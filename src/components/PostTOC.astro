@@ -1,0 +1,125 @@
+---
+/**
+ * Fixed "On this page" rail for blog posts, in the gutter right of the
+ * article column. Hidden below `xl` (1280 px): the 48 rem page container
+ * leaves less than the rail's width plus margins before that, and the inline
+ * remark-toc block stays the table of contents on narrow screens.
+ *
+ * Headings arrive build-time from `render()`; the script only marks the
+ * current one. Same scroll-spy contract as the homepage `SectionNav`: reading
+ * line at a third of the viewport, clicked link pinned until the reader
+ * scrolls, last heading selected at page bottom (short final sections never
+ * reach the line).
+ */
+import Slugger from "github-slugger";
+import { TOC_HEADING } from "@/utils/tocHeading";
+
+type Props = {
+  headings: { depth: number; slug: string; text: string }[];
+  label: string;
+};
+
+const { headings, label } = Astro.props;
+
+// At the rail's breakpoint the inline remark-toc block hides — the rail is
+// the table of contents there. The block carries no class of its own, so the
+// rule targets the heading ids slugged from TOC_HEADING plus every details
+// that is not a spoiler (the repo's spoiler convention, styled in
+// typography.css). 80rem is Tailwind's `xl`, the same breakpoint the rail
+// itself uses.
+const tocIds = TOC_HEADING.split("|").map(t => new Slugger().slug(t.trim()));
+const hideInlineToc = `@media (min-width: 80rem) {
+  ${tocIds.map(id => `.app-prose [id='${id}']`).join(",\n  ")},
+  .app-prose details:not(.spoiler) {
+    display: none;
+  }
+}`;
+---
+
+{
+  headings.length > 0 && (
+    <nav
+      id="post-toc"
+      aria-label={label}
+      class="fixed start-[calc(50%+24rem)] top-20 hidden w-56 xl:block"
+    >
+      <p class="font-mono text-meta text-ink-muted">{label}</p>
+      <ul class="mt-2 max-h-[calc(100dvh-9rem)] [scrollbar-width:thin] space-y-0.5 overflow-y-auto border-s border-rule">
+        {headings.map(({ depth, slug, text }) => (
+          <li>
+            <a
+              href={`#${slug}`}
+              data-depth={depth}
+              class="-ms-px block border-s-2 border-transparent py-0.5 ps-3 text-meta leading-snug text-ink-muted hover:text-ink aria-[current]:border-accent aria-[current]:text-accent [&[data-depth='3']]:ps-8"
+            >
+              {text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style is:global set:html={hideInlineToc}></style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>("#post-toc");
+  const links = [
+    ...(nav?.querySelectorAll<HTMLAnchorElement>("a[href^='#']") ?? []),
+  ];
+  const headings = links
+    .map(link => {
+      try {
+        return document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      } catch {
+        return null;
+      }
+    })
+    .filter((h): h is HTMLElement => h != null);
+
+  if (nav && headings.length === links.length) {
+    const mark = (current: number) =>
+      links.forEach((link, i) => {
+        if (i === current) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      });
+
+    // A click on a short final section lands at the page bottom, so the
+    // clicked link would immediately lose the mark. Pin it until the reader
+    // scrolls under their own steam.
+    let pinned: number | null = null;
+
+    const sync = () => {
+      if (pinned !== null) return;
+
+      const line = innerHeight * 0.35;
+      const atEnd =
+        scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+
+      let current = headings.length - 1;
+      if (!atEnd) {
+        current = 0;
+        headings.forEach((heading, i) => {
+          if (heading.getBoundingClientRect().top <= line) current = i;
+        });
+      }
+      mark(current);
+    };
+
+    links.forEach((link, i) =>
+      link.addEventListener("click", () => {
+        pinned = i;
+        mark(i);
+      })
+    );
+
+    for (const event of ["wheel", "touchstart", "keydown"]) {
+      addEventListener(event, () => (pinned = null), { passive: true });
+    }
+
+    addEventListener("scroll", sync, { passive: true });
+    addEventListener("resize", sync, { passive: true });
+    sync();
+  }
+</script>

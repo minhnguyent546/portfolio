@@ -26,6 +26,7 @@ export default {
     imagePreview: "Image preview",
     closeImagePreview: "Close image preview",
     linkToHeading: "Link to section: %s",
+    onThisPage: "On this page",
     switchLanguage: "Read this post in Vietnamese",
   },
   pagination: {

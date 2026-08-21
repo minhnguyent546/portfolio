@@ -25,6 +25,8 @@ export interface UIStrings {
     closeImagePreview: string;
     /** Accessible name for the anchor beside a heading. `%s` is the heading text. */
     linkToHeading: string;
+    /** Label for the fixed "on this page" rail on wide screens. */
+    onThisPage: string;
     /** Names the other language, since a pair is always English plus Vietnamese. */
     switchLanguage: string;
   };
