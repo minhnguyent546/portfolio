@@ -26,6 +26,7 @@ export default {
     imagePreview: "Xem trước hình",
     closeImagePreview: "Đóng hình xem trước",
     linkToHeading: "Liên kết đến mục: %s",
+    onThisPage: "Mục lục",
     switchLanguage: "Đọc bài viết này bằng tiếng Anh",
   },
   pagination: {

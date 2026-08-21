@@ -21,10 +21,8 @@ import remarkToc from "remark-toc";
 import config from "./astro-paper.config";
 import { rehypeIgnoreMathml } from "./src/utils/rehypeIgnoreMathml";
 import { remarkHeadingIds } from "./src/utils/remarkHeadingIds";
+import { TOC_HEADING } from "./src/utils/tocHeading";
 import { transformerFileName } from "./src/utils/transformers/fileName";
-
-/** Matched case-insensitively as `^(…)$` by `mdast-util-heading-range`. */
-const TOC_HEADING = "Table of contents|Mục lục";
 
 /** Easter eggs. No link points at them, so the sitemap must not either. */
 const HIDDEN_ROUTES = ["/photon-sphere/", "/tty3/"];
