@@ -5,6 +5,7 @@ tags:
   - auxiliary-tree
   - virtual-tree
 topic: algorithms
+thumbnail: ./auxiliary-tree/construction-overview.svg
 author: Minh Thien Nguyen
 pubDatetime: 2023-02-01
 lang: en

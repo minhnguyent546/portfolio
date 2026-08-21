@@ -25,6 +25,8 @@ const blog = defineCollection({
           post into whichever topic happened to be first. */
       topic: z.enum(TOPICS),
       ogImage: image().or(z.string()).optional(),
+      /** Card image on the blog ledger. Falls back to the generated OG card. */
+      thumbnail: image().optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
       hideEditPost: z.boolean().optional(),

@@ -5,6 +5,7 @@ tags:
   - nlp
   - llm
 topic: llm
+thumbnail: ./pretraining-gpt2-bert-bart/gpt2-training-loss.png
 author: Minh Thien Nguyen
 pubDatetime: 2024-05-28
 lang: en

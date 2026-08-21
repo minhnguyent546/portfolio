@@ -5,6 +5,7 @@ tags:
   - xor-basis
   - linear-algebra
 topic: algorithms
+thumbnail: ./xor-basis/thumbnail.png
 author: Minh Thien Nguyen
 pubDatetime: 2022-12-30
 lang: en
