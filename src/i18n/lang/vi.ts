@@ -21,11 +21,13 @@ export default {
     previousPost: "Bài trước",
     nextPost: "Bài tiếp theo",
     copyCode: "Sao chép",
+    minRead: "{{minutes}} phút đọc",
     copiedCode: "Đã sao chép",
     zoomImage: "Phóng to hình",
     imagePreview: "Xem trước hình",
     closeImagePreview: "Đóng hình xem trước",
     linkToHeading: "Liên kết đến mục: %s",
+    onThisPage: "Mục lục",
     switchLanguage: "Đọc bài viết này bằng tiếng Anh",
   },
   pagination: {
