@@ -22,6 +22,7 @@ export default {
     nextPost: "Next Post",
     copyCode: "Copy",
     copiedCode: "Copied",
+    minRead: "{{minutes}} min read",
     zoomImage: "Zoom image",
     imagePreview: "Image preview",
     closeImagePreview: "Close image preview",

@@ -261,14 +261,18 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   ViREx-Bench (inference-time scaling, Vietnamese reasoning) · seas (async
   FastAPI/SQLAlchemy/Qdrant) · medical-llama2 (LLaMA-2 7B fine-tune + HF Spaces demo) ·
   pre-training-gpt2 (PyTorch/XLA, CUDA + TPU).
-- **Blog taxonomy** (2026-08-11): every post declares one `topic` from a closed enum —
-  `algorithms`, `llm`, `nlp`, `systems` — in `src/data/topics.ts`, beside the free
-  `tags`. The field is required with no default, so the build stops until a new post
-  picks one. `/blog` lists every post as a year-grouped ledger with a mono date and a
-  right-aligned topic mark; each populated topic also gets `/blog/topic/<name>/`. A
-  topic joins `BlogNav` and gets a page once it has a post, so the row never offers an
-  empty list. `BlogNav` also carries Tags and Archives on the right, as the secondary
-  axes. Filters are real routes, which keeps
+- **Blog taxonomy** (2026-08-11; ledger redesigned 2026-08-21): every post declares one
+  `topic` from a closed enum — `algorithms`, `llm`, `nlp`, `systems` — in
+  `src/data/topics.ts`, beside the free `tags`. The field is required with no default,
+  so the build stops until a new post picks one. `/blog` lists posts as a year-grouped
+  ledger of three-column rows: date, reading time, and topic pill in a left meta column,
+  title plus two-line description in the middle, card image on the right; the whole row
+  is one link. Reading time is computed at build from the Markdown body (200 wpm, code
+  fences excluded). A row's card image comes from optional `thumbnail` frontmatter and
+  falls back to the generated OG card. Topic filters render as pills; each populated
+  topic also gets `/blog/topic/<name>/`. A topic joins `BlogNav` and gets a page once it
+  has a post, so the row never offers an empty list. `BlogNav` also carries Tags and
+  Archives on the right, as the secondary axes. Filters are real routes, which keeps
   the page at 0 bytes of JavaScript. Pagination is gone: `/archives` already holds the
   full history, and a year heading split across pages stops grouping. Sorting is on
   `pubDatetime` alone, not the `modDatetime` that `getSortedPosts` prefers, or an

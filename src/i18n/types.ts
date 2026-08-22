@@ -20,6 +20,8 @@ export interface UIStrings {
     nextPost: string;
     copyCode: string;
     copiedCode: string;
+    /** Reading-time estimate on cards and post headers. `%s` is the count. */
+    minRead: string;
     zoomImage: string;
     imagePreview: string;
     closeImagePreview: string;

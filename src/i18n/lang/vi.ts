@@ -21,6 +21,7 @@ export default {
     previousPost: "Bài trước",
     nextPost: "Bài tiếp theo",
     copyCode: "Sao chép",
+    minRead: "{{minutes}} phút đọc",
     copiedCode: "Đã sao chép",
     zoomImage: "Phóng to hình",
     imagePreview: "Xem trước hình",

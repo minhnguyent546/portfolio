@@ -1,15 +1,22 @@
 ---
 /**
- * One row of the blog ledger: date, title + description, topic mark.
+ * One row of the blog ledger: meta column, title + description, card image.
  *
- * The year is printed once in the group heading above, so the date drops it
- * here. `showTopic` is off on a topic page, where every row carries the same
- * mark and the column says nothing.
+ * Three columns on wide screens (meta | body | thumb); below that the meta
+ * line wraps above a two-column body/thumb pair. The whole row is one link,
+ * so the hover target matches what looks clickable. The year is printed once
+ * in the group heading above, so the date drops it here. `showTopic` is off
+ * on a topic page, where every row carries the same mark and the pill says
+ * nothing.
  */
+import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
+import config from "@/config";
 import { TOPIC_LABELS } from "@/data/topics";
+import { tplStr, useTranslations } from "@/i18n";
 import { formatDate } from "@/utils/formatDate";
 import { getPostUrl } from "@/utils/getPostPaths";
+import { getReadingTime } from "@/utils/getReadingTime";
 import { toTransitionName } from "@/utils/toTransitionName";
 
 type Props = {
@@ -18,34 +25,79 @@ type Props = {
 };
 
 const { post, showTopic = true } = Astro.props;
-const { title, description, lang, pubDatetime, topic } = post.data;
+const { title, description, lang, pubDatetime, topic, thumbnail, ogImage } =
+  post.data;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+const minutes = getReadingTime(post);
 
 const { label, datetime } = formatDate(pubDatetime, "day-short");
+
+// Card image: the post's own thumbnail, else the generated OG card when the
+// build makes one. A hand-picked ogImage replaces the generated card, so it
+// cannot stand in here.
+const ogCardUrl =
+  config.features.dynamicOgImage && !ogImage
+    ? `${getPostUrl(post.id, post.filePath, locale).replace(/\/+$/, "")}/index.png`
+    : undefined;
 ---
 
-<li class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-12">
-  <time
-    {datetime}
-    class="font-mono text-meta text-ink-muted tabular-nums sm:col-span-2"
+<li>
+  <a
+    href={getPostUrl(post.id, post.filePath, locale)}
+    {lang}
+    title={description}
+    class="group grid grid-cols-[minmax(0,1fr)_6.5rem] gap-x-5 gap-y-1 py-4 lg:grid-cols-[7rem_minmax(0,1fr)_14rem] lg:gap-x-8"
+    style={{ viewTransitionName: toTransitionName(title) }}
   >
-    {label}
-  </time>
-  <div class:list={["min-w-0", showTopic ? "sm:col-span-8" : "sm:col-span-10"]}>
-    <a
-      href={getPostUrl(post.id, post.filePath, Astro.currentLocale)}
-      {lang}
-      class="inline-block text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-      style={{ viewTransitionName: toTransitionName(title) }}
+    <div
+      class="col-span-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-muted lg:col-span-1 lg:flex-col lg:items-start lg:gap-y-0.5"
     >
-      {title}
-    </a>
-    <p {lang} class="text-ink-muted">{description}</p>
-  </div>
-  {
-    showTopic && (
-      <span class="font-mono text-meta text-ink-muted uppercase sm:col-span-2 sm:text-end">
-        {TOPIC_LABELS[topic]}
-      </span>
-    )
-  }
+      <time {datetime} class="font-mono text-[0.78rem] tabular-nums">
+        {label}
+      </time>
+      <span class="text-sm lg:hidden" aria-hidden="true">·</span>
+      <span class="text-sm">{tplStr(t.post.minRead, { minutes })}</span>
+      {
+        showTopic && (
+          <span class="rounded-full bg-surface px-2.5 py-px text-[0.74rem] font-medium tracking-wide lowercase">
+            {TOPIC_LABELS[topic]}
+          </span>
+        )
+      }
+    </div>
+
+    <div class="min-w-0">
+      <h3
+        class="text-h3 leading-tight font-medium text-ink-heading underline decoration-transparent decoration-[1.5px] underline-offset-4 transition-colors duration-(--dur-micro) group-hover:text-accent group-hover:decoration-current"
+      >
+        {title}
+      </h3>
+      <p class="mt-0.5 line-clamp-3 text-[0.95rem] text-ink-muted">
+        {description}
+      </p>
+    </div>
+
+    {
+      thumbnail ? (
+        <Image
+          src={thumbnail}
+          alt=""
+          width={448}
+          loading="lazy"
+          decoding="async"
+          class="h-auto w-full rounded-md border border-ink-muted/25 bg-white shadow-[0_1px_3px_rgb(0_0_0/0.06)]"
+        />
+      ) : ogCardUrl ? (
+        <img
+          src={ogCardUrl}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          class="h-auto w-full rounded-md border border-ink-muted/25 bg-white shadow-[0_1px_3px_rgb(0_0_0/0.06)]"
+        />
+      ) : null
+    }
+  </a>
 </li>
