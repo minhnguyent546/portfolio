@@ -211,8 +211,10 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 
 ## 3. Content inventory (from GitHub README)
 
-- **Hero/About:** AI Research Engineer; inference-time scaling, symbolic reasoning,
-  high-performance model serving; personal work on distributed/TPU training and RAG.
+- **Hero/About:** AI Researcher; language models, inference-time scaling,
+  neuro-symbolic reasoning, and high-performance model serving; personal work on
+  distributed/TPU training and RAG. The About entry's description also feeds the
+  homepage meta description and Person JSON-LD, so search metadata follows the prose.
   The About prose renders inside the hero (left column, full three paragraphs) with the
   identity card (avatar, name, title, CV, socials) on the right under the avatar; the
   About section is gone (2026-08-10). `about.md` keeps one home, so tty3 `about.txt` still works.

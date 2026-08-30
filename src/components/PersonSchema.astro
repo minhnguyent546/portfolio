@@ -2,6 +2,11 @@
 import avatar from "@/assets/images/avatar.jpg";
 import config from "@/config";
 
+type Props = {
+  description: string;
+};
+
+const { description } = Astro.props;
 const { site, socials } = config;
 
 const mail = socials.find(s => s.name === "mail");
@@ -14,7 +19,7 @@ const structuredData = {
   url: site.profile ?? site.url,
   image: new URL(avatar.src, Astro.site ?? site.url).href,
   jobTitle: "AI Researcher",
-  description: site.description,
+  description,
   ...(mail && { email: mail.url.replace(/^mailto:/, "") }),
   // Verbatim from the homepage About prose; keep the two in step.
   knowsAbout: [

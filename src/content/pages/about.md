@@ -1,6 +1,6 @@
 ---
 title: About
-description: AI Researcher working on inference-time scaling, symbolic reasoning, and high-performance model serving.
+description: AI Researcher working on language models, inference-time scaling, neuro-symbolic reasoning, and high-performance model serving.
 ---
 
 I am an AI researcher working on language models, reasoning, and deep learning.

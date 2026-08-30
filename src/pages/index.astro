@@ -59,6 +59,10 @@ const about = await getEntry("pages", "about");
 if (!about) {
   throw new Error("Missing content entry: `about.md` in `src/content/pages/`");
 }
+const homepageDescription = about.data.description;
+if (!homepageDescription) {
+  throw new Error("Missing description in `src/content/pages/about.md`");
+}
 const { Content: AboutContent } = await render(about);
 
 const sections = [
@@ -104,8 +108,8 @@ const contactRows = [
       .map(({ id }) => id);
 ---
 
-<Layout class="app-wide">
-  <PersonSchema slot="head" />
+<Layout class="app-wide" description={homepageDescription}>
+  <PersonSchema slot="head" description={homepageDescription} />
   <BootSequence
     postCount={sortedPosts.length}
     tagCount={getUniqueTags(posts).length}
