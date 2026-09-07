@@ -86,8 +86,18 @@ const rssHref = getAssetPath("rss.xml");
       href={new URL(rssHref, Astro.site)}
     />
 
-    <!-- Static fallback (light --paper); theme.ts overwrites per theme. -->
-    <meta name="theme-color" content="#fdfcfa" />
+    <!-- System followers get the right chrome colour before JS runs; theme.ts
+         keeps the matching tag in sync on toggle. -->
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#fdfcfa"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#16161a"
+    />
 
     <!-- Extra head content injected by child layouts (e.g. JSON-LD, article meta) -->
     <slot name="head" />

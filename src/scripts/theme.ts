@@ -50,12 +50,12 @@ function reflect(): void {
     );
   }
 
-  // Fill <meta name="theme-color"> with the computed background colour so
-  // Android's browser chrome matches the page background.
+  // Two tags exist (light/dark media) so system followers get the right
+  // chrome before JS; sync both so manual overrides tint correctly too.
   const bg = window.getComputedStyle(document.body).backgroundColor;
   document
-    .querySelector("meta[name='theme-color']")
-    ?.setAttribute("content", bg);
+    .querySelectorAll("meta[name='theme-color']")
+    .forEach(tag => tag.setAttribute("content", bg));
 }
 
 function persist(): void {
