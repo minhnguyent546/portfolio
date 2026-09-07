@@ -118,8 +118,20 @@ const hideInlineToc = `@media (min-width: 80rem) {
       addEventListener(event, () => (pinned = null), { passive: true });
     }
 
-    addEventListener("scroll", sync, { passive: true });
-    addEventListener("resize", sync, { passive: true });
+    // One layout per frame: scroll fires faster than paint, and sync()
+    // forces layout on every heading.
+    let ticking = false;
+    function requestSync() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        sync();
+        ticking = false;
+      });
+    }
+
+    addEventListener("scroll", requestSync, { passive: true });
+    addEventListener("resize", requestSync, { passive: true });
     sync();
   }
 </script>
