@@ -34,8 +34,9 @@ poorly on Vietnamese. ViCLIP-OT adds a Similarity-Graph Regularized Optimal
 Transport (SIGROT) loss to CLIP-style contrastive training, which aligns the
 two modalities more tightly and narrows the modality gap.
 
-On three Vietnamese benchmarks — UIT-OpenViIC, KTVIC, and Crossmodal-3600 —
-the model beats CLIP and SigLIP baselines in both in-domain and zero-shot
-settings. It reaches an average Recall@K of 67.34% on UIT-OpenViIC, 5.75
-points above CLIP, and beats CLIP by 11.72 points zero-shot on Crossmodal-3600.
-Embedding-space analysis confirms the improved alignment.
+The model beats CLIP and SigLIP baselines on three Vietnamese benchmarks:
+UIT-OpenViIC, KTVIC, and Crossmodal-3600. This holds in both in-domain and
+zero-shot settings. It reaches an average Recall@K of 67.34% on UIT-OpenViIC,
+5.75 points above CLIP, and beats CLIP by 11.72 points zero-shot on
+Crossmodal-3600. Embedding-space analysis shows closer alignment between image
+and text embeddings.

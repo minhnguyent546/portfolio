@@ -18,9 +18,10 @@ thumbnail: ../competitions/exact-2026-pipeline.png
 abstract: >
   CoTu is a neuro-symbolic Program-of-Thought system for explainable educational
   question answering. A 4B open-weight backbone writes a program instead of
-  stating an answer: regulation queries become a Z3 encoding whose entailment
-  verdict grounds the deduction, and physics becomes numerical Python. It scored
-  perfectly on physics in both automated selection rounds of the EXACT 2026
+  stating an answer. For regulation queries, it produces a Z3 encoding whose
+  entailment verdict supports the deduction. For physics questions, it produces
+  numerical Python. It scored perfectly on physics in both automated selection
+  rounds of the EXACT 2026
   challenge and took the highest technical score of any team in the final.
 bibtex: |
   @misc{tran2026cotu,

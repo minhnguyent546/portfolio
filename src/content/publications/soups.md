@@ -38,11 +38,11 @@ and heterogeneous domains. Conventional models either overfit or show high
 variance.
 
 This work applies model soups on top of CoAtNet, averaging checkpoints from a
-single training trajectory so that inference cost stays flat. Two strategies
-are compared, greedy and uniform soup. A bias-variance decomposition shows the
-gain comes from reduced variance at almost no cost in bias, and
-cross-entropy-based distance metrics with MDS show that model soups picks
-geometrically diverse checkpoints where Soft Voting blends redundant ones.
+single training trajectory so that inference cost stays flat. The study
+compares two strategies, greedy and uniform soup. A bias-variance decomposition
+shows that the gain comes from lower variance with almost no added bias.
+Cross-entropy-based distance metrics and MDS show that model soups choose
+geometrically diverse checkpoints, while Soft Voting blends redundant ones.
 
 On ICH-17 — 7,406 images across 17 classes — the approach reaches 72.36%
 top-1 accuracy and 69.28% macro F1, ahead of ResNet-50, DenseNet-121, and ViT.

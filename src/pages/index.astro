@@ -95,8 +95,8 @@ const contactRows = [
   {
     Icon: IconLinkedin,
     href: socialUrl("linkedin"),
-    text: "Happy to connect",
-    srSuffix: " on LinkedIn",
+    text: "Connect on LinkedIn",
+    srSuffix: "",
     mono: false,
   },
 ];
@@ -170,11 +170,7 @@ const contactRows = [
       </div>
     </Section>
 
-    <Section
-      id="projects"
-      title="Projects"
-      note="What each project does, and the result it produced."
-    >
+    <Section id="projects" title="Projects">
       <div class="divide-y divide-rule border-y border-rule">
         {projects.map(entry => <ProjectRow {entry} />)}
       </div>

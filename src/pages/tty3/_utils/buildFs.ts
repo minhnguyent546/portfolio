@@ -155,11 +155,9 @@ export function buildFs(content: {
     ]);
   }
 
-  files[`${HOME}/contact.txt`] = block([
-    "Reach me at any of these.",
-    "",
-    ...config.socials.map(({ name, url }) => `  ${name.padEnd(14)}${url}`),
-  ]);
+  files[`${HOME}/contact.txt`] = block(
+    config.socials.map(({ name, url }) => `  ${name.padEnd(14)}${url}`)
+  );
 
   // What a .plan file held on a real finger daemon: what the person is working
   // on now. The newest news entry is exactly that, so the joke needs no invention.
