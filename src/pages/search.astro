@@ -131,7 +131,14 @@ const t = useTranslations(locale);
       }
 
       // Reset search param if search input is cleared
-      const searchInput = document.querySelector(".pagefind-ui__search-input");
+      // Pagefind renders its input without form attrs: "off" keeps the
+      // browser-history dropdown from covering Pagefind's own results, and
+      // no spellcheck keeps technical terms squiggle-free (same as palette).
+      const searchInput = document.querySelector<HTMLInputElement>(
+        ".pagefind-ui__search-input"
+      );
+      searchInput?.setAttribute("autocomplete", "off");
+      searchInput?.setAttribute("spellcheck", "false");
       const clearButton = document.querySelector(".pagefind-ui__search-clear");
       searchInput?.addEventListener("input", resetSearchParam);
       clearButton?.addEventListener("click", resetSearchParam);
