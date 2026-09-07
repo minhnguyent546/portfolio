@@ -54,7 +54,7 @@ export default {
     archivesDesc: "All the articles I've archived.",
 
     searchTitle: "Search",
-    searchDesc: "Search any article ...",
+    searchDesc: "Search any article …",
   },
   palette: {
     label: "Search or jump to",
@@ -79,7 +79,7 @@ export default {
     themeModeLight: "Theme: light",
     themeModeDark: "Theme: dark",
     themeModeSystem: "Theme: system",
-    searchPlaceholder: "Search posts...",
+    searchPlaceholder: "Search posts…",
     noResults: "No results found",
     goToPreviousPage: "Go to previous page",
     goToNextPage: "Go to next page",

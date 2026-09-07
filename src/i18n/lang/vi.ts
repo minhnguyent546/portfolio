@@ -49,7 +49,7 @@ export default {
     archivesTitle: "Lưu trữ",
     archivesDesc: "Tất cả bài viết đã lưu trữ.",
     searchTitle: "Tìm kiếm",
-    searchDesc: "Tìm kiếm bài viết...",
+    searchDesc: "Tìm kiếm bài viết…",
   },
   palette: {
     label: "Tìm kiếm hoặc chuyển đến",
@@ -74,7 +74,7 @@ export default {
     themeModeLight: "Giao diện: sáng",
     themeModeDark: "Giao diện: tối",
     themeModeSystem: "Giao diện: hệ thống",
-    searchPlaceholder: "Tìm bài viết...",
+    searchPlaceholder: "Tìm bài viết…",
     noResults: "Không tìm thấy kết quả",
     goToPreviousPage: "Đến trang trước",
     goToNextPage: "Đến trang tiếp theo",
