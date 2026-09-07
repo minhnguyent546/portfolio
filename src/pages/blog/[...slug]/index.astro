@@ -311,7 +311,9 @@ const ogImage = ogImageUrl
       const copyButton = document.createElement("button");
       copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-surface border border-surface px-2 py-1 text-xs leading-4 text-ink font-medium`;
       copyButton.textContent = copyButtonLabel;
-      codeBlock.setAttribute("tabindex", "0");
+      // Shiki adds tabindex="0" to every <pre>; the Copy button is the
+      // single tab stop instead.
+      codeBlock.removeAttribute("tabindex");
       codeBlock.appendChild(copyButton);
 
       codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
