@@ -23,6 +23,12 @@ const {
 } = entry.data;
 
 const { label, datetime } = formatDate(date);
+const thumbnailWidths = thumbnail
+  ? [224, 320, 448, 640, 768, thumbnail.width].filter(
+      (width, index, widths) =>
+        width <= thumbnail.width && widths.indexOf(width) === index
+    )
+  : [];
 
 // Built here rather than stored, so an id change cannot leave a stale URL.
 const idLinks = [
@@ -36,17 +42,20 @@ const idLinks = [
 ];
 ---
 
-<article class="flex flex-col gap-5 py-7 sm:flex-row">
+<article class="flex flex-col gap-5 py-7 sm:flex-row sm:gap-6">
   {
     thumbnail && (
-      <div class="flex h-40 w-52 shrink-0 items-center justify-center border border-rule bg-paper p-2">
+      <div class="w-full shrink-0 sm:w-56">
         <Image
           src={thumbnail}
           alt=""
-          width={416}
-          densities={[1, 2]}
+          widths={thumbnailWidths}
+          sizes="(min-width: 40rem) 14rem, calc(100vw - 2rem)"
+          format="webp"
+          quality={95}
           loading="lazy"
-          class="max-h-full w-auto object-contain"
+          decoding="async"
+          class="h-auto w-full border border-rule bg-white"
         />
       </div>
     )

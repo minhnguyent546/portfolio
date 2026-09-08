@@ -226,7 +226,10 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   identity card is centred under a square avatar scaled ~1.15×.
 - **News:** manually curated dated list (paper releases, competition results) — recency signal.
 - **Publications** (show each paper's publication status; BibTeX behind "Cite" toggle;
-  arXiv/Code/Demo link rows; thumbnails):
+  arXiv/Code/Demo link rows; thumbnails). Thumbnail rows keep each figure's natural
+  ratio in a 14rem desktop column and use the available width on small screens.
+  Responsive WebP images preserve diagram detail without full-size PNG downloads.
+  Use the original paper figures when a thumbnail source has too few pixels:
   - **ViCLIP-OT** — first foundation VLM for Vietnamese image–text retrieval w/ Optimal
     Transport. arXiv 2602.22678 · code.
   - **soups** — model soups for Mekong Delta intangible-cultural-heritage image
