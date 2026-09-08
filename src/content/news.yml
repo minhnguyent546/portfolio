@@ -1,8 +1,17 @@
+- id: exact-2026-csonet-acceptance
+  date: 2026-09-08
+  text: >
+    Our CoTu paper was accepted at CSoNet 2026, Special Session: EXACT Competition,
+    Springer LNCS.
+  links:
+    - label: Preprint
+      url: https://arxiv.org/abs/2607.14735
+
 - id: exact-2026-csonet-submission
   date: 2026-07-15
-  text:
-    Submitted the CoTu system paper to the EXACT Competition Track at the CSoNet
-    2026 special session, hosted at HCMUT.
+  text: >
+    Submitted the CoTu system paper to CSoNet 2026, Special Session: EXACT
+    Competition, hosted at HCMUT.
   links:
     - label: Technical report
       url: https://arxiv.org/abs/2607.14735

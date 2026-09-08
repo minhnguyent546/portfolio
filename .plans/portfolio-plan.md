@@ -225,14 +225,15 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   italic — the trial before the treatment spreads to other markdown bodies; the
   identity card is centred under a square avatar scaled ~1.15×.
 - **News:** manually curated dated list (paper releases, competition results) — recency signal.
-- **Publications** (label clearly as *arXiv preprints*; BibTeX behind "Cite" toggle;
+- **Publications** (show each paper's publication status; BibTeX behind "Cite" toggle;
   arXiv/Code/Demo link rows; thumbnails):
   - **ViCLIP-OT** — first foundation VLM for Vietnamese image–text retrieval w/ Optimal
     Transport. arXiv 2602.22678 · code.
   - **soups** — model soups for Mekong Delta intangible-cultural-heritage image
     classification. arXiv 2603.02181 · code.
   - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational
-    QA. arXiv 2607.14735 · code. Added 2026-08-09.
+    QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS.
+    Camera-ready revisions pending. arXiv 2607.14735 · code.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
 - **Experience** (added 2026-08-09): a `src/content/experience/` collection rendered as
   floating cards on a timeline (role title, org subtitle in full ink, period in mono,

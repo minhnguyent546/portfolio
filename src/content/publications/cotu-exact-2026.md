@@ -8,7 +8,7 @@ authors:
   - Xuan-Tung Bui
   - Truong-Thanh Ma
   - Nguyen-Khang Pham
-venue: Under review at CSoNet 2026, Springer LNCS
+venue: "Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS"
 date: 2026-07-15
 arxivId: "2607.14735"
 links:
