@@ -235,6 +235,7 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
     QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS.
     Camera-ready revisions pending. arXiv 2607.14735 · code.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
+  - Venue lines use semibold, full-contrast text. Dates stay muted on a separate line.
 - **Experience** (added 2026-08-09): a `src/content/experience/` collection rendered as
   floating cards on a timeline (role title, org subtitle in full ink, period in mono,
   three focused highlights; hover lifts the card). Cards sit on `--surface` so they read
