@@ -26,7 +26,7 @@ const items = await Promise.all(
 
 <div class="flex flex-wrap items-center gap-1">
   {
-    items.map(({ name, url, title, Icon, isMail }, index) =>
+    items.map(({ url, title, Icon, isMail }, index) =>
       Icon ? (
         <LinkButton
           href={url}
