@@ -1,3 +1,9 @@
+- id: cvpr-2026-fmv-reviewer
+  date: 2026-10-16
+  text: >
+    Reviewed a submission for the CVPR 2026 Workshop on Foundation Models for
+    Medical Vision.
+
 - id: exact-2026-csonet-acceptance
   date: 2026-09-08
   text: >

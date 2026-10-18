@@ -28,6 +28,8 @@ dist/
 /*.jpeg
 /*.gif
 /tmp/
+/notes/
+/shots/
 
 # misc
 
