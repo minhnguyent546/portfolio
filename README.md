@@ -8,7 +8,7 @@ A personal portfolio for research, engineering projects, publications, and writi
 
 ## Development
 
-Requires `node` 22.15+ and `pnpm`.
+Requires `node` 22.23.4+, 24.22.1+, or 26.12.1+ and `pnpm`.
 
 ```sh
 pnpm install        # Install dependencies
