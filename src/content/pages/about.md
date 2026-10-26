@@ -1,13 +1,13 @@
 ---
 title: About
-description: AI Researcher working on language models, inference-time scaling, neuro-symbolic reasoning, and high-performance model serving.
+description: AI Researcher working on neuro-symbolic reasoning, inference-time scaling, and multimodal representation learning.
 ---
 
 I am an AI researcher working on language models, reasoning, and deep learning.
-I work on inference-time scaling, symbolic reasoning, high-performance model
+My main focus is **neuro-symbolic reasoning**, **inference-time scaling**, and
+**multimodal representation learning**. I also work on high-performance model
 serving, embedding models, Vietnamese image-text retrieval, and
-retrieval-augmented generation. My main focus is **inference-time scaling** and
-**neuro-symbolic reasoning**, along with efficient large-model serving.
+retrieval-augmented generation.
 
 My papers cover a **vision-language model** for Vietnamese
 image-text retrieval, _model soups_ for image classification, and explainable

@@ -211,8 +211,8 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 
 ## 3. Content inventory (from GitHub README)
 
-- **Hero/About:** AI Researcher; language models, inference-time scaling,
-  neuro-symbolic reasoning, and high-performance model serving; personal work on
+- **Hero/About:** AI Researcher; main focus on neuro-symbolic reasoning,
+  inference-time scaling, and multimodal representation learning; personal work on
   distributed/TPU training and RAG. The About entry's description also feeds the
   homepage meta description and Person JSON-LD, so search metadata follows the prose.
   The About prose renders inside the hero (left column, full three paragraphs) with the
