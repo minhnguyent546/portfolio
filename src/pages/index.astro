@@ -43,9 +43,11 @@ const competitions = (await getCollection("competitions", published)).sort(
 const experience = (await getCollection("experience", published)).sort(byOrder);
 const projects = (await getCollection("projects", published)).sort(byOrder);
 
-const news = (await getCollection("news")).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
+// The homepage shows the latest entries only; tty3 keeps the full list.
+const NEWS_LIMIT = 7;
+const news = (await getCollection("news"))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, NEWS_LIMIT);
 const articles = (await getCollection("articles")).sort(
   (a, b) => b.data.year - a.data.year
 );
