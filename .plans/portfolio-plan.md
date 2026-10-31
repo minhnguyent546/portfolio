@@ -225,6 +225,7 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   italic — the trial before the treatment spreads to other markdown bodies; the
   identity card is centred under a square avatar scaled ~1.15×.
 - **News:** manually curated dated list (paper releases, competition results) — recency signal.
+  The homepage shows the 7 latest entries. `news.yml` and tty3 keep the full list.
 - **Publications** (show each paper's publication status; BibTeX behind "Cite" toggle;
   arXiv/Code/Demo link rows; thumbnails). Thumbnail rows keep each figure's natural
   ratio in a 14rem desktop column and use the available width on small screens.
