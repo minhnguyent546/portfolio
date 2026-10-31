@@ -10,8 +10,8 @@ serving, embedding models, Vietnamese image-text retrieval, and
 retrieval-augmented generation.
 
 My papers cover a **vision-language model** for Vietnamese
-image-text retrieval, _model soups_ for image classification, and explainable
-educational question answering. On the engineering side, I have built personal projects on
+image-text retrieval, explainable educational question answering, and _model
+soups_ for Mekong Delta heritage image classification. On the engineering side, I have built personal projects on
 distributed and TPU training and on retrieval-augmented question answering over
 dense technical documents.
 
