@@ -68,7 +68,6 @@ export function buildFs(content: {
               label: `arXiv:${data.arxivId}`,
               url: `https://arxiv.org/abs/${data.arxivId}`,
             },
-            { label: "PDF", url: `https://arxiv.org/pdf/${data.arxivId}` },
           ]
         : []),
       ...(data.doi

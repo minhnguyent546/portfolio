@@ -33,10 +33,7 @@ const thumbnailWidths = thumbnail
 // Built here rather than stored, so an id change cannot leave a stale URL.
 const idLinks = [
   ...(arxivId
-    ? [
-        { label: `arXiv:${arxivId}`, url: `https://arxiv.org/abs/${arxivId}` },
-        { label: "PDF", url: `https://arxiv.org/pdf/${arxivId}` },
-      ]
+    ? [{ label: `arXiv:${arxivId}`, url: `https://arxiv.org/abs/${arxivId}` }]
     : []),
   ...(doi ? [{ label: "DOI", url: `https://doi.org/${doi}` }] : []),
 ];
