@@ -33,5 +33,5 @@ bibtex: |
     primaryClass = {cs.CL},
     url          = {https://arxiv.org/abs/2607.14735}
   }
-order: 0
+order: 1
 ---

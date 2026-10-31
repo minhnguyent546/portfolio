@@ -5,7 +5,7 @@ authors:
   - Quoc-Khang Tran*
   - Minh-Thien Nguyen*
   - Nguyen-Khang Pham
-venue: Under review at Machine Vision and Applications
+venue: "Accepted at Machine Vision and Applications (SCIE, Scopus Q2)"
 date: 2026-05-26
 arxivId: "2602.22678"
 links:
@@ -26,7 +26,7 @@ bibtex: |
     primaryClass = {cs.CV},
     url          = {https://arxiv.org/abs/2602.22678}
   }
-order: 1
+order: 0
 ---
 
 Most vision-language models are tuned for high-resource languages and do

@@ -1,3 +1,11 @@
+- id: viclip-ot-mva-acceptance
+  date: 2026-10-31
+  text: >
+    Our ViCLIP-OT paper was accepted at Machine Vision and Applications.
+  links:
+    - label: Preprint
+      url: https://arxiv.org/abs/2602.22678
+
 - id: cict-olympiad-2026-selection
   date: 2026-10-25
   text: >
