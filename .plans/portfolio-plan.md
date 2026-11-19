@@ -170,7 +170,7 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   `arXiv`, `Code`, `Hugging Face`, expandable `Abstract` via `<details>`; `bibtex` stays
   in frontmatter for `tty3`):
   - **ViCLIP-OT** — Vietnamese image–text retrieval w/ Optimal Transport. Accepted at Machine Vision and Applications. arXiv 2602.22678 · code · Hugging Face collection.
-  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS. Camera-ready revisions pending. arXiv 2607.14735 · code.
+  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS. Camera-ready revisions pending. arXiv 2607.14735 · code · Hugging Face collection.
   - **soups** — model soups for Mekong Delta intangible-cultural-heritage image classification. Published in Journal on Information Technologies and Communications. arXiv 2603.02181 · code.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
 - **Experience:** `src/content/experience/` rendered as flat two-column rows (`period`
@@ -182,10 +182,16 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   number and the decision behind it (GPT-2 perplexity ~21.02, SEAS MRR 0.18→0.70, MCQA
   91.2%/4×, medical-llama2 QLoRA).
 - **Competitions** (flat two-column rows; extended write-ups and diagrams expand behind `<details>`):
+  - **Zalo AI Challenge 2026** — Agentic QA over business data (DuckDB + SQL/Python,
+    LoRA-tuned MiMo-V2.6-Distill-Qwen-9B, W8A16 INT8). Month-only date (2026-11);
+    0.856 Penalized Accuracy on the 1,000-question public leaderboard. HF model.
+  - **VLSP 2026** — Numerical reasoning QA over Vietnamese financial reports (DSPy,
+    LoRA rejection-sampling SFT on GRM-2.5 4B, self-consistency). Month-only date
+    (2026-10); 67.13% program accuracy on the private test.
   - **EXACT 2026** (IEEE IJCNN) — *highest technical score 13.44/15, 3rd overall*,
-    announced 2026-06-25. Code · tech report (arXiv 2607.14735) · leaderboard. The
-    leaderboard is on free Vercel hosting and may disappear; the claim must stand on
-    the tech report alone.
+    announced 2026-06-25. Code · tech report (arXiv 2607.14735) · HF collection ·
+    leaderboard. The leaderboard is on free Vercel hosting and may disappear; the
+    claim must stand on the tech report alone.
   - **Viettel AI Race 2025** — MCQA pipeline for complex technical documents. Code.
     Month-only date (2025-10); top 3 on the public leaderboard, 91.2% round-3 accuracy.
 - **Projects** (framed around engineering decisions & scale):
