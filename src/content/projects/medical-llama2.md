@@ -6,10 +6,11 @@ summary: >
   quantized and served through llama.cpp, with a live demo on Hugging Face
   Spaces.
 stack:
-  - Python
-  - PyTorch
-  - LLaMA 2 7B
-  - Hugging Face
+  - QLoRA
+  - DDP
+  - PEFT
+  - bitsandbytes
+  - llama.cpp
 aliases:
   - LLM
   - large language model

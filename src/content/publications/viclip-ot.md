@@ -11,6 +11,8 @@ arxivId: "2602.22678"
 links:
   - label: Code
     url: https://github.com/minhnguyent546/ViCLIP-OT
+  - label: Hugging Face
+    url: https://huggingface.co/collections/minhnguyent546/research-viclip-ot
 thumbnail: ./viclip-ot-thumbnail.png
 abstract: A vision-language model for Vietnamese image-text retrieval. It
   pairs CLIP-style contrastive learning with a Similarity-Graph Regularized

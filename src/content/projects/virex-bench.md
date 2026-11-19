@@ -10,8 +10,9 @@ summary: >
   the proposed pipeline led them in accuracy at 3.3 model calls per item,
   versus 18–28 for the others.
 stack:
-  - Python
   - Inference-time scaling
+  - Z3
+  - Program-of-Thought
   - Evaluation
 repo: https://github.com/minhnguyent546/ViREx-Bench
 order: 1

@@ -6,10 +6,11 @@ summary: >
   strategies showed reranking drove most of the gain: MRR@10 rose from 0.18 to
   0.70, so the final system paired reranking with query expansion.
 stack:
-  - Python
-  - FastAPI
-  - SQLAlchemy
+  - RAG
+  - LangChain
   - Qdrant
+  - FastAPI
+  - AWS
 repo: https://github.com/minhnguyent546/seas
 order: 2
 ---
