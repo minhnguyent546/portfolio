@@ -1,8 +1,6 @@
 ---
-/**
- * The row of outbound links under an entry. Every link leaves the site, so
- * they all carry the same target and the same trailing mark.
- */
+import ExternalLink from "./ExternalLink.astro";
+
 type Props = {
   links: { label: string; url: string }[];
   class?: string;
@@ -13,18 +11,10 @@ const { links, class: className } = Astro.props;
 
 {
   links.length > 0 && (
-    <ul class:list={["flex flex-wrap gap-x-4 gap-y-1", className]}>
+    <ul class:list={["flex flex-wrap gap-x-3.5 gap-y-0.5", className]}>
       {links.map(({ label, url }) => (
         <li>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-block py-1 text-meta text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-          >
-            {label}
-            <span aria-hidden="true"> ↗</span>
-          </a>
+          <ExternalLink {label} {url} />
         </li>
       ))}
     </ul>

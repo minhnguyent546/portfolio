@@ -1,0 +1,98 @@
+---
+import IconExternalLink from "@/assets/icons/IconExternalLink.svg";
+import IconFileText from "@/assets/icons/IconFileText.svg";
+import IconTrophy from "@/assets/icons/IconTrophy.svg";
+import IconArxiv from "@/assets/icons/links/arxiv.svg";
+import IconDoi from "@/assets/icons/links/doi.svg";
+import IconHuggingFace from "@/assets/icons/links/huggingface.svg";
+import IconGithub from "@/assets/icons/socials/github.svg";
+
+type Props = {
+  label: string;
+  url: string;
+  class?: string;
+};
+
+const { label, url, class: className } = Astro.props;
+
+let host = "";
+let pathname = "";
+try {
+  const parsed = new URL(url);
+  host = parsed.hostname.replace(/^www\./, "");
+  pathname = parsed.pathname.toLowerCase();
+} catch {
+  // Relative or non-standard URL falls through to the generic icon.
+}
+
+const lowerLabel = label.toLowerCase();
+
+type IconSpec = {
+  Component: typeof IconExternalLink;
+  mode: "filled" | "outline" | "colored";
+  colorClass?: string;
+};
+
+function pickIcon(): IconSpec {
+  if (host === "arxiv.org" || host.endsWith(".arxiv.org")) {
+    return {
+      Component: IconArxiv,
+      mode: "filled",
+      colorClass: "text-[#b31b1b] dark:text-[#e57373]",
+    };
+  }
+  if (host === "github.com" || host.endsWith(".github.com")) {
+    return { Component: IconGithub, mode: "filled" };
+  }
+  if (host === "huggingface.co" || host.endsWith(".huggingface.co")) {
+    return { Component: IconHuggingFace, mode: "colored" };
+  }
+  if (host === "doi.org" || host.endsWith(".doi.org")) {
+    return { Component: IconDoi, mode: "filled" };
+  }
+  if (lowerLabel.includes("leaderboard") || pathname.includes("leaderboard")) {
+    return { Component: IconTrophy, mode: "outline" };
+  }
+  if (
+    pathname.endsWith(".pdf") ||
+    host === "drive.google.com" ||
+    lowerLabel.includes("pdf")
+  ) {
+    return { Component: IconFileText, mode: "outline" };
+  }
+  return { Component: IconExternalLink, mode: "outline" };
+}
+
+const { Component: Icon, mode, colorClass } = pickIcon();
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class:list={[
+    "group inline-flex items-center gap-1.5 py-0.5 text-meta whitespace-nowrap text-accent transition-colors duration-(--dur-micro)",
+    className,
+  ]}
+>
+  <Icon
+    class:list={[
+      "shrink-0",
+      mode === "colored"
+        ? "size-4"
+        : [
+            "size-3.5 transition-colors duration-(--dur-micro)",
+            colorClass ?? "text-ink-muted group-hover:text-accent",
+            mode === "filled"
+              ? "fill-current stroke-none"
+              : "fill-none stroke-current",
+          ],
+    ]}
+    aria-hidden="true"
+  />
+  <span
+    class="underline decoration-rule underline-offset-4 group-hover:decoration-current"
+  >
+    {label}
+  </span>
+</a>
