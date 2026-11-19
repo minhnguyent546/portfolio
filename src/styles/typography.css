@@ -192,7 +192,11 @@
     }
 
     details:not(.callout) {
-      @apply inline-block cursor-pointer text-ink select-none [&_p]:hidden [&_ul]:my-0!;
+      @apply inline-block text-ink [&_p]:hidden [&_ul]:my-0!;
+    }
+
+    details:not(.callout) > summary {
+      @apply cursor-pointer select-none;
     }
 
     /* Code spoilers hold a wide <pre>. Inline-block would let it grow to its
