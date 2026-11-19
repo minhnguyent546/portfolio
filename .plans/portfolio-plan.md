@@ -12,9 +12,9 @@ A **research-engineer hybrid** portfolio (Raschka/Dettmers pattern): the same wo
 presented in two vocabularies — papers/preprints for academic readers, systems &
 scale framing for industry readers.
 
-Design direction: **"quiet craft"** — Swiss typography, minimal, **light default with
-banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
-"AI-slop" look, terminal cosplay, 3D/WebGL hero scenes.
+Design direction: **"quiet craft"** — Swiss typography, minimal, **light default,
+single-column academic layout**, restrained motion. Explicitly avoid: Inter +
+purple-gradient "AI-slop" look, terminal cosplay, 3D/WebGL hero scenes.
 
 > **Override 2026-08-06:** `/photon-sphere` overrides the "no 3D/WebGL hero scenes"
 > rule for one hidden route. The rule protects the homepage from decoration that costs
@@ -41,11 +41,9 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 
 **Hybrid single-page + routed long-form:**
 
-- `/` — single scannable homepage with sticky anchor nav.
-  Section order: **Hero → News → Publications → Experience → Competitions → Projects → Writing → Contact**
-  (About merged into the hero 2026-08-10; Experience moved ahead of Competitions the
-  same day to keep its cards on the alt band. Experience added 2026-08-09.)
-- `/blog/…` — routed blog posts (Markdown/MDX, math + code support)
+- `/` — compact single-column homepage with one sticky header.
+  Section order: **Hero → News → Publications → Experience → Competitions → Projects → Education & Honors**.
+- `/blog/…` — routed blog posts (Markdown/MDX, math + code support) and VNOI Magazine list
 - **No `/about` route (2026-08-08).** It held the same prose as section 01 under a
   second URL, which showed as two About rows in the palette. Section 01 renders
   `src/content/pages/about.md`, so the prose has one home and tty3 keeps reading the
@@ -60,35 +58,11 @@ banded sections**, restrained motion. Explicitly avoid: Inter + purple-gradient
 identity fully replaced by our design system. Layout inspiration:
 tovacinni/research-website-template (publication rows — design only, repo is stale).
 
-## 2.5 Design system — banded sections ("quiet craft", adapted from jimfan.me)
+## 2.5 Design system — single-column academic layout ("quiet craft")
 
-> Decided 2026-08-01 after `hallmark study` on five references. The user picked
-> **jimfan.me** and named *layout + colour, combined* as what makes it comfortable,
-> then asked for **smaller type**. This section is that adaptation. Full diagnosis:
-> `.research/…design-DNA-studies.md` §5.
->
-> **What is adapted:** the banded-section mechanism, the left-rail heading, the
-> comfortable-reading posture. **What is not:** Montserrat, Roboto, Material Blue at
-> flood footprint, and the Wowchemy/Bootstrap substrate. jimfan.me is a Wowchemy theme
-> (= Hugo Blox, already rejected in §8); we take the mechanism, not the dress.
-
-### The core mechanism — alternating tonal bands
-
-Sections are separated by **full-bleed background bands**, not by whitespace or rules.
-Adjacent sections touch at **0 px gap**; the tone change *is* the boundary.
-
-```css
-.section:nth-of-type(even) { background: var(--paper-alt) }
-```
-
-This is the one thing that produced the user's reaction. A full-bleed edge-to-edge
-tonal change is a much stronger grouping cue than spacing, which matters because this
-site has 8 dense sections. The four other references all separate with whitespace alone
-and read sparse/gallery-like — the wrong model for this content.
-
-**Band delta is deliberately tiny.** Target contrast ratio **≈1.05** between the pair
-(jimfan.me's `#fff`/`#f7f7f7` is 1.071). It should register as a change of surface, not
-as two different colours.
+Single-column academic dossier (`58rem` container, hairline-ruled top headings, shared
+`11rem` left gutter across every section). Keeps the warm-paper palette, desaturated
+slate-blue accent, dark mode, and near-0 JS bar.
 
 ### Colour — warm neutral paper, desaturated blue accent
 
@@ -148,123 +122,72 @@ Each theme block must also set `color-scheme`. Without it the canvas behind `<ht
 stays white, which shows as a flash during the cross-document view transition when the
 site theme and the OS theme disagree.
 
-### Type scale — sized for Newsreader
+### Type scale — Newsreader display + IBM Plex Sans body
 
-The global fluid body scale starts at 17 px and reaches about 18.5 px at 1440 px.
-Newsreader's x-height ratio is **0.4531**, against **0.5313** for Roboto or Arial,
-so nominal pixels overstate its perceived size compared with a sans serif.
+UI and homepage body use **IBM Plex Sans** (16 px floor, tabular figures for dates).
+Headings and blog article bodies use **Newsreader** (preserving its optical match with
+KaTeX). **JetBrains Mono** stays limited to code blocks, BibTeX, and project names.
 
 | Role | 375 px | 1440 px | `clamp()` |
 |---|---|---|---|
-| h1 | 31 | 43 | `clamp(1.9375rem, 1.6812rem + 1.0939vw, 2.6875rem)` |
-| h2 | 24 | 31 | `clamp(1.5rem, 1.3521rem + 0.6315vw, 1.9375rem)` |
-| h3 | 19 | 21 | `clamp(1.1875rem, 1.1345rem + 0.2264vw, 1.3125rem)` |
-| body | 17 | 18.5 | `clamp(1.0625rem, 1.0295rem + 0.1408vw, 1.1719rem)` |
-| meta | 14 | 15 | `clamp(0.875rem, 0.8562rem + 0.0803vw, 0.9375rem)` |
+| h1 | 30 | 38 | `clamp(1.875rem, 1.7342rem + 0.6009vw, 2.375rem)` |
+| h2 | 22 | 26 | `clamp(1.375rem, 1.3046rem + 0.3005vw, 1.625rem)` |
+| h3 | 18 | 20 | `clamp(1.125rem, 1.0898rem + 0.1502vw, 1.25rem)` |
+| body | 16 | 17 | `clamp(1rem, 0.9824rem + 0.0751vw, 1.0625rem)` |
+| meta | 14 | 15 | `clamp(0.875rem, 0.8574rem + 0.0751vw, 0.9375rem)` |
 
-Fluid via `clamp()` — no breakpoint patching. Base body leading is **1.6**, and prose
-blocks use the plugin leading of **1.75**. `max-w-measure` stays **36rem** for
-summaries and other short prose. Heading spread is **2.29×**.
-
-Blog articles set their own reading density: **17 px** text in a **45.5rem** column.
-That column fits the 48rem page container after its padding, so a long post reads
-denser than a summary block without a wider page. Headings keep the fluid scale.
-The article now fills that container, so the back-to-top control is docked to the
-viewport corner. A floated one has no gutter left to sit in and lands on the text.
-
-Built 2026-08-02 as `--text-h1` … `--text-meta` in `theme.css`; resized 2026-08-03.
-`.app-prose` needs its own h1–h3 rules **and** its own `font-size`: the `prose` plugin
-sets sizes that win over the base layer, so without that one line the reading pages
-stay at 16 px while the rest of the site grows.
-**Heading weight is 500 site-wide (2026-08-09), except article headings.** The base
-layer sets `h1–h6 { font-weight: 500 }`; `.app-prose` headings are `font-bold` (700)
-so a section title never reads lighter than the `<strong>` (600) inside it (2026-08-11).
-Table headers stay at 500. The hero name is a card label under the avatar at
-`text-h2` / 500 (2026-08-10, when About merged into the hero; it was 600 before). Sub-heads
-that label technical blocks — project titles, "VNOI Magazine", "Awards" — use JetBrains Mono.
-The footer drops the repeated hero social row for a quiet colophon, and `--rule` was darkened
-to ~1.6:1 so container borders read as intentional.
-**Prose code is 0.8em (2026-08-11).** The typography plugin's 0.875em makes JetBrains
-Mono read larger than the Newsreader body around it, whose x-height sits ~15% under a
-typical sans. Block code is 1em of the 0.8em `pre`, so the two 0.8em rules don't compound.
+Fluid via `clamp()`. Base body leading is **1.6** with a **65ch** prose measure;
+headings use weight **600** (article headings in `.app-prose` use **700** so titles
+stay heavier than `<strong>` at 600). `.app-prose` must set its own `font-size` and
+h1–h3 rules because the typography plugin otherwise resets reading pages to 16 px.
+Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display` on
+`#article`), with inline code at **0.8em** to match Newsreader optically.
 
 ### Layout
 
-- **Left-rail section headings.** Heading in a ~4/12 rail, content in ~8/12, repeated
-  identically in every section so the eye learns the entry point once.
-  Collapses to stacked below `lg`.
-- **Section padding** `55px 0` equivalent (`3.5rem`), uniform. The bands carry the
-  separation, so the padding does not need to.
-- **Container** 80rem max, 1280px of content inside it. The blog reads at 45.5rem, so
-  the width is a variable (`--app-width`) that the homepage re-points, not a second
-  utility — see Phase 4.
-- **`scroll-padding-top`** matching nav height, so anchor jumps clear the sticky nav.
-- Deliberate two-line heading breaks where a label reads better stacked.
-
-### Explicitly not carried from the reference
-
-Montserrat · Roboto · `#1565c0` at 49 CSS occurrences · Bootstrap + jQuery + isotope +
-Fuse + mark.js + GTM · `transition: all` (×4 there) · `font-size: 16.17px` (a theme
-artifact — we set the root deliberately) · its 2 `focus-visible` rules.
-*(Worth copying: its 18 `prefers-reduced-motion` blocks — the best of any site studied.)*
+- **Single column with top headings.** Container is `58rem` on `/` via `--app-width`
+  and `48rem` on reading pages. Each section uses a hairline-ruled `<h2>` and
+  `py-5 sm:py-6` padding, aligned to one `11rem` left gutter.
+- **Sticky `Header.astro`.** Solid `bg-paper` bar. On `/` it shows desktop section anchors
+  (`News`, `Publications`, `Experience`, `Competitions`, `Projects`) with active-section
+  scroll highlighting on the left, a collapsible mobile section menu below `md` (with
+  `minhnguyent546` on the left so the author's name does not repeat above the hero `h1`),
+  and `Blog`, search, and the theme toggle on the right. Subpages show the full wordmark.
+  `scroll-padding-top` clears the header height.
 
 
 ## 3. Content inventory (from GitHub README)
 
-- **Hero/About:** AI Researcher; main focus on neuro-symbolic reasoning,
-  inference-time scaling, and multimodal representation learning; personal work on
-  distributed/TPU training and RAG. The About entry's description also feeds the
-  homepage meta description and Person JSON-LD, so search metadata follows the prose.
-  The About prose renders inside the hero (left column, full three paragraphs) with the
-  identity card (avatar, name, title, CV, socials) on the right under the avatar; the
-  About section is gone (2026-08-10). `about.md` keeps one home, so tty3 `about.txt` still works.
-  Removing the section flipped every band's parity (see Section.astro); moving Experience
-  before Competitions (same day) restored it to the `--paper-alt` band. The bio reads at
-  42rem, ragged-right with `text-wrap: pretty` (justify read as a Word document); it
-  renders through `.app-prose` (2026-08-11), so `about.md` can carry links, bold, and
-  italic — the trial before the treatment spreads to other markdown bodies; the
-  identity card is centred under a square avatar scaled ~1.15×.
-- **News:** manually curated dated list (paper releases, competition results) — recency signal.
-  The homepage shows the 7 latest entries. `news.yml` and tty3 keep the full list.
-- **Publications** (show each paper's publication status; BibTeX behind "Cite" toggle;
-  arXiv/Code/Demo link rows; thumbnails). Thumbnail rows keep each figure's natural
-  ratio in a 14rem desktop column and use the available width on small screens.
-  Responsive WebP images preserve diagram detail without full-size PNG downloads.
-  Use the original paper figures when a thumbnail source has too few pixels:
-  - **ViCLIP-OT** — first foundation VLM for Vietnamese image–text retrieval w/ Optimal
-    Transport. arXiv 2602.22678 · code.
-  - **soups** — model soups for Mekong Delta intangible-cultural-heritage image
-    classification. arXiv 2603.02181 · code.
-  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational
-    QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS.
-    Camera-ready revisions pending. arXiv 2607.14735 · code.
+- **Hero/About:** `about.md` prose (`65ch`) on the left (so tty3 `about.txt` and JSON-LD
+  share one source); centered identity rail (`15.5rem`) on the right with square portrait,
+  single-line name (`h1`), **AI Researcher** role, `Curriculum vitae` link, and centered
+  contact links (`Email`, `X`, `LinkedIn`, `Scholar`, `HackMD`, `GitHub`). Outbound links
+  carry borderless domain-matched monochrome SVG icons (`ExternalLink.astro`).
+- **News:** Curated list in `news.yml` using `MMM YYYY` dates. Shows the latest 5 rows
+  with older entries behind a `<details>` toggle (0 JS).
+- **Publications:** Desktop thumbnails (`11rem`, `object-contain` on white, hidden on
+  mobile), bold self-author, verbatim venue + date line, and one link row (`DOI`,
+  `arXiv`, `Code`, `Hugging Face`, expandable `Abstract` via `<details>`; `bibtex` stays
+  in frontmatter for `tty3`):
+  - **ViCLIP-OT** — Vietnamese image–text retrieval w/ Optimal Transport. Accepted at Machine Vision and Applications. arXiv 2602.22678 · code · Hugging Face collection.
+  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS. Camera-ready revisions pending. arXiv 2607.14735 · code.
+  - **soups** — model soups for Mekong Delta intangible-cultural-heritage image classification. Published in Journal on Information Technologies and Communications. arXiv 2603.02181 · code.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
-  - Venue lines use semibold, full-contrast text. Dates stay muted on a separate line.
-- **Experience** (added 2026-08-09): a `src/content/experience/` collection rendered as
-  floating cards on a timeline (role title, org subtitle in full ink, period in mono,
-  three focused highlights; hover lifts the card). Cards sit on `--surface` so they read
-  against the band; the timeline dot is filled for the current role and an
-  open ring for past ones. Awards group by year into a matching mini timeline, share a
-  `src/data/awards.ts` module with the ⌘K palette (search "Super Cup" lands on
-  `#experience`), and the education block adds the thesis title + grade 9.6/10. The
-  section lives at index 04, wired through the section nav, ⌘K palette, and tty3
-  `~/experience/`. Role label unified to **AI Researcher** across hero, About, config,
-  and the CV (2026-08-08 build). Reworded 2026-08-09: highlights restored to three per
-  role, matching the CV, and award titles keep the full official division names (Super
-  Cup division; Specialized / Non-specialized Informatics division).
+- **Experience:** `src/content/experience/` rendered as flat two-column rows (`period`
+  left, `role · organization` and full-ink highlights right).
+- **Education & Honors:** `#education` section below Projects. Lists Can Tho University
+  (GPA 3.91/4.0, TOEIC 845, thesis 9.6/10) and `src/data/awards.ts` grouped by year;
+  the ⌘K palette routes award queries to `#education`.
 - **Project summaries** state what each project does and the result it produced, with one
   number and the decision behind it (GPT-2 perplexity ~21.02, SEAS MRR 0.18→0.70, MCQA
-  91.2%/4×, medical-llama2 QLoRA). Reworded 2026-08-09 so each row is self-explanatory
-  to a hiring manager, not just the number.
-- **Competitions** (own section; precise, verifiable claims with leaderboard links):
+  91.2%/4×, medical-llama2 QLoRA).
+- **Competitions** (flat two-column rows; extended write-ups and diagrams expand behind `<details>`):
   - **EXACT 2026** (IEEE IJCNN) — *highest technical score 13.44/15, 3rd overall*,
     announced 2026-06-25. Code · tech report (arXiv 2607.14735) · leaderboard. The
-    leaderboard is on free Vercel hosting and the owner expects it to disappear; the
-    claim must stand on the tech report alone once it does.
+    leaderboard is on free Vercel hosting and may disappear; the claim must stand on
+    the tech report alone.
   - **Viettel AI Race 2025** — MCQA pipeline for complex technical documents. Code.
-    Month-only date (2025-10); no full contest schedule exists. Result pill: top 3 on
-    the public leaderboard; summary states the per-round placements and 91.2% round-3
-    accuracy (added 2026-08-09).
+    Month-only date (2025-10); top 3 on the public leaderboard, 91.2% round-3 accuracy.
 - **Projects** (framed around engineering decisions & scale):
   ViREx-Bench (inference-time scaling, Vietnamese reasoning) · seas (async
   FastAPI/SQLAlchemy/Qdrant) · medical-llama2 (LLaMA-2 7B fine-tune + HF Spaces demo) ·
@@ -285,13 +208,10 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
   full history, and a year heading split across pages stops grouping. Sorting is on
   `pubDatetime` alone, not the `modDatetime` that `getSortedPosts` prefers, or an
   edited old post would head the list while sitting in an older year group.
-- **Writing:** blog posts (on-site, migrating/linking HackMD) + distinct sub-list for
-  **VNOI Magazine** articles: "Virtual Tree / Cây ảo" (2024), "Kỹ thuật tinh tế về
-  phép Xor" (2023). "Virtual Tree", "Parallel Binary Search", and "Bit compression" are
-  migrated and hold both languages; each English side is a partial draft. HackMD `:::spoiler` containers
-  port to `<details><summary>` — a code fence inside a raw HTML block still parses, so
-  no markdown plugin is needed for it.
-- **Contact:** plain email (no form), GitHub, LinkedIn, X, Google Scholar, HackMD.
+- **Writing:** Moved off `/` onto `/blog` (2026-11-19). `/blog` lists on-site posts
+  plus a **VNOI Magazine** sub-list ("Virtual Tree / Cây ảo", 2024; "Kỹ thuật tinh tế
+  về phép Xor", 2023). HackMD `:::spoiler` containers port to `<details><summary>`.
+- **Contact:** Inline labelled links in the Hero (email, GitHub, LinkedIn, X, Google Scholar, HackMD).
 
 ## 4. Stack (verified current, 2026-08)
 
@@ -308,23 +228,17 @@ artifact — we set the root deliberately) · its 2 `focus-visible` rules.
 
 | Role | Font | CSS variable |
 |---|---|---|
-| Headings / display / UI | **Newsreader** (wght 400–700, roman + italic) | `--font-display` |
-| Body / long-form | **Newsreader** (same browser family) | `--font-app` |
-| Code / metadata | **JetBrains Mono** (wght 400–600) | `--font-mono` |
+| Headings / display / blog body | **Newsreader** (wght 400–700, roman + italic) | `--font-display` |
+| Homepage body / UI | **IBM Plex Sans** (wght 400–700, roman + italic) | `--font-app` |
+| Code / dates / metadata | **JetBrains Mono** (wght 400–600) | `--font-mono` |
 
-All OFL. Astro's top-level `fonts` config loads the browser families as variable ranges
-with Latin and Vietnamese subsets. Newsreader gives headings and body text consistent
-Vietnamese forms. A separate build-only Archivo TTF family gives Satori Vietnamese
-glyphs for OG images; the browser does not load Archivo.
-
-**Decided 2026-08-01.** This replaces Geist + Source Serif 4. Geist is Vercel's house
-font and reads as "deployed", which §1 rejects. hallmark bans Source Serif as a body
-serif in `typography.md:41` but recommends it in `:92`; the ban is the safer reading.
-Newsreader also matches KaTeX better — x-height 0.426 against KaTeX's 0.431, where
-Source Serif 4 is 0.475.
+All OFL. Astro's top-level `fonts` config loads all three browser families with Latin
+and Vietnamese subsets. Newsreader keeps blog prose optically matched to KaTeX (x-height
+0.426 vs KaTeX 0.431), while IBM Plex Sans gives dense homepage metadata crisp scanning.
+A separate build-only Archivo TTF family supplies Satori Vietnamese glyphs for OG images.
 
 - **The `opsz` axis is omitted on purpose.** It doubles the file, from 57 KB to 129 KB,
-  and the type scale runs only 14–40 px.
+  and the type scale runs only 14–38 px.
 - **`styles` defaults to `["normal", "italic"]`.** Italic is a second file. Only
   Newsreader declares it.
 - **satori cannot read woff2**, so the OG routes use a separate build-only family,
@@ -358,7 +272,7 @@ Source Serif 4 is 0.475.
 | RSS | `@astrojs/rss` — full post bodies in `content:encoded` | The body must reach the feed as a string, but `render()` returns a `<Content />` component, so the route renders each post through `astro/container`. The container export still carries an `experimental_` prefix in Astro 7: check it on an Astro major upgrade. No sanitizer — the posts are the site's own content, so a filter guards a failure that cannot happen here. Feed readers load none of the site CSS, so KaTeX and Shiki markup arrives unstyled. |
 | Sitemap | `@astrojs/sitemap` (+ `site` set in config) | |
 | Comments | **Skip for v1** | If wanted later: giscus via lazy plain `<script>` (audience has GitHub accounts). |
-| Section nav | **`SectionNav.astro`** — sticky in-page index on `/`, with the current section marked | The only JS on the homepage that is not the boot log, ~380 B gzipped. **The masthead and this strip are two different objects, so they must not read alike (2026-08-08).** Header holds the site destinations; this strip holds one document's outline. Three changes separate them. The strip numbers its items `01`–`07` in mono, which repeats the numeral already in each section rail and makes the row read as a table of contents. The header drops About, Tags, and Archives: About repeated `#about` under a second URL, and Tags and Archives filter one list, so they belong on the blog index. That leaves Blog, Search, and the theme toggle, which is few enough to wrap on a small screen — so the hamburger button, its icons, and its script are all deleted. Section 06 keeps the name Writing: it holds the VNOI Magazine articles as well as the posts, so Blog names a part of it and the palette then showed two rows called Blog. The numerals come from array position, which is safe because the scroll spy already needs nav order to match DOM order. CSS cannot do it: `:target` fires on click and never on scroll, and scroll-driven animations style the scrolled element, with no selector that reaches a sibling nav link. Two traps, both found by measuring. The reading line is a third of the way down the viewport, not under the nav: Writing and Contact are shorter than the screen, so their tops never reach it — Writing needs 5511 px of scroll against a 5461 px maximum. A click on either therefore lands at the page bottom, so the clicked link is pinned until a wheel, touch, or key press hands control back to the scroll position. Homepage inline JS goes from 2.8 KB to 3.7 KB raw (1.4 KB gzipped); external JS on `/` stays at 0. |
+| Section nav | **Sticky `Header.astro` anchors** | Desktop `/` shows four section links (`Publications`, `Experience`, `Competitions`, `Projects`) beside `Blog`, search, and theme toggle with 0 JS. |
 | Post TOC | **`PostTOC.astro`** — fixed "On this page" rail in the gutter right of the article column, current heading marked | **Done (2026-08-21).** Headings come build-time from `render()` (h2–h3); the script only scroll-spies, same contract as `SectionNav` (reading line at 35% of viewport, clicked link pinned, last heading at page bottom). Hidden below `xl`: the 48 rem container leaves no gutter before that, and the inline remark-toc block stays the TOC there. At `xl` and up the roles flip: the rail is 14 rem wide (fits every real heading; only 30+-char titles and one KaTeX-duplicated heading take a second line) and a style built in the component from the `TOC_HEADING` slugs hides the inline block — its heading ids plus every `details:not(.spoiler)`, since spoilers are the only other `<details>` and carry the class by convention (`typography.css`). The inline TOC's own heading is excluded from the rail through `TOC_HEADING`, moved to `src/utils/tocHeading.ts` so `astro.config.ts` and the filter share one source. Label is `post.onThisPage` ("On this page" / "Mục lục"). Rail hrefs are percent-decoded before `getElementById`, since github-slugger keeps Vietnamese diacritics. |
 | Analytics | **GoatCounter** (hosted, free, no cookies/banner) | **Done (2026-08-08).** One `async` tag at the end of `Layout.astro`, so it loads on every route. It is the first thing on the site to add an external script to a page: `/` goes from 1 external script to 2, and the file is 3.3 KB gzipped, against the 16 KB that `ClientRouter` cost. `is:inline` is required — Astro otherwise bundles the tag and the browser never reads `data-goatcounter`. The tag is behind `import.meta.env.PROD`, so a dev session and a local `dist/` test do not count as visits. GoatCounter also declines to count `localhost` on its own side. **Not** Cloudflare Web Analytics — free tier being wound down. Umami self-hosted as alt. |
 | Boot intro | **`BootSequence.astro`** — systemd-style boot log on `/`, once per session | Overrides §1's "no terminal cosplay" for this one component. It uses the site tokens and JetBrains Mono on `--paper`, not a black-and-green tty. `index.astro` passes the entry ids of the publications, competitions, and projects collections. Each section prints at most 5 `Started <id>.service` lines and then counts the rest, so a long collection cannot flood the log. A section with no entries prints nothing. Joke lines follow. The sequence has a fixed length near 4.1 s: a cap on the log compresses the row gaps as content grows, and the last 2 s hold on the login prompt to let the visitor read the log. The log clips at the height of the screen and follows the printing line down, so a long list cannot push a row off the top. Any key ends it early. A press of `t` opens `/tty3` instead. Pointer and scroll input do not end it. A session gate on `<html data-boot>` stops a replay and also skips the overlay under `prefers-reduced-motion: reduce`. Cost against the §1 bar: homepage inline JS goes from 1.9 KB to 2.8 KB, and external JS on `/` stays at 0. |
