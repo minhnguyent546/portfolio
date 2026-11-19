@@ -16,10 +16,10 @@
 
 @layer base {
   html {
-    /* Clears the sticky index nav on an anchor jump. `clip` rather than
+    /* Clears the sticky header on an anchor jump. `clip` rather than
        `hidden`, which would turn the root into a scroll container and break
        `position: sticky`. */
-    scroll-padding-top: 3.5rem;
+    scroll-padding-top: 4.5rem;
     overflow-x: clip;
   }
 
@@ -49,19 +49,17 @@
   max-width: var(--app-width, 48rem);
 }
 
-/* The homepage carries eight dense sections behind a left heading rail, so it
-   runs wider than the reading pages. */
 @utility app-wide {
-  --app-width: 80rem;
+  --app-width: 58rem;
 }
 
-/* Reading measure for long-form prose — narrower than the page container. */
+/* Reading measure for summaries and short prose blocks. */
 @utility max-w-measure {
-  max-width: 36rem;
+  max-width: 44rem;
 }
 
 @utility app-layout {
-  @apply mx-auto w-full max-w-app px-4;
+  @apply mx-auto w-full max-w-app px-5;
 }
 
 @utility active-nav {

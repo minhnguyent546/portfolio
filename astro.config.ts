@@ -99,7 +99,7 @@ export default defineConfig({
   },
   // Variable ranges, not discrete weights: one file per family covers the range.
   // `opsz` is deliberately omitted from Newsreader — it more than doubles the
-  // woff2 (57KB -> 129KB) for a 14-40px scale that needs no optical compensation.
+  // woff2 (57KB -> 129KB) for a 14-38px scale that needs no optical compensation.
   fonts: [
     {
       name: "Newsreader",
@@ -111,12 +111,12 @@ export default defineConfig({
       subsets: ["latin", "vietnamese"],
     },
     {
-      name: "Archivo",
-      cssVariable: "--font-archivo",
+      name: "IBM Plex Sans",
+      cssVariable: "--font-ibm-plex-sans",
       provider: fontProviders.google(),
       fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
       weights: ["400 700"],
-      styles: ["normal"],
+      styles: ["normal", "italic"],
       subsets: ["latin", "vietnamese"],
     },
     {
