@@ -1,31 +1,26 @@
 ---
 import { getCollection, getEntry, render } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
-import IconLinkedin from "@/assets/icons/socials/linkedin.svg";
-import IconMail from "@/assets/icons/socials/mail.svg";
-import IconX from "@/assets/icons/socials/x.svg";
+import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import BootSequence from "@/components/BootSequence.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
 import CompetitionRow from "@/components/home/CompetitionRow.astro";
 import Experience from "@/components/home/Experience.astro";
+import ExternalLink from "@/components/home/ExternalLink.astro";
 import Hero from "@/components/home/Hero.astro";
-import LinkRow from "@/components/home/LinkRow.astro";
 import ProjectRow from "@/components/home/ProjectRow.astro";
 import PublicationRow from "@/components/home/PublicationRow.astro";
 import Section from "@/components/home/Section.astro";
-import SectionNav from "@/components/home/SectionNav.astro";
 import PersonSchema from "@/components/PersonSchema.astro";
 import config from "@/config";
+import { awards } from "@/data/awards";
 import Layout from "@/layouts/Layout.astro";
 import { formatDate } from "@/utils/formatDate";
-import { getPostUrl } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { dedupeTranslations } from "@/utils/getTranslation";
 import { getUniqueTags } from "@/utils/getUniqueTags";
-
-const { socials } = config;
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const homePath = getRelativeLocaleUrl(locale, "");
@@ -42,15 +37,12 @@ const competitions = (await getCollection("competitions", published)).sort(
 );
 const experience = (await getCollection("experience", published)).sort(byOrder);
 const projects = (await getCollection("projects", published)).sort(byOrder);
-
-// The homepage shows the latest entries only; tty3 keeps the full list.
-const NEWS_LIMIT = 7;
-const news = (await getCollection("news"))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, NEWS_LIMIT);
-const articles = (await getCollection("articles")).sort(
-  (a, b) => b.data.year - a.data.year
+const allNews = (await getCollection("news")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
+const NEWS_VISIBLE = 5;
+const recentNews = allNews.slice(0, NEWS_VISIBLE);
+const olderNews = allNews.slice(NEWS_VISIBLE);
 
 const posts = await getCollection("blog");
 const sortedPosts = dedupeTranslations(getSortedPosts(posts));
@@ -67,47 +59,25 @@ if (!homepageDescription) {
 }
 const { Content: AboutContent } = await render(about);
 
-const sections = [
+const navSections = [
   { id: "news", label: "News" },
   { id: "publications", label: "Publications" },
   { id: "experience", label: "Experience" },
   { id: "competitions", label: "Competitions" },
   { id: "projects", label: "Projects" },
-  { id: "writing", label: "Writing" },
-  { id: "contact", label: "Contact" },
 ];
 
-const socialUrl = (name: string) => socials.find(s => s.name === name)!.url;
+const awardsByYear = new Map<number, string[]>();
+for (const { year, title } of awards) {
+  awardsByYear.set(year, [...(awardsByYear.get(year) ?? []), title]);
+}
+const awardYears = [...awardsByYear.keys()].sort((a, b) => b - a);
 
-const contactRows = [
-  {
-    Icon: IconMail,
-    href: socialUrl("mail"),
-    text: socialUrl("mail").replace("mailto:", ""),
-    srSuffix: "",
-    mono: true,
-  },
-  {
-    Icon: IconX,
-    href: socialUrl("x"),
-    text: "DMs are open",
-    srSuffix: " on X",
-    mono: false,
-  },
-  {
-    Icon: IconLinkedin,
-    href: socialUrl("linkedin"),
-    text: "Connect on LinkedIn",
-    srSuffix: "",
-    mono: false,
-  },
-];
-
-/** Entry ids for the boot log, in the order the real sections use. */ const bootUnits =
-  async (name: "publications" | "competitions" | "projects") =>
-    (await getCollection(name, ({ data }) => !data.draft))
-      .sort((a, b) => a.data.order - b.data.order)
-      .map(({ id }) => id);
+/** Entry ids for the boot log, in the order the real sections use. */
+const bootUnits = async (name: "publications" | "competitions" | "projects") =>
+  (await getCollection(name, ({ data }) => !data.draft))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(({ id }) => id);
 ---
 
 <Layout class="app-wide" description={homepageDescription}>
@@ -119,44 +89,92 @@ const contactRows = [
     competitions={await bootUnits("competitions")}
     projects={await bootUnits("projects")}
   />
-  <Header />
-  <SectionNav items={sections} />
+  <Header sections={navSections} />
 
-  <main id="main-content" data-layout="index" data-home-path={homePath}>
+  <main
+    id="main-content"
+    data-layout="index"
+    data-home-path={homePath}
+    class="pb-8"
+  >
     <Hero>
       <AboutContent />
     </Hero>
 
     <Section id="news" title="News">
-      <ol class="divide-y divide-rule border-y border-rule">
+      <ol class="divide-y divide-rule/50">
         {
-          news.map(({ data: { date, text, links } }) => {
-            const { label, datetime } = formatDate(date);
+          recentNews.map(({ data: { date, text, links } }) => {
+            const { label, datetime } = formatDate(date, "month-short");
             return (
-              <li class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-12">
+              <li class="grid gap-x-6 gap-y-0.5 py-2 first:pt-0 last:pb-0 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-baseline">
                 <time
                   datetime={datetime}
-                  class="font-mono text-meta text-ink-muted tabular-nums sm:col-span-3"
+                  class="text-meta text-ink-muted tabular-nums"
                 >
                   {label}
                 </time>
-                <div class="min-w-0 sm:col-span-9">
-                  <p>{text}</p>
-                  <LinkRow {links} class="mt-1" />
-                </div>
+                <p class="max-w-[65ch] min-w-0 text-body leading-[1.6] text-ink">
+                  {text}
+                  {links.length > 0 && (
+                    <span class="ms-2 inline-flex flex-wrap items-center gap-x-2.5 text-meta">
+                      {links.map(({ label: linkLabel, url }) => (
+                        <ExternalLink label={linkLabel} {url} />
+                      ))}
+                    </span>
+                  )}
+                </p>
               </li>
             );
           })
         }
       </ol>
+
+      {
+        olderNews.length > 0 && (
+          <details class="group mt-3">
+            <summary class="inline-flex cursor-pointer list-none items-center gap-1 py-1 text-meta text-accent underline decoration-rule underline-offset-4 select-none hover:decoration-current [&::-webkit-details-marker]:hidden">
+              <IconChevronRight
+                class="size-3.5 shrink-0 fill-none stroke-current transition-transform duration-(--dur-micro) group-open:rotate-90"
+                aria-hidden="true"
+              />
+              <span class="group-open:hidden">
+                Older news ({olderNews.length})
+              </span>
+              <span class="hidden group-open:inline">Hide older news</span>
+            </summary>
+            <ol class="mt-2 divide-y divide-rule/50 border-t border-rule/50 pt-2">
+              {olderNews.map(({ data: { date, text, links } }) => {
+                const { label, datetime } = formatDate(date, "month-short");
+                return (
+                  <li class="grid gap-x-6 gap-y-0.5 py-2 first:pt-0 last:pb-0 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-baseline">
+                    <time
+                      datetime={datetime}
+                      class="text-meta text-ink-muted tabular-nums"
+                    >
+                      {label}
+                    </time>
+                    <p class="max-w-[65ch] min-w-0 text-body leading-[1.6] text-ink">
+                      {text}
+                      {links.length > 0 && (
+                        <span class="ms-2 inline-flex flex-wrap items-center gap-x-2.5 text-meta">
+                          {links.map(({ label: linkLabel, url }) => (
+                            <ExternalLink label={linkLabel} {url} />
+                          ))}
+                        </span>
+                      )}
+                    </p>
+                  </li>
+                );
+              })}
+            </ol>
+          </details>
+        )
+      }
     </Section>
 
-    <Section
-      id="publications"
-      title="Publications"
-      note="Conference papers, journal papers, and preprints. Author lists are as submitted."
-    >
-      <div class="divide-y divide-rule border-y border-rule">
+    <Section id="publications" title="Publications">
+      <div class="divide-y divide-rule/70">
         {publications.map(entry => <PublicationRow {entry} />)}
       </div>
       <p class="mt-3 text-meta text-ink-muted">* Equal contribution.</p>
@@ -167,120 +185,55 @@ const contactRows = [
     </Section>
 
     <Section id="competitions" title="Competitions">
-      <div class="divide-y divide-rule border-y border-rule">
+      <div class="divide-y divide-rule/70">
         {competitions.map(entry => <CompetitionRow {entry} />)}
       </div>
     </Section>
 
     <Section id="projects" title="Projects">
-      <div class="divide-y divide-rule border-y border-rule">
+      <div class="divide-y divide-rule/70">
         {projects.map(entry => <ProjectRow {entry} />)}
       </div>
     </Section>
 
-    <Section id="writing" title="Writing">
-      {
-        sortedPosts.length > 0 && (
-          <ol class="divide-y divide-rule border-y border-rule">
-            {sortedPosts.slice(0, config.posts.perIndex).map(post => {
-              const { label, datetime } = formatDate(post.data.pubDatetime);
-              return (
-                <li class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-12">
-                  <time
-                    datetime={datetime}
-                    class="font-mono text-meta text-ink-muted tabular-nums sm:col-span-3"
-                  >
-                    {label}
-                  </time>
-                  <div class="min-w-0 sm:col-span-9">
-                    <a
-                      href={getPostUrl(post.id, post.filePath, locale)}
-                      lang={post.data.lang}
-                      class="inline-block py-1 text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-                    >
-                      {post.data.title}
-                    </a>
-                    <p lang={post.data.lang} class="text-ink-muted">
-                      {post.data.description}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        )
-      }
+    <Section id="education" title="Education & Honors">
+      <div class="grid gap-x-6 gap-y-1 sm:grid-cols-[11rem_minmax(0,1fr)]">
+        <p class="pt-0.5 text-meta font-medium text-ink-muted">Education</p>
+        <div class="max-w-[65ch] min-w-0">
+          <p class="text-body leading-snug text-ink-heading">
+            <span class="font-semibold">
+              Engineer's degree, Information Technology
+            </span>
+            <span class="text-ink-muted"> · </span>
+            <span class="text-ink">Can Tho University</span>
+          </p>
+          <p class="mt-1 text-meta text-ink-muted tabular-nums">
+            GPA 3.91/4.0 · TOEIC 845
+          </p>
+          <p class="mt-1 text-body leading-[1.6] text-ink">
+            Thesis: <em>
+              Building a Smart Enrollment Advisory System Based on an Automatic
+              Dialogue Model
+            </em>
+            <span class="text-meta text-ink-muted"> · grade 9.6/10</span>
+          </p>
+        </div>
+      </div>
 
-      <h3 class="mt-8 font-mono text-h3 text-ink-heading">VNOI Magazine</h3>
-      <ol class="mt-3 divide-y divide-rule border-y border-rule">
+      <ol class="mt-5 divide-y divide-rule/50 border-t border-rule/70 pt-4">
         {
-          articles.map(
-            ({ data: { title, titleVi, publication, year, url } }) => (
-              <li class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-12">
-                <span class="font-mono text-meta text-ink-muted tabular-nums sm:col-span-3">
-                  {year}
-                </span>
-                <div class="min-w-0 sm:col-span-9">
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-block py-1 text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-                  >
-                    {title}
-                    <span aria-hidden="true"> ↗</span>
-                  </a>
-                  {titleVi && (
-                    <p class="text-meta text-ink-muted" lang="vi">
-                      {titleVi}
-                    </p>
-                  )}
-                  <p class="mt-1 text-meta text-ink-muted">{publication}</p>
-                </div>
-              </li>
-            )
-          )
+          awardYears.map(year => (
+            <li class="grid gap-x-6 gap-y-0.5 py-2 first:pt-0 last:pb-0 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-baseline">
+              <span class="text-meta text-ink-muted tabular-nums">{year}</span>
+              <div class="max-w-[65ch] min-w-0 space-y-1 text-body leading-[1.6] text-ink">
+                {awardsByYear.get(year)!.map(title => (
+                  <p>{title}</p>
+                ))}
+              </div>
+            </li>
+          ))
         }
       </ol>
-
-      <p class="mt-5">
-        <a
-          href={getRelativeLocaleUrl(locale, "blog")}
-          class="inline-block py-1 text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-        >
-          All blog posts →
-        </a>
-      </p>
-    </Section>
-
-    <Section id="contact" title="Contact">
-      <ul class="flex flex-col gap-y-1">
-        {
-          contactRows.map(({ Icon, href, text, srSuffix, mono }) => {
-            const isMail = href.startsWith("mailto:");
-            return (
-              <li>
-                <a
-                  href={href}
-                  target={isMail ? undefined : "_blank"}
-                  rel={isMail ? undefined : "noopener noreferrer"}
-                  class="inline-flex items-center gap-2.5 py-1.5 text-accent underline decoration-rule underline-offset-4 hover:decoration-current"
-                >
-                  <Icon
-                    class="size-5 shrink-0 no-underline"
-                    aria-hidden="true"
-                  />
-                  <span class:list={[{ "font-mono": mono }]}>
-                    {text}
-                    <span class="sr-only">{srSuffix}</span>
-                    {!isMail && <span aria-hidden="true"> ↗</span>}
-                  </span>
-                </a>
-              </li>
-            );
-          })
-        }
-      </ul>
     </Section>
 
     <BackToTopButton uiLocale={locale as "en" | "vi"} />

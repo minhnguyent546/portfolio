@@ -2,8 +2,9 @@
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
+import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
 import { formatDate } from "@/utils/formatDate";
-import LinkRow from "./LinkRow.astro";
+import ExternalLink from "./ExternalLink.astro";
 
 type Props = { entry: CollectionEntry<"competitions"> };
 
@@ -11,53 +12,89 @@ const { entry } = Astro.props;
 const { title, venue, date, datePrecision, result, summary, links, figure } =
   entry.data;
 
-const { label, datetime } = formatDate(date, datePrecision);
-
-// The body is optional in this collection; only render the wrapper when it
-// has content.
+const { label, datetime } = formatDate(
+  date,
+  datePrecision === "month" ? "month-short" : "day"
+);
 const { Content } = await render(entry);
 const hasBody = entry.body != null && entry.body.trim() !== "";
+const hasDetails = hasBody || Boolean(figure);
 ---
 
-<article class="py-7">
-  <p class="text-meta text-ink-muted">
-    {venue} · <time datetime={datetime}>{label}</time>
-  </p>
+<article
+  class="grid gap-x-6 gap-y-1 py-4 first:pt-0 last:pb-0 sm:grid-cols-[11rem_minmax(0,1fr)]"
+>
+  <div class="pt-0.5 text-meta text-ink-muted">
+    <p class="tabular-nums">
+      <time datetime={datetime}>{label}</time>
+    </p>
+    <p class="mt-0.5 leading-snug">{venue}</p>
+  </div>
 
-  <h3 class="mt-1 wrap-anywhere text-ink-heading">{title}</h3>
+  <div class="min-w-0">
+    <div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+      <h3
+        class="font-display text-h3 leading-snug font-semibold wrap-anywhere text-ink-heading"
+      >
+        {title}
+      </h3>
+      {
+        result && (
+          <span class="inline-block rounded-xs border border-accent/35 bg-accent/8 px-2 py-0.5 text-meta font-medium whitespace-nowrap text-accent">
+            {result}
+          </span>
+        )
+      }
+    </div>
 
-  {
-    result && (
-      <p class="mt-2 inline-block border border-accent/40 px-2 py-0.5 font-mono text-meta text-accent">
-        {result}
-      </p>
-    )
-  }
+    <p class="mt-1.5 max-w-[65ch] text-body leading-[1.6] text-ink">
+      {summary}
+    </p>
 
-  <p class="mt-3 max-w-measure">{summary}</p>
+    <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-meta">
+      {
+        links.map(({ label: linkLabel, url }) => (
+          <ExternalLink label={linkLabel} {url} />
+        ))
+      }
 
-  {
-    hasBody && (
-      <div class="app-prose mt-4 max-w-measure prose-p:text-body">
-        <Content />
-      </div>
-    )
-  }
-
-  {
-    figure && (
-      <figure class="mt-5">
-        <Image
-          src={figure.src}
-          alt={figure.alt}
-          widths={[448, 896]}
-          sizes="(min-width: 40rem) 28rem, 92vw"
-          loading="lazy"
-          class="w-full max-w-md border border-rule bg-paper"
-        />
-      </figure>
-    )
-  }
-
-  <LinkRow {links} class="mt-4" />
+      {
+        hasDetails && (
+          <details class="group [&[open]]:basis-full">
+            <summary class="group/toggle inline-flex cursor-pointer list-none items-center gap-1 py-0.5 whitespace-nowrap text-accent select-none [&::-webkit-details-marker]:hidden">
+              <IconChevronRight
+                class="size-3.5 shrink-0 fill-none stroke-current text-ink-muted transition-transform duration-(--dur-micro) group-open:rotate-90 group-open:text-accent group-hover/toggle:text-accent"
+                aria-hidden="true"
+              />
+              <span class="underline decoration-rule underline-offset-4 group-open:hidden group-hover/toggle:decoration-current">
+                System details
+              </span>
+              <span class="hidden underline decoration-current underline-offset-4 group-open:inline">
+                Hide details
+              </span>
+            </summary>
+            <div class="mt-2.5 max-w-[65ch] space-y-3 rounded-xs border border-rule bg-paper-alt p-3.5">
+              {hasBody && (
+                <div class="app-prose max-w-none text-meta leading-relaxed prose-p:my-0 prose-p:text-meta">
+                  <Content />
+                </div>
+              )}
+              {figure && (
+                <figure>
+                  <Image
+                    src={figure.src}
+                    alt={figure.alt}
+                    widths={[448, 896]}
+                    sizes="(min-width: 40rem) 28rem, 92vw"
+                    loading="lazy"
+                    class="w-full max-w-md rounded-xs border border-rule bg-white"
+                  />
+                </figure>
+              )}
+            </div>
+          </details>
+        )
+      }
+    </div>
+  </div>
 </article>

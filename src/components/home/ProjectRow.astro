@@ -12,17 +12,23 @@ const allLinks = [
 ];
 ---
 
-<article class="grid gap-x-8 gap-y-2 py-6 sm:grid-cols-12">
-  <h3 class="font-mono text-h3 wrap-anywhere text-ink-heading sm:col-span-4">
-    {title}
-  </h3>
+<article
+  class="grid gap-x-6 gap-y-1 py-4 first:pt-0 last:pb-0 sm:grid-cols-[11rem_minmax(0,1fr)]"
+>
+  <div class="min-w-0">
+    <h3
+      class="font-mono text-body font-semibold wrap-anywhere text-ink-heading"
+    >
+      {title}
+    </h3>
+    <LinkRow links={allLinks} class="mt-1" />
+  </div>
 
-  <div class="min-w-0 sm:col-span-8">
-    <p class="max-w-measure">{summary}</p>
-
+  <div class="min-w-0">
+    <p class="max-w-[65ch] text-body leading-[1.6] text-ink">{summary}</p>
     {
       stack.length > 0 && (
-        <ul class="mt-2 flex flex-wrap gap-x-2 gap-y-1 text-meta text-ink-muted">
+        <ul class="mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5 text-meta text-ink-muted">
           {stack.map(item => (
             <li class="after:ms-2 after:text-rule after:content-['/'] last:after:content-none">
               {item}
@@ -31,7 +37,5 @@ const allLinks = [
         </ul>
       )
     }
-
-    <LinkRow links={allLinks} class="mt-2" />
   </div>
 </article>

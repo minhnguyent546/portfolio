@@ -1,9 +1,9 @@
 export type Award = { year: number; title: string };
 
 /**
- * ICPC and Olympiad prizes, newest first. Shared by the homepage timeline and
- * the ⌘K palette, so a search for "Super Cup" lands on `#experience` instead
- * of relying on full-text matches. One row per prize; the timeline groups
+ * ICPC and Olympiad prizes, newest first. Shared by the homepage honors list and
+ * the ⌘K palette, so a search for "Super Cup" lands on `#education` instead
+ * of relying on full-text matches. One row per prize; the homepage groups
  * rows by year.
  */
 export const awards: Award[] = [

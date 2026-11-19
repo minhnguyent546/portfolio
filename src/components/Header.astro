@@ -1,17 +1,24 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconSystem from "@/assets/icons/IconSystem.svg";
 import IconUnderline from "@/assets/icons/IconUnderline.svg";
+import IconX from "@/assets/icons/IconX.svg";
 import config from "@/config";
 import { useTranslations } from "@/i18n";
 import { stripBase, stripLocale } from "@/utils/withBase";
 import LinkButton from "./LinkButton.astro";
 import CommandPalette from "./palette/CommandPalette.astro";
 
+type Props = {
+  sections?: { id: string; label: string }[];
+};
+
+const { sections = [] } = Astro.props;
 const { site, features } = config;
 
 // Blog reads the collection, so the link is dead until the first post exists.
@@ -52,23 +59,61 @@ const showPalette = features.search !== false && !isActive("/tty3");
   {t.a11y.skipToContent}
 </a>
 
-<header lang="en" class="app-layout">
+<header
+  id="site-header"
+  lang="en"
+  class="sticky top-0 z-30 border-b border-rule bg-paper"
+>
   <div
-    class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-rule bg-paper py-4 sm:py-6"
+    class="app-layout flex items-center justify-between gap-x-2 py-3 sm:gap-x-4 sm:py-3.5"
   >
-    <a
-      href={getRelativeLocaleUrl(locale, "")}
-      class="text-xl leading-none font-semibold whitespace-nowrap hover:text-accent sm:text-2xl"
+    {
+      sections.length > 0 ? (
+        <>
+          <a
+            href={getRelativeLocaleUrl(locale, "")}
+            class="font-mono text-meta leading-none whitespace-nowrap text-ink-muted hover:text-accent md:hidden"
+          >
+            minhnguyent546
+          </a>
+          <nav aria-label="Sections" class="hidden md:block">
+            <ul class="flex items-center gap-x-3.5 lg:gap-x-4">
+              {sections.map(({ id, label }) => (
+                <li>
+                  <a
+                    href={`#${id}`}
+                    data-section-link={id}
+                    class="group inline-flex py-1 text-meta whitespace-nowrap text-ink-muted transition-colors duration-(--dur-micro) hover:text-accent aria-[current]:font-medium aria-[current]:text-accent"
+                  >
+                    <span class="underline decoration-transparent underline-offset-4 group-hover:decoration-current group-aria-[current]:decoration-current">
+                      {label}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </>
+      ) : (
+        <a
+          href={getRelativeLocaleUrl(locale, "")}
+          class="font-display text-[1.0625rem] leading-none font-semibold tracking-[-0.015em] whitespace-nowrap text-ink-heading hover:text-accent sm:text-xl"
+        >
+          {site.title}
+        </a>
+      )
+    }
+    <nav
+      id="nav-menu"
+      aria-label="Primary"
+      class="flex items-center gap-x-1.5 sm:gap-x-3.5"
     >
-      {site.title}
-    </a>
-    <nav id="nav-menu" aria-label="Primary" class="flex items-center gap-x-5">
       {
         hasPosts && (
           <a
             href={getRelativeLocaleUrl(locale, "blog")}
             class:list={[
-              "py-1 font-medium hover:text-accent",
+              "px-1 py-1 text-meta font-medium whitespace-nowrap text-ink hover:text-accent",
               { "active-nav": isActive("/blog") },
             ]}
           >
@@ -81,16 +126,16 @@ const showPalette = features.search !== false && !isActive("/tty3");
           <LinkButton
             id="search-link"
             href={getRelativeLocaleUrl(locale, "search")}
-            class="relative size-8"
+            class="relative size-8 shrink-0"
             title={t.nav.search}
             aria-label={t.nav.search}
           >
-            <IconSearch class="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2" />
+            <IconSearch class="absolute top-1/2 left-1/2 size-5 -translate-x-1/2 -translate-y-1/2" />
             <span class="sr-only">{t.nav.search}</span>
             {isActive("/search") && (
               <IconUnderline
                 aria-hidden="true"
-                class="absolute bottom-0 w-6 scale-125"
+                class="absolute bottom-0 w-5 scale-125"
               />
             )}
           </LinkButton>
@@ -100,24 +145,202 @@ const showPalette = features.search !== false && !isActive("/tty3");
         features.lightAndDarkMode && (
           <button
             id="theme-btn"
-            class="relative size-8 hover:[&>svg]:stroke-accent"
+            class="relative size-8 shrink-0 hover:[&>svg]:stroke-accent"
             title={t.a11y.toggleTheme}
             aria-label={t.a11y.toggleTheme}
             data-mode-light={t.a11y.themeModeLight}
             data-mode-dark={t.a11y.themeModeDark}
             data-mode-system={t.a11y.themeModeSystem}
           >
-            <IconSunHigh class="theme-icon theme-icon-sun absolute top-[50%] left-[50%] translate-[-50%] transition-transform" />
-            <IconMoon class="theme-icon theme-icon-moon absolute top-[50%] left-[50%] translate-[-50%] transition-transform" />
-            <IconSystem class="theme-icon theme-icon-system absolute top-[50%] left-[50%] translate-[-50%] transition-transform" />
+            <IconSunHigh class="theme-icon theme-icon-sun absolute top-[50%] left-[50%] size-5 translate-[-50%] transition-transform" />
+            <IconMoon class="theme-icon theme-icon-moon absolute top-[50%] left-[50%] size-5 translate-[-50%] transition-transform" />
+            <IconSystem class="theme-icon theme-icon-system absolute top-[50%] left-[50%] size-5 translate-[-50%] transition-transform" />
+          </button>
+        )
+      }
+      {
+        sections.length > 0 && (
+          <button
+            id="mobile-menu-btn"
+            type="button"
+            class="relative size-8 shrink-0 md:hidden hover:[&>svg]:stroke-accent"
+            aria-expanded="false"
+            aria-controls="mobile-section-menu"
+            aria-label="Toggle section menu"
+            title="Sections"
+          >
+            <IconMenuDeep
+              data-menu-open
+              class="absolute top-1/2 left-1/2 size-5 -translate-x-1/2 -translate-y-1/2"
+              aria-hidden="true"
+            />
+            <IconX
+              data-menu-close
+              class="absolute top-1/2 left-1/2 hidden size-5 -translate-x-1/2 -translate-y-1/2"
+              aria-hidden="true"
+            />
           </button>
         )
       }
     </nav>
   </div>
+
+  {
+    sections.length > 0 && (
+      <nav
+        id="mobile-section-menu"
+        aria-label="Sections"
+        hidden
+        class="border-t border-rule bg-paper md:hidden"
+      >
+        <ul class="app-layout grid grid-cols-2 gap-x-4 gap-y-1 py-2.5">
+          {sections.map(({ id, label }) => (
+            <li>
+              <a
+                href={`#${id}`}
+                data-section-link={id}
+                class="group inline-flex py-1.5 text-meta text-ink-muted hover:text-accent aria-[current]:font-medium aria-[current]:text-accent"
+              >
+                <span class="underline decoration-transparent underline-offset-4 group-hover:decoration-current group-aria-[current]:decoration-current">
+                  {label}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
 </header>
 
 {showPalette && <CommandPalette />}
+
+<script>
+  const header = document.querySelector<HTMLElement>("#site-header");
+  const allLinks = [
+    ...(header?.querySelectorAll<HTMLAnchorElement>("[data-section-link]") ??
+      []),
+  ];
+
+  const menuBtn = document.querySelector<HTMLButtonElement>("#mobile-menu-btn");
+  const mobileMenu = document.querySelector<HTMLElement>(
+    "#mobile-section-menu"
+  );
+  const openIcon = menuBtn?.querySelector<SVGElement>("[data-menu-open]");
+  const closeIcon = menuBtn?.querySelector<SVGElement>("[data-menu-close]");
+
+  const setMenuOpen = (open: boolean) => {
+    if (!menuBtn || !mobileMenu) return;
+    menuBtn.setAttribute("aria-expanded", String(open));
+    mobileMenu.hidden = !open;
+    openIcon?.classList.toggle("hidden", open);
+    closeIcon?.classList.toggle("hidden", !open);
+  };
+
+  menuBtn?.addEventListener("click", () => {
+    const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
+    setMenuOpen(!isOpen);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (
+      event.key === "Escape" &&
+      menuBtn?.getAttribute("aria-expanded") === "true"
+    ) {
+      setMenuOpen(false);
+      menuBtn.focus();
+    }
+  });
+
+  document.addEventListener("click", event => {
+    if (
+      menuBtn?.getAttribute("aria-expanded") === "true" &&
+      header &&
+      !header.contains(event.target as Node)
+    ) {
+      setMenuOpen(false);
+    }
+  });
+
+  if (header && allLinks.length > 0) {
+    const ids = [
+      ...new Set(
+        allLinks
+          .map(link => link.dataset.sectionLink)
+          .filter((id): id is string => Boolean(id))
+      ),
+    ];
+    const sections = ids
+      .map(id => ({ id, el: document.getElementById(id) }))
+      .filter((item): item is { id: string; el: HTMLElement } =>
+        Boolean(item.el)
+      );
+
+    if (sections.length > 0) {
+      const mark = (activeId: string | null) => {
+        for (const link of allLinks) {
+          if (activeId !== null && link.dataset.sectionLink === activeId) {
+            link.setAttribute("aria-current", "true");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        }
+      };
+
+      // Pin a clicked section until the reader scrolls manually so short
+      // bottom sections stay highlighted after jumping to them.
+      let pinned: string | null = null;
+
+      const sync = () => {
+        if (pinned !== null) return;
+
+        const barHeight =
+          header.firstElementChild?.getBoundingClientRect().height ?? 56;
+        const line = Math.max(barHeight + 12, innerHeight * 0.3);
+        const atEnd =
+          scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+
+        let current: string | null = sections[sections.length - 1].id;
+        if (!atEnd) {
+          current = null;
+          for (const { id, el } of sections) {
+            if (el.getBoundingClientRect().top <= line) current = id;
+          }
+        }
+        mark(current);
+      };
+
+      for (const link of allLinks) {
+        link.addEventListener("click", () => {
+          const id = link.dataset.sectionLink;
+          if (id) {
+            pinned = id;
+            mark(id);
+          }
+          setMenuOpen(false);
+        });
+      }
+
+      for (const event of ["wheel", "touchstart", "keydown"]) {
+        addEventListener(event, () => (pinned = null), { passive: true });
+      }
+
+      let ticking = false;
+      const requestSync = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          sync();
+          ticking = false;
+        });
+      };
+
+      addEventListener("scroll", requestSync, { passive: true });
+      addEventListener("resize", requestSync, { passive: true });
+      sync();
+    }
+  }
+</script>
 
 <style>
   /* Three-state theme icon: sun in light, moon in dark, the auto mark in system

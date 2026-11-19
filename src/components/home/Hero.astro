@@ -1,9 +1,4 @@
 ---
-/**
- * Hero diptych — About prose left, identity card right (avatar, name, title,
- * CV, socials) at 7/5. Sits above the first band and carries no tone of its
- * own. The prose comes in through the slot; index.astro passes AboutContent.
- */
 import { Image } from "astro:assets";
 import avatar from "@/assets/images/avatar.jpg";
 import Socials from "@/components/Socials.astro";
@@ -13,50 +8,45 @@ import { getAssetPath } from "@/utils/withBase";
 const { site } = config;
 ---
 
-<section id="hero" class="app-layout grid gap-8 py-14 lg:grid-cols-12">
-  <div class="lg:col-span-8">
-    {
-      /* Ragged-right, not justified: justify + hyphens reads as a Word
-        document. `text-wrap: pretty` keeps the flush-left rail but breaks
-        lines deliberately — no orphan words or widows, and no stretched
-        word gaps on narrow widths. */
-    }
-    <div class="app-prose max-w-[42rem] text-pretty">
+<section id="hero" class="app-layout pt-7 pb-6 sm:pt-9 sm:pb-7">
+  <div
+    class="grid items-start gap-x-8 gap-y-6 md:grid-cols-[minmax(0,1fr)_15.5rem]"
+  >
+    <div
+      class="max-w-[65ch] min-w-0 space-y-2.5 text-body leading-[1.6] text-pretty text-ink [&_a]:text-accent [&_a]:underline [&_a]:decoration-rule [&_a]:underline-offset-3 [&_a:hover]:decoration-current [&_strong]:font-semibold"
+    >
       <slot />
     </div>
-  </div>
 
-  {
-    /* The identity card leads on mobile (name first, as before) and sits in
-      the right rail at lg, where DOM order puts the prose first. */
-  }
-  <div
-    class="order-first flex flex-col items-center text-center lg:order-none lg:col-span-4"
-  >
-    <Image
-      src={avatar}
-      alt={`Portrait of ${site.author}`}
-      width={220}
-      densities={[1, 2]}
-      loading="eager"
-      class="size-46 border border-rule object-cover lg:size-63"
-    />
-    <h1 class="mt-4 text-h2 tracking-[-0.02em] wrap-anywhere text-ink-heading">
-      {site.author}
-    </h1>
-    <p
-      class="mt-2 font-mono text-meta tracking-[0.14em] text-ink-muted uppercase"
+    <aside
+      class="order-first flex flex-col items-center text-center md:order-none md:mt-1"
     >
-      AI Researcher
-    </p>
-    <a
-      href={getAssetPath("cv.pdf")}
-      class="mt-4 inline-block border border-accent px-4 py-2 text-meta text-accent hover:bg-accent hover:text-accent-ink"
-    >
-      Curriculum vitae
-    </a>
-    <div class="mt-[1.6875rem]">
-      <Socials />
-    </div>
+      <Image
+        src={avatar}
+        alt={`Portrait of ${site.author}`}
+        width={224}
+        densities={[1, 2]}
+        loading="eager"
+        class="aspect-square w-36 rounded-sm border border-rule object-cover sm:w-44 md:w-52"
+      />
+
+      <h1
+        class="mt-3.5 font-display text-[1.4375rem] leading-tight font-semibold tracking-[-0.02em] whitespace-nowrap text-ink-heading sm:text-[1.5rem]"
+      >
+        {site.author}
+      </h1>
+      <p class="mt-0.5 text-meta font-medium text-ink-muted">AI Researcher</p>
+
+      <a
+        href={getAssetPath("cv.pdf")}
+        class="mt-3.5 inline-flex items-center justify-center border border-accent px-5 py-1.5 text-meta font-medium whitespace-nowrap text-accent transition-colors duration-(--dur-micro) hover:bg-accent hover:text-accent-ink md:w-52"
+      >
+        Curriculum vitae
+      </a>
+
+      <div class="mt-3 w-full max-w-64 md:max-w-none">
+        <Socials />
+      </div>
+    </aside>
   </div>
 </section>

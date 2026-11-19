@@ -6,7 +6,7 @@ import config from "@/config";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export type DatePrecision = "day" | "day-short" | "month";
+export type DatePrecision = "day" | "day-short" | "month" | "month-short";
 
 /**
  * `day-short` drops the year from the label alone: the blog ledger prints the
@@ -17,6 +17,7 @@ const FORMATS: Record<DatePrecision, { label: string; datetime: string }> = {
   day: { label: "D MMMM YYYY", datetime: "YYYY-MM-DD" },
   "day-short": { label: "D MMM", datetime: "YYYY-MM-DD" },
   month: { label: "MMMM YYYY", datetime: "YYYY-MM" },
+  "month-short": { label: "MMM YYYY", datetime: "YYYY-MM" },
 };
 
 /**

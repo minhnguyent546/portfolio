@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import IconFileText from "@/assets/icons/IconFileText.svg";
 import BlogNav from "@/components/BlogNav.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Footer from "@/components/Footer.astro";
@@ -13,6 +14,9 @@ import { getLedgerPosts, getTopicCounts } from "@/utils/getLedgerPosts";
 
 const posts = getLedgerPosts(await getCollection("blog"));
 const counts = getTopicCounts(posts);
+const articles = (await getCollection("articles")).sort(
+  (a, b) => b.data.year - a.data.year
+);
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
@@ -27,6 +31,44 @@ const t = useTranslations(locale);
     <BlogNav {counts} total={posts.length} />
 
     <PostLedger {posts} />
+
+    {
+      articles.length > 0 && (
+        <section id="vnoi-magazine" class="mt-10">
+          <h2 class="border-b border-rule pb-2 font-display text-h2 font-semibold text-ink-heading">
+            VNOI Magazine
+          </h2>
+          <ol class="divide-y divide-rule/70">
+            {articles.map(({ data: { title, titleVi, year, url } }) => (
+              <li class="grid gap-x-5 gap-y-0.5 py-3.5 sm:grid-cols-[5rem_minmax(0,1fr)] sm:items-baseline">
+                <span class="text-meta text-ink-muted tabular-nums">
+                  {year}
+                </span>
+                <div class="min-w-0">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 font-display text-h3 font-semibold text-ink-heading underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-current"
+                  >
+                    <IconFileText
+                      class="size-4 shrink-0 fill-none stroke-current text-ink-muted"
+                      aria-hidden="true"
+                    />
+                    <span>{title}</span>
+                  </a>
+                  {titleVi && (
+                    <p class="mt-0.5 text-meta text-ink-muted" lang="vi">
+                      {titleVi}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
   </Main>
 
   <Footer />
