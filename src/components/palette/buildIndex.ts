@@ -124,7 +124,7 @@ export function buildIndex(content: {
       d: data.result ?? data.venue,
       k: "competition",
       u: `${content.homeUrl}#competitions`,
-      a: `${data.summary} ${data.venue}`,
+      a: `${data.summary.replace(/\*\*([^*]+)\*\*/g, "$1")} ${data.venue}`,
     });
   }
 

@@ -19,6 +19,8 @@ const { label, datetime } = formatDate(
 const { Content } = await render(entry);
 const hasBody = entry.body != null && entry.body.trim() !== "";
 const hasDetails = hasBody || Boolean(figure);
+// Odd indices hold `**...**` spans so summaries can emphasize key results without raw HTML.
+const summaryParts = summary.split(/\*\*([^*]+)\*\*/g);
 ---
 
 <article
@@ -48,53 +50,57 @@ const hasDetails = hasBody || Boolean(figure);
     </div>
 
     <p class="mt-1.5 max-w-[65ch] text-body leading-[1.6] text-ink">
-      {summary}
-    </p>
-
-    <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-meta">
       {
-        links.map(({ label: linkLabel, url }) => (
-          <ExternalLink label={linkLabel} {url} />
-        ))
-      }
-
-      {
-        hasDetails && (
-          <details class="group [&[open]]:basis-full">
-            <summary class="group/toggle inline-flex cursor-pointer list-none items-center gap-1 py-0.5 whitespace-nowrap text-accent select-none [&::-webkit-details-marker]:hidden">
-              <IconChevronRight
-                class="size-3.5 shrink-0 fill-none stroke-current text-ink-muted transition-transform duration-(--dur-micro) group-open:rotate-90 group-open:text-accent group-hover/toggle:text-accent"
-                aria-hidden="true"
-              />
-              <span class="underline decoration-rule underline-offset-4 group-open:hidden group-hover/toggle:decoration-current">
-                System details
-              </span>
-              <span class="hidden underline decoration-current underline-offset-4 group-open:inline">
-                Hide details
-              </span>
-            </summary>
-            <div class="mt-2.5 max-w-[65ch] space-y-3 rounded-xs border border-rule bg-paper-alt p-3.5">
-              {hasBody && (
-                <div class="app-prose max-w-none text-meta leading-relaxed prose-p:my-0 prose-p:text-meta">
-                  <Content />
-                </div>
-              )}
-              {figure && (
-                <figure>
-                  <Image
-                    src={figure.src}
-                    alt={figure.alt}
-                    widths={[448, 896]}
-                    sizes="(min-width: 40rem) 28rem, 92vw"
-                    loading="lazy"
-                    class="w-full max-w-md rounded-xs border border-rule bg-white"
-                  />
-                </figure>
-              )}
-            </div>
-          </details>
+        summaryParts.map((part, i) =>
+          i % 2 === 1 ? <strong class="font-semibold">{part}</strong> : part
         )
       }
-    </div>
+    </p>
+
+    {
+      (links.length > 0 || hasDetails) && (
+        <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-meta">
+          {links.map(({ label: linkLabel, url }) => (
+            <ExternalLink label={linkLabel} {url} />
+          ))}
+
+          {hasDetails && (
+            <details class="group [&[open]]:basis-full">
+              <summary class="group/toggle inline-flex cursor-pointer list-none items-center gap-1 py-0.5 whitespace-nowrap text-accent select-none [&::-webkit-details-marker]:hidden">
+                <IconChevronRight
+                  class="size-3.5 shrink-0 fill-none stroke-current text-ink-muted transition-transform duration-(--dur-micro) group-open:rotate-90 group-open:text-accent group-hover/toggle:text-accent"
+                  aria-hidden="true"
+                />
+                <span class="underline decoration-rule underline-offset-4 group-open:hidden group-hover/toggle:decoration-current">
+                  System details
+                </span>
+                <span class="hidden underline decoration-current underline-offset-4 group-open:inline">
+                  Hide details
+                </span>
+              </summary>
+              <div class="mt-2.5 max-w-[65ch] space-y-3 rounded-xs border border-rule bg-paper-alt p-3.5">
+                {hasBody && (
+                  <div class="app-prose max-w-none text-meta leading-relaxed prose-p:my-0 prose-p:text-meta">
+                    <Content />
+                  </div>
+                )}
+                {figure && (
+                  <figure>
+                    <Image
+                      src={figure.src}
+                      alt={figure.alt}
+                      widths={[448, 896]}
+                      sizes="(min-width: 40rem) 28rem, 92vw"
+                      loading="lazy"
+                      class="w-full max-w-md rounded-xs border border-rule bg-white"
+                    />
+                  </figure>
+                )}
+              </div>
+            </details>
+          )}
+        </div>
+      )
+    }
   </div>
 </article>

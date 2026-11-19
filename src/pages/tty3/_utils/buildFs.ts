@@ -96,7 +96,7 @@ export function buildFs(content: {
       `Date:    ${formatDate(data.date, data.datePrecision).label}`,
       data.result !== undefined && `Result:  ${data.result}`,
       "",
-      data.summary.trim(),
+      flattenMarkdown(data.summary.trim()),
       ...bodyLines(body),
       ...linkLines(data.links),
     ]);
@@ -121,7 +121,7 @@ export function buildFs(content: {
       data.stack.length > 0 && `Stack:  ${data.stack.join(", ")}`,
       data.repo !== undefined && `Repo:   ${data.repo}`,
       "",
-      data.summary.trim(),
+      flattenMarkdown(data.summary.trim()),
       ...bodyLines(body),
       ...linkLines(data.links),
     ]);
