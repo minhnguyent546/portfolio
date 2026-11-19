@@ -80,7 +80,11 @@ const bootUnits = async (name: "publications" | "competitions" | "projects") =>
     .map(({ id }) => id);
 ---
 
-<Layout class="app-wide" description={homepageDescription}>
+<Layout
+  class="app-wide"
+  title={`${config.site.title} - Academic Homepage`}
+  description={homepageDescription}
+>
   <PersonSchema slot="head" description={homepageDescription} />
   <BootSequence
     postCount={sortedPosts.length}
