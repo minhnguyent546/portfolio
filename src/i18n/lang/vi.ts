@@ -60,6 +60,7 @@ export default {
     competitions: "Cuộc thi",
     experience: "Kinh nghiệm",
     projects: "Dự án",
+    news: "Tin tức",
     pages: "Trang",
     inPosts: "Trong bài viết",
     navigate: "Di chuyển",

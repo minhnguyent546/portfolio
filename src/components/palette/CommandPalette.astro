@@ -19,25 +19,37 @@ const byOrder = <T extends { data: { order: number } }>(a: T, b: T) =>
 const published = ({ data }: { data: { draft: boolean } }) => !data.draft;
 
 const homeUrl = getRelativeLocaleUrl(locale, "");
+const blogUrl = getRelativeLocaleUrl(locale, "blog");
 
 const index = buildIndex({
   posts: await getCollection("blog", ({ data }) => !data.draft),
+  articles: (await getCollection("articles")).sort(
+    (a, b) => b.data.year - a.data.year
+  ),
   publications: (await getCollection("publications", published)).sort(byOrder),
   competitions: (await getCollection("competitions", published)).sort(byOrder),
   experience: (await getCollection("experience", published)).sort(byOrder),
   projects: (await getCollection("projects", published)).sort(byOrder),
+  news: (await getCollection("news")).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  ),
   sections: [
     { id: "news", label: "News" },
     { id: "publications", label: "Publications" },
     { id: "experience", label: "Experience" },
     { id: "competitions", label: "Competitions" },
     { id: "projects", label: "Projects" },
-    { id: "writing", label: "Writing" },
-    { id: "contact", label: "Contact" },
+    {
+      id: "education",
+      label: "Education & Honors",
+      aliases:
+        "Can Tho University Engineer's degree Information Technology GPA TOEIC Thesis",
+    },
   ],
   homeUrl,
+  blogUrl,
   routes: [
-    { label: t.nav.blog, url: getRelativeLocaleUrl(locale, "blog") },
+    { label: t.nav.blog, url: blogUrl },
     { label: t.nav.tags, url: getRelativeLocaleUrl(locale, "tags") },
     { label: t.nav.archives, url: getRelativeLocaleUrl(locale, "archives") },
     { label: t.nav.search, url: getRelativeLocaleUrl(locale, "search") },
@@ -54,6 +66,7 @@ const labels = {
   competition: t.palette.competitions,
   experience: t.palette.experience,
   project: t.palette.projects,
+  news: t.palette.news,
   page: t.palette.pages,
   inPosts: t.palette.inPosts,
   noResults: t.palette.noResults,

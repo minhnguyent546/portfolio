@@ -2,6 +2,7 @@ import type { CollectionEntry } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { awards } from "@/data/awards";
 import { TOPIC_LABELS, TOPICS } from "@/data/topics";
+import { formatDate } from "@/utils/formatDate";
 import { getTopicCounts } from "@/utils/getLedgerPosts";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { dedupeTranslations, getTranslation } from "@/utils/getTranslation";
@@ -27,23 +28,33 @@ export type PaletteEntry = {
 };
 
 export type PaletteGroup =
-  "post" | "publication" | "competition" | "experience" | "project" | "page";
+  | "post"
+  | "publication"
+  | "competition"
+  | "experience"
+  | "project"
+  | "news"
+  | "page";
 
 /** A homepage section, keyed by the anchor it scrolls to. */
-type Section = { id: string; label: string };
+type Section = { id: string; label: string; aliases?: string };
 
 /** A site route that is not built from a collection. */
 type Route = { label: string; url: string };
 
 export function buildIndex(content: {
   posts: CollectionEntry<"blog">[];
+  articles: CollectionEntry<"articles">[];
   publications: CollectionEntry<"publications">[];
   competitions: CollectionEntry<"competitions">[];
   experience: CollectionEntry<"experience">[];
   projects: CollectionEntry<"projects">[];
+  news: CollectionEntry<"news">[];
   sections: Section[];
   /** Prepended with the homepage path to make each section anchor. */
   homeUrl: string;
+  /** Blog index URL, used for VNOI Magazine articles listed on `/blog`. */
+  blogUrl: string;
   routes: Route[];
   locale: string;
 }): PaletteEntry[] {
@@ -73,6 +84,16 @@ export function buildIndex(content: {
       u: getPostUrl(post.id, post.filePath),
       a: other ? `${other.title} ${terms}` : terms,
       ...(other && { v: other.url }),
+    });
+  }
+
+  for (const { data } of content.articles) {
+    entries.push({
+      t: data.title,
+      d: `${data.publication} · ${data.year}`,
+      k: "post",
+      u: `${content.blogUrl}#vnoi-magazine`,
+      ...(data.titleVi && { a: data.titleVi }),
     });
   }
 
@@ -118,14 +139,14 @@ export function buildIndex(content: {
   }
 
   // The awards have no rows of their own, so they ride the Experience group
-  // and keep the same anchor. A search for "Super Cup" or "ICPC" then lands
-  // on the section instead of a full-text hit that opens at the page top.
+  // and link to the Education & Honors section. A search for "Super Cup" or
+  // "ICPC" lands on the section instead of opening at the page top.
   for (const award of awards) {
     entries.push({
       t: award.title,
       d: String(award.year),
       k: "experience",
-      u: `${content.homeUrl}#experience`,
+      u: `${content.homeUrl}#education`,
     });
   }
 
@@ -139,16 +160,26 @@ export function buildIndex(content: {
     });
   }
 
+  for (const { data } of content.news) {
+    entries.push({
+      t: data.text.trim(),
+      d: formatDate(data.date, "month-short").label,
+      k: "news",
+      u: `${content.homeUrl}#news`,
+    });
+  }
+
   for (const { label, url } of content.routes) {
     entries.push({ t: label, d: "", k: "page", u: url });
   }
 
-  for (const { id, label } of content.sections) {
+  for (const { id, label, aliases } of content.sections) {
     entries.push({
       t: label,
       d: "",
       k: "page",
       u: `${content.homeUrl}#${id}`,
+      ...(aliases && { a: aliases }),
     });
   }
 

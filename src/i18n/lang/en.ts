@@ -65,6 +65,7 @@ export default {
     competitions: "Competitions",
     experience: "Experience",
     projects: "Projects",
+    news: "News",
     pages: "Pages",
     inPosts: "In posts",
     navigate: "Navigate",

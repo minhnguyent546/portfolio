@@ -47,6 +47,7 @@ const GROUPS: (PaletteGroup | "inPosts")[] = [
   "competition",
   "experience",
   "project",
+  "news",
   "page",
   "inPosts",
 ];
@@ -250,7 +251,11 @@ function staticRows(query: string): Row[] {
     matched.push({
       row: {
         title: entry.t,
-        detail: reason ? `${entry.d} · ${reason}` : entry.d,
+        detail: reason
+          ? entry.d
+            ? `${entry.d} · ${reason}`
+            : reason
+          : entry.d,
         group: entry.k,
         url: entry.u,
       },
