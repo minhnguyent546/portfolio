@@ -97,9 +97,11 @@ const showPalette = features.search !== false && !isActive("/tty3");
       ) : (
         <a
           href={getRelativeLocaleUrl(locale, "")}
-          class="font-display text-[1.0625rem] leading-none font-semibold tracking-[-0.015em] whitespace-nowrap text-ink-heading hover:text-accent sm:text-xl"
+          aria-label={`${t.nav.home} — ${site.title}`}
+          title={t.nav.home}
+          class="-ms-1 px-1 py-1 font-mono text-base leading-none font-medium whitespace-nowrap text-ink-heading transition-colors duration-(--dur-micro) hover:text-accent sm:text-lg"
         >
-          {site.title}
+          ~/
         </a>
       )
     }
