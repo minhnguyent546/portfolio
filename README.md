@@ -4,8 +4,6 @@ A personal portfolio for research, engineering projects, publications, and writi
 
 ![The homepage boot sequence](assets/boot-sequence.gif)
 
-> This site is a work in progress.
-
 ## Development
 
 Requires `node` 22.23.4+, 24.22.1+, or 26.12.1+ and `pnpm`.
