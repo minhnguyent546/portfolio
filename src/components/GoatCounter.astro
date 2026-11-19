@@ -1,0 +1,80 @@
+---
+/* `is:inline` keeps Astro from bundling either tag: the setup script must run
+   synchronously before `count.js`, and the browser must read `data-goatcounter`
+   from the literal tag. */
+---
+
+<script is:inline>
+  (function () {
+    const isTrackingParam = k =>
+      k === "ref" ||
+      k === "src" ||
+      k === "source" ||
+      k === "campaign" ||
+      k.startsWith("utm_");
+
+    const getCleanUrl = () => {
+      if (!location.search) return null;
+      const params = new URLSearchParams(location.search);
+      let changed = false;
+      for (const key of [...params.keys()]) {
+        if (isTrackingParam(key)) {
+          params.delete(key);
+          changed = true;
+        }
+      }
+      if (!changed) return null;
+      const qs = params.toString();
+      return location.pathname + (qs ? "?" + qs : "") + location.hash;
+    };
+
+    if (!getCleanUrl()) return;
+
+    const stripParams = () => {
+      const clean = getCleanUrl();
+      if (clean) history.replaceState(history.state, "", clean);
+    };
+
+    // Runs inside count.js get_data() right after location.search is copied
+    // into data.q, so foreground and background tabs report ref/utm_* before
+    // the URL bar is cleaned.
+    window.goatcounter = Object.assign(window.goatcounter || {}, {
+      referrer: r => {
+        stripParams();
+        return r;
+      },
+    });
+
+    window.addEventListener(
+      "error",
+      e => {
+        if (
+          e.target instanceof HTMLScriptElement &&
+          e.target.dataset.goatcounter
+        ) {
+          stripParams();
+        }
+      },
+      true
+    );
+
+    window.addEventListener(
+      "load",
+      () => {
+        if (
+          !window.goatcounter?.count ||
+          (document.visibilityState !== "prerender" &&
+            window.goatcounter.filter?.())
+        ) {
+          stripParams();
+        }
+      },
+      { once: true }
+    );
+  })();
+</script>
+<script
+  is:inline
+  async
+  data-goatcounter="https://minhnguyent546.goatcounter.com/count"
+  src="https://gc.zgo.at/count.js"></script>

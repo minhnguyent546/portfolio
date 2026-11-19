@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import GoatCounter from "@/components/GoatCounter.astro";
 import config from "@/config";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
@@ -43,7 +44,17 @@ const rssHref = getAssetPath("rss.xml");
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href={getAssetPath("favicon.svg")} />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href={getAssetPath("favicon.png")}
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href={getAssetPath("apple-touch-icon.png")}
+    />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -153,16 +164,8 @@ const rssHref = getAssetPath("rss.xml");
 
     {
       /* Production only, so a dev session or a local dist/ test does not count as a
-         visit. `is:inline` keeps Astro from bundling it: the tag must reach the
-         browser as written for GoatCounter to read its own data attribute. */
-      import.meta.env.PROD && (
-        <script
-          is:inline
-          async
-          data-goatcounter="https://minhnguyent546.goatcounter.com/count"
-          src="https://gc.zgo.at/count.js"
-        />
-      )
+         visit. */
+      import.meta.env.PROD && <GoatCounter />
     }
   </body>
 </html>
