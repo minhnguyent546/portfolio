@@ -5,14 +5,16 @@ date: 2026-06-25
 result: Highest technical score, 3rd overall
 summary:
   A neuro-symbolic Program-of-Thought pipeline for explainable educational QA
-  under an 8B open-weight limit. Team CoTu took the highest final-round
-  technical score of any team, 13.44/15, and placed 3rd overall once the
+  under an 8B open-weight limit. Team CoTu took the **highest final-round
+  technical score** of any team, **13.44/15**, and placed 3rd overall once the
   equally weighted presentation score was included.
 links:
   - label: Code
     url: https://github.com/minhnguyent546/EXACT-2026-CoTu
   - label: Technical report
     url: https://arxiv.org/abs/2607.14735
+  - label: Hugging Face
+    url: https://huggingface.co/collections/cotulabs/cotu-exact-2026
   - label: Leaderboard
     url: https://exact-ijcnn.vercel.app/leaderboard
 figure:
@@ -21,7 +23,7 @@ figure:
     type, then emits either a Z3 encoding for regulation queries or numerical
     Python for physics, both passing through a shared self-correction loop to a
     unified explained-JSON output.
-order: 1
+order: 3
 ---
 
 EXACT 2026 asks for answers that are correct and explainable, from self-hosted

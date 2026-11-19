@@ -14,6 +14,8 @@ arxivId: "2607.14735"
 links:
   - label: Code
     url: https://github.com/minhnguyent546/EXACT-2026-CoTu
+  - label: Hugging Face
+    url: https://huggingface.co/collections/cotulabs/cotu-exact-2026
 thumbnail: ../competitions/exact-2026-pipeline.png
 abstract: >
   CoTu is a neuro-symbolic Program-of-Thought system for explainable educational
