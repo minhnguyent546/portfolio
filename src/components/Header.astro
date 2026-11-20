@@ -99,9 +99,15 @@ const showPalette = features.search !== false && !isActive("/tty3");
           href={getRelativeLocaleUrl(locale, "")}
           aria-label={`${t.nav.home} — ${site.title}`}
           title={t.nav.home}
-          class="-ms-1 px-1 py-1 font-mono text-base leading-none font-medium whitespace-nowrap text-ink-heading transition-colors duration-(--dur-micro) hover:text-accent sm:text-lg"
+          class="home-path -ms-1 inline-flex items-center px-1 py-1.5 font-mono text-sm leading-none font-medium whitespace-nowrap text-ink-heading hover:text-accent sm:text-lg"
         >
-          ~/
+          <span class="home-path-tilde" aria-hidden="true">
+            ~
+          </span>
+          <span class="home-path-full" aria-hidden="true">
+            {"/home/minhnguyent546"}
+          </span>
+          <span aria-hidden="true">/</span>
         </a>
       )
     }
@@ -383,5 +389,57 @@ const showPalette = features.search !== false && !isActive("/tty3");
     transition:
       scale var(--dur-micro) ease,
       rotate var(--dur-long) ease;
+  }
+
+  /* Reserve the expanded path's width so the hover/tap target spans
+     `/home/minhnguyent546/` rather than just the two-character `~/`. */
+  .home-path {
+    --home-path-dur: 380ms;
+    --home-path-hold: 175ms;
+    min-width: calc(21ch + 0.5rem);
+    transition: color var(--home-path-dur) ease var(--home-path-hold);
+  }
+
+  .home-path:hover,
+  .home-path:focus-visible {
+    transition: color var(--dur-micro) ease 0s;
+  }
+
+  .home-path-tilde,
+  .home-path-full {
+    display: inline-block;
+    overflow: hidden;
+    /* Keep descenders (g, y) clear of the clip box. */
+    padding-block: 0.15em;
+    margin-block: -0.15em;
+  }
+
+  .home-path-tilde {
+    width: 1ch;
+    transition: width 0s calc(var(--home-path-hold) + var(--home-path-dur));
+  }
+
+  .home-path-full {
+    width: 0ch;
+    transition: width var(--home-path-dur) steps(20, end) var(--home-path-hold);
+  }
+
+  .home-path:hover .home-path-tilde,
+  .home-path:focus-visible .home-path-tilde {
+    width: 0ch;
+    transition-delay: 0s;
+  }
+
+  .home-path:hover .home-path-full,
+  .home-path:focus-visible .home-path-full {
+    width: 20ch;
+    transition-delay: 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-path {
+      --home-path-dur: 0s;
+      --home-path-hold: 0s;
+    }
   }
 </style>

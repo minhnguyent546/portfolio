@@ -152,8 +152,9 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   (`News`, `Publications`, `Experience`, `Competitions`, `Projects`) with active-section
   scroll highlighting on the left, a collapsible mobile section menu below `md` (with
   `minhnguyent546` on the left so the author's name does not repeat above the hero `h1`),
-  and `Blog`, search, and the theme toggle on the right. Subpages show a monospace `~/` home link.
-  `scroll-padding-top` clears the header height.
+  and `Blog`, search, and the theme toggle on the right. Subpages show a monospace `~/`
+  home link that expands to `/home/minhnguyent546/` on hover. `scroll-padding-top` clears
+  the header height.
 
 
 ## 3. Content inventory (from GitHub README)
