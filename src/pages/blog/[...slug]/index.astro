@@ -16,7 +16,6 @@ import { getSortedPosts } from "@/utils/getSortedPosts";
 import { getTranslation } from "@/utils/getTranslation";
 import { slugifyStr } from "@/utils/slugify";
 import { tocHeadingPattern } from "@/utils/tocHeading";
-import { toTransitionName } from "@/utils/toTransitionName";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import BackButton from "./_components/BackButton.astro";
 import EditPost from "./_components/EditPost.astro";
@@ -148,10 +147,7 @@ const ogImage = ogImageUrl
     data-close-preview-label={t.post.closeImagePreview}
     data-heading-link-label={t.post.linkToHeading}
   >
-    <h1
-      style={{ viewTransitionName: toTransitionName(title) }}
-      class="inline-block font-bold text-accent"
-    >
+    <h1 class="inline-block font-bold text-accent">
       {title}
     </h1>
 

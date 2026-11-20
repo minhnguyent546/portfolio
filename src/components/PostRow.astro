@@ -17,7 +17,6 @@ import { tplStr, useTranslations } from "@/i18n";
 import { formatDate } from "@/utils/formatDate";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { getReadingTime } from "@/utils/getReadingTime";
-import { toTransitionName } from "@/utils/toTransitionName";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -49,7 +48,6 @@ const ogCardUrl =
     {lang}
     title={description}
     class="group grid grid-cols-[minmax(0,1fr)_6.5rem] gap-x-5 gap-y-1 py-4 lg:grid-cols-[7rem_minmax(0,1fr)_14rem] lg:gap-x-8"
-    style={{ viewTransitionName: toTransitionName(title) }}
   >
     <div
       class="col-span-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-muted lg:col-span-1 lg:flex-col lg:items-start lg:gap-y-0.5"
