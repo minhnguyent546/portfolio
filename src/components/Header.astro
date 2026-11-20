@@ -225,6 +225,28 @@ const showPalette = features.search !== false && !isActive("/tty3");
 
 <script>
   const header = document.querySelector<HTMLElement>("#site-header");
+  const homePath = header?.querySelector<HTMLAnchorElement>(".home-path");
+  const homePathFull = homePath?.querySelector<HTMLElement>(".home-path-full");
+
+  if (homePath && homePathFull) {
+    const defaultPath = homePathFull.textContent ?? "/home/minhnguyent546";
+    const rollHomePath = () => {
+      const isRoot = Math.random() < 0.1;
+      homePath.toggleAttribute("data-root", isRoot);
+      homePathFull.textContent = isRoot ? "/root" : defaultPath;
+    };
+
+    rollHomePath();
+    homePathFull.addEventListener("transitionend", event => {
+      if (
+        event.propertyName === "width" &&
+        !homePath.matches(":hover, :focus-visible")
+      ) {
+        rollHomePath();
+      }
+    });
+  }
+
   const allLinks = [
     ...(header?.querySelectorAll<HTMLAnchorElement>("[data-section-link]") ??
       []),
@@ -424,6 +446,14 @@ const showPalette = features.search !== false && !isActive("/tty3");
     transition: width var(--home-path-dur) steps(20, end) var(--home-path-hold);
   }
 
+  .home-path[data-root] {
+    --home-path-dur: 95ms;
+  }
+
+  .home-path[data-root] .home-path-full {
+    transition: width var(--home-path-dur) steps(5, end) var(--home-path-hold);
+  }
+
   .home-path:hover .home-path-tilde,
   .home-path:focus-visible .home-path-tilde {
     width: 0ch;
@@ -436,8 +466,15 @@ const showPalette = features.search !== false && !isActive("/tty3");
     transition-delay: 0s;
   }
 
+  .home-path[data-root]:hover .home-path-full,
+  .home-path[data-root]:focus-visible .home-path-full {
+    width: 5ch;
+    transition-delay: 0s;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .home-path {
+    .home-path,
+    .home-path[data-root] {
       --home-path-dur: 0s;
       --home-path-hold: 0s;
     }
