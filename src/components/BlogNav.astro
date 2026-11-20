@@ -15,7 +15,7 @@ type Props = {
   counts: Map<Topic, number>;
   total: number;
   /** Omitted on the blog index, where "All" is the current view. */
-  current?: Topic;
+  current?: Topic | "tags" | "archives";
 };
 
 const { counts, total, current } = Astro.props;
@@ -39,12 +39,17 @@ const chips = [
 ];
 
 const links = [
-  { href: getRelativeLocaleUrl(locale, "tags"), label: t.nav.tags },
+  {
+    href: getRelativeLocaleUrl(locale, "tags"),
+    label: t.nav.tags,
+    active: current === "tags",
+  },
   ...(config.features.showArchives
     ? [
         {
           href: getRelativeLocaleUrl(locale, "archives"),
           label: t.nav.archives,
+          active: current === "archives",
         },
       ]
     : []),
@@ -92,7 +97,13 @@ const links = [
         <li>
           <a
             href={link.href}
-            class="text-sm whitespace-nowrap text-ink-muted underline-offset-4 hover:text-accent hover:underline"
+            aria-current={link.active ? "page" : undefined}
+            class:list={[
+              "text-sm whitespace-nowrap underline-offset-4",
+              link.active
+                ? "font-medium text-ink-heading underline decoration-ink-heading"
+                : "text-ink-muted hover:text-accent hover:underline",
+            ]}
           >
             {link.label}
           </a>

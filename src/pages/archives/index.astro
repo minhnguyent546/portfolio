@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import BlogNav from "@/components/BlogNav.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Card from "@/components/Card.astro";
 import Footer from "@/components/Footer.astro";
@@ -9,6 +10,7 @@ import Main from "@/components/Main.astro";
 import config from "@/config";
 import { useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+import { getTopicCounts } from "@/utils/getLedgerPosts";
 import { dedupeTranslations } from "@/utils/getTranslation";
 import { getPostsByGroupCondition } from "@/utils/groupPosts";
 import { postFilter } from "@/utils/postFilter";
@@ -25,6 +27,7 @@ const t = useTranslations(locale);
 
 const posts = await getCollection("blog");
 const filteredPosts = dedupeTranslations(posts.filter(postFilter));
+const counts = getTopicCounts(filteredPosts);
 const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
 ---
 
@@ -34,6 +37,8 @@ const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
   <Breadcrumb />
 
   <Main pageTitle={t.pages.archivesTitle} pageDesc={t.pages.archivesDesc}>
+    <BlogNav {counts} total={filteredPosts.length} current="archives" />
+
     {
       Object.entries(
         getPostsByGroupCondition(filteredPosts, post =>

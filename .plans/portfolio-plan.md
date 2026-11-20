@@ -212,7 +212,9 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   falls back to the generated OG card. Topic filters render as pills; each populated
   topic also gets `/blog/topic/<name>/`. A topic joins `BlogNav` and gets a page once it
   has a post, so the row never offers an empty list. `BlogNav` also carries Tags and
-  Archives on the right, as the secondary axes. Filters are real routes, which keeps
+  Archives on the right, as the secondary axes, and stays visible on `/tags` and
+  `/archives` (where `Breadcrumb` inserts `Blog` before them and `Header` keeps `Blog`
+  active). Filters are real routes, which keeps
   the page at 0 bytes of JavaScript. Pagination is gone: `/archives` already holds the
   full history, and a year heading split across pages stops grouping. Sorting is on
   `pubDatetime` alone, not the `modDatetime` that `getSortedPosts` prefers, or an
@@ -425,6 +427,8 @@ A separate build-only Archivo TTF family supplies Satori Vietnamese glyphs for O
     build, exit 0, `dist/` carries `index.html` + Pagefind index).
   - Pinned to current majors: `checkout@v7`, `setup-node@v7`, `pnpm/action-setup@v6`,
     `upload-pages-artifact@v5`, `deploy-pages@v5`.
+  - Both workflows set `ASTRO_TELEMETRY_DISABLED: "1"`: Astro's `isCI` check hides only
+    the notice banner and still sends telemetry with no request timeout.
   - **Blocked until two repo settings change** (neither is doable from the workflow
     file): Settings → Pages → Source must be set to **GitHub Actions**, and the repo is
     currently **private**, so Pages needs either a public repo or a paid plan.

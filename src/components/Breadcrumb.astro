@@ -55,6 +55,14 @@ if (segments[0] === "tags" && !isNaN(Number(segments[2]))) {
   });
 }
 
+// Tags and Archives live at top-level routes but belong under Blog.
+if (segments[0] === "tags" || segments[0] === "archives") {
+  crumbs.unshift({
+    label: t.nav.blog,
+    href: getRelativeLocaleUrl(locale, "blog"),
+  });
+}
+
 crumbs.unshift({ label: t.nav.home, href: getRelativeLocaleUrl(locale, "") });
 
 // The page you are on is not a link to itself.
