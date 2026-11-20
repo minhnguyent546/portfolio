@@ -115,3 +115,49 @@ From `src/content/blog/xor-basis-vi.md` and `src/content/blog/xor-basis.md`.
 > A set $V \ne \varnothing$ is called a vector space if $V$ is equipped with two operations: addition and scalar multiplication.
 
 *Why:* In English CP, "subarray" implies contiguous, whereas "subsequence"/"subset" allows non-contiguous elements. Standard linear algebra uses "equipped with", "scalar multiplication", and uppercase `XOR`.
+
+---
+
+## 8. Tree Terminology & Keeping Author Transitions
+
+From `src/content/blog/auxiliary-tree-vi.md` and `src/content/blog/auxiliary-tree.md`.
+
+**Vietnamese:**
+> ...mối quan hệ giữa các đỉnh (quan hệ tiền bối - hậu duệ) sẽ được giữ nguyên so với cây ban đầu.
+>
+> trong đó các đỉnh màu đỏ là các đỉnh cần truy vấn, các đỉnh màu xanh là các đỉnh phụ được thêm. Nếu bạn cảm thấy mơ hồ thì cũng đừng lo lắng, ở phần còn lại của bài viết, mình sẽ tập trung vào việc giải thích cũng như cách xây dựng cây phụ, sau đó là cài đặt mẫu và các bài tập ví dụ.
+
+**Avoid (drops the reassuring transition; uses imprecise tree phrasing):**
+> ...the predecessor-successor relations between vertices stay the same as in the original tree.
+>
+> The red vertices are the query vertices, and the blue ones are the vertices that the technique adds.
+
+**Preferred:**
+> ...the relationships between vertices (ancestor–descendant relationships) are preserved from the original tree.
+>
+> Here, the red vertices are the query vertices, and the blue vertices are the auxiliary vertices added to the tree. If this still feels vague, don't worry: in the rest of this article, I will focus on explaining how an auxiliary tree works and how to build one, followed by a sample implementation and example problems.
+
+*Why:* Tree ancestry in CP is always "ancestor–descendant" (not "predecessor–successor"), and author roadmap/reassurance sentences should not be silently dropped.
+
+---
+
+## 9. Cleaning Up Loanword Backticks & Vietnamese Glosses
+
+From `src/content/blog/bit-compression-vi.md` and `src/content/blog/bit-compression.md`.
+
+**Vietnamese:**
+> ## 3. Tìm `transitive closure` với thuật toán Floyd–Warshall trong $\mathcal{O}(n^3 / \log{n})$
+>
+> **Bài toán:** transitive closure (bao đóng bắc cầu) của quan hệ hai ngôi $R$ trên $X$ là một quan hệ $S$ nhỏ nhất trên $X$ chứa $R$ và có tính bắc cầu, có nghĩa nếu $xSy$ và $ySz$ thì $xSz$.
+
+**Avoid (keeps loanword backticks or bilingual gloss):**
+> ## 3. Finding `transitive closure` with Floyd–Warshall in $\mathcal{O}(n^3 / \log{n})$
+>
+> **Problem:** The transitive closure (bao đóng bắc cầu) of a binary relation $R$ on $X$ is...
+
+**Preferred:**
+> ## 3. Finding the transitive closure with Floyd–Warshall in $\mathcal{O}(n^3 / \log{n})$
+>
+> **Problem:** The transitive closure of a binary relation $R$ on $X$ is the smallest relation $S$ on $X$ that contains $R$ and is transitive, meaning that if $xSy$ and $ySz$, then $xSz$.
+
+*Why:* Vietnamese tutorials often wrap English terms in backticks or add a Vietnamese gloss in parentheses. Drop both in English; reserve backticks for code identifiers (`bitset`, `solve`, `tin[u]`).

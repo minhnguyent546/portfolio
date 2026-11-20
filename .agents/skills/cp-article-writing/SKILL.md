@@ -22,24 +22,32 @@ for concrete `Vietnamese → Avoid → Preferred` calibration pairs from this bl
 1. **Preserve structure.** Keep the same headings, paragraph breaks, bullet
    lists, and logical progression as the Vietnamese original. Do not skip
    sections or compress multiple paragraphs into one summary.
-2. **Preserve logic and qualifiers.** Keep conditionals ("in problems where..."),
-   qualifiers ("after optimization", "relatively few"), and personal voice
-   ("I have noticed..."). Never turn a conditional into an unconditional claim.
+2. **Preserve logic, qualifiers, and author voice.** Keep conditionals ("in
+   problems where..."), qualifiers ("after optimization", "relatively few"),
+   frontmatter `description` nuances (do not just copy the title), and personal
+   or casual voice ("I have noticed...", "don't worry...", playful CP remarks
+   like `:))`). Never silently drop transition sentences or turn a conditional
+   into an unconditional claim.
 3. **Do not invent content.** Never add extra explanations, analogies, or
    complexity remarks that are not in the source.
 4. **Keep code, math, and links exact.** Keep all executable code in fenced
    blocks identical to the Vietnamese source (unless fixing a compile-blocking
    typo, which must be reported). Translate any Vietnamese `//` comments inside
-   code blocks into concise English. Keep constraints and math notation exact,
+   code blocks into concise English. Keep constraints and math notation exact
+   (fix unambiguous LaTeX typos like `Wlog{W}` → `W\log{W}` and report them),
    put math operators inside `$...$` (`$\text{span}(S)$`, `$\text{dim}(V)$`,
    `$\text{msb}(x)$`, `$\max\{a_i\}$`, not `span$(S)$`), and localize
    `vi.wikipedia.org` links to their `en.wikipedia.org` equivalents.
-5. **Preserve blog conventions.** Keep `## Table of contents`,
-   `translationOf: <slug>-vi`, `<details class="spoiler">`, and lone-form `$$`
-   display math blocks (`$$` alone on opening and closing lines). Pull
-   multi-line `$$` blocks (matrices, `\begin{cases}`) out of bullet-list
-   indentation so Prettier does not collapse `\\` or `\{`. Omit dead
-   commented-out Vietnamese HTML blocks.
+5. **Preserve blog conventions and clean up bilingual artifacts.** Keep
+   `## Table of contents`, `translationOf: <slug>-vi`, `<details class="spoiler">`,
+   and lone-form `$$` display math blocks (`$$` alone on opening and closing
+   lines). Pull multi-line `$$` blocks (matrices, `\begin{cases}`) out of
+   bullet-list indentation so Prettier does not collapse `\\` or `\{`. Omit dead
+   commented-out Vietnamese HTML blocks. Drop redundant Vietnamese parenthetical
+   glosses (`transitive closure (bao đóng bắc cầu)` → `transitive closure`),
+   remove backticks that only marked English loanwords in Vietnamese prose or
+   headings (keep backticks for code identifiers), and translate `Chú thích:`
+   by context (`Legend:` for figures, `Notation:` for variable/function lists).
 
 ## Tone & Anti-Patterns
 
@@ -88,6 +96,21 @@ Use clean, natural "we" voice with active verbs ("we split", "we reduce",
 | Tóm tắt đề bài / Đề bài | Problem summary / Problem statement | — |
 | Phân tích / Lời giải | Analysis / Solution | — |
 | Bài tập luyện tập / áp dụng | Practice problems | — |
+| Chú thích: | Legend: (figures) / Notation: (variables) | — |
+| tiền bối / tổ tiên / hậu duệ | ancestor / descendant | predecessor / successor (in trees) |
+| thứ tự thăm trong phép duyệt DFS | DFS visit order / DFS entry time | — |
+| cây con gốc $u$ | subtree rooted at $u$ | — |
+| bảng thưa / nhảy nhị phân | sparse table / binary lifting | — |
+| quy hoạch động trên cây | tree DP | — |
+| lượng đóng góp (của cạnh) | contribution (of an edge) | — |
+| truy vết (đáp án) | reconstruct (the answer) / trace back | — |
+| đồ thị có hướng / cung | directed graph / directed edge | — |
+| bao đóng bắc cầu | transitive closure | — |
+| bài toán cái túi | knapsack problem | — |
+| định thức / phép khử Gauss | determinant / Gaussian elimination | — |
+| phần bù của tập | complement of a set | — |
+| dịch trái / dịch phải bit | left shift / right shift | — |
+| độ dài của machine word | machine word size | — |
 
 ## Workflow
 
