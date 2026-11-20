@@ -1,140 +1,99 @@
 # AGENTS.md
 
-Personal portfolio. Static Astro site, deployed to GitHub Pages.
+Personal website and blog for Minh-Thien Nguyen (`minhnguyent546.io.vn`). Static Astro site, deployed to GitHub Pages.
 
 ## Where things live
 
-- Plan at `.plans/portfolio-plan.md`: The plan. Stack, content inventory, phases, rejected options. **Read this first.**
-- Research at `.research/`: Index of the research reports. Read a full report only when you need it.
+- `.plans/portfolio-plan.md`: architecture, stack, content inventory, and rejected options. **Read this first.**
+- `.research/`: background research reports (`2026-08-01-*.md`). Read a report only when you need it.
+- `.agents/skills/`: repo-local skills (`hallmark`, `cp-article-writing`, `hackmd-blog-port`, `generate-release-notes`, `web-design-guidelines`).
 
-Keep the plan current. When a decision changes during implementation, edit
-`.plans/portfolio-plan.md` in the same change.
+Keep `.plans/portfolio-plan.md` current. When a decision changes during implementation, update the plan in the same change.
 
-Keep the plan short. It is a reference for a future reader, not a log of the work. It
-must stay readable at the end of the project, so every edit competes for space with
-everything already there.
+Keep the plan short. It is a reference for future work, not a work log.
 
-- **Record the decision, not the path to it.** Write what was chosen and the one fact
-  that makes it hard to rediscover. Leave out the options you rejected on the way, the
-  measurements that led you there, and the argument you made in chat.
-- **Match the length of the entries beside it.** Most are 3 to 8 lines. A new entry that
-  runs longer needs a reason.
-- **Edit the entry that exists.** Add a new bullet only for a new decision. Two bullets
-  on one topic must become one.
-- **Leave out the things that other files hold.** Skip anything that is already in the
-  code, the config, the commit message, or the response to the user. Version numbers,
-  timings, download counts, and command output all go stale, so cite them only when a
-  number is the reason for the decision.
-- **Write in Simplified Technical English** (the `ste` skill): short sentences, active
-  voice, plain words, one topic per entry.
+- **Record the decision, not the path to it.** State what was chosen and the one fact that is hard to rediscover. Omit rejected paths, intermediate measurements, and chat discussion.
+- **Match nearby entry length.** Most entries are 3 to 8 lines. Longer entries need a reason.
+- **Edit the existing entry.** Add a new bullet only for a new decision. Merge duplicate bullets on the same topic.
+- **Omit facts held in other files.** Skip details already in code, config, commit messages, or chat. Cite version numbers, timings, or command output only when a number drives the decision.
+- **Write in Simplified Technical English** (the `ste` skill): short sentences, active voice, plain words, one topic per entry.
 
-Say what you cut from the plan in your response, so the user can ask for it back.
+List what you cut from the plan in your response so the user can restore it if needed.
 
 ## Commands
 
-The project uses `pnpm` and `Node 22`:
+Requires Node (`22.23.4+`, `24.22.1+`, or `26.12.1+`; `.nvmrc` pins `22.23.4`) and `pnpm` (`11.13.1+`).
 
-```
-pnpm install
+```sh
+pnpm install        # install dependencies
 pnpm dev            # local dev server on port 4321
-pnpm build          # astro check && astro build (Pagefind runs in this step)
+pnpm build          # astro check, astro build, and Pagefind indexing
+pnpm preview        # preview dist/ via Astro
 pnpm lint           # ESLint
-pnpm format         # Prettier
+pnpm format         # Prettier write
+pnpm format:check   # Prettier check without editing files
 ```
 
-For serving for testing, use the port range `4330-4340`, e.g., `python3 -m http.server 4331 --directory dist`.
+For browser testing, serve `dist/` on a port in `4330-4340`, such as `python3 -m http.server 4331 --directory dist`. Never test the performance bar against `pnpm dev`.
 
-AVOID using `nohup`
+Do not use `nohup`.
 
 ## Locked stack decisions
 
-These are decided. Raise a question before you change one.
+Raise a question before changing any of these.
 
-- **Astro 7**, not 5 or 6. Static output only (`output: 'static'`). No SSR.
-- **Tailwind v4** through `@tailwindcss/vite`, with CSS-first `@theme` config.
-  `@astrojs/tailwind` is dead. Do not install it.
-- **Content Layer API** with `glob()` loaders in `src/content.config.ts`.
-  Legacy collections were removed in Astro 6.
-- Fonts load through Astro's top-level `fonts` config. No Google Fonts CDN.
-- Blog posts declare English or Vietnamese. The site shell stays English, and routes have no locale prefix. A `translationOf` reference pairs the two languages of one article, and listings show the English side.
-- Rejected, with reasons in the plan §8: `astro-icon`, `cmdk`, `ClientRouter`,
-  Biome, husky, Fontshare fonts (Satoshi, General Sans, Switzer),
-  Cloudflare Web Analytics.
+- **Astro 7** with static output only. No SSR or server islands.
+- **Tailwind v4** through `@tailwindcss/vite`, with CSS-first `@theme` tokens in `src/styles/theme.css`. Do not install `@astrojs/tailwind`.
+- **Content Layer API** with `glob()` and `file()` loaders in `src/content.config.ts`. Legacy collections were removed in Astro 6.
+- **Astro Fonts API** in `astro.config.ts`. Fonts load at build time. Do not add runtime Google Fonts CDN links.
+- **Bilingual blog posts (`en` or `vi`).** The site shell stays English, and routes have no locale prefix. Vietnamese posts localize post controls, dates, and metadata via `src/i18n/`. A `translationOf` reference pairs the two versions, and listings show the English side.
+- **Rejected tools** (reasons in plan §8): `astro-icon`, `cmdk`, `ClientRouter`, Biome, husky, oxc/oxlint/oxfmt, Fontshare fonts (`Satoshi`, `General Sans`, `Switzer`), Cloudflare Web Analytics.
 
 ## Code rules
 
 Listed most important first.
 
-- **Choose the simplest implementation that meets the current requirements.** Write what the site needs now. Do not build for a requirement that nobody asked for.
-- **Avoid premature abstraction.** Write concrete code until a real pattern appears. Two similar blocks are not a pattern.
-- **Avoid unnecessary fallbacks.** A fallback that nobody needs hides the real failure.
-  Add one only for a failure that you can name.
-- **Decide for the long term.** A simple solution is not the same as a temporary one. Do not accept a stopgap that you plan to replace later. This matters most for the choices that are hard to reverse: the content schemas, the design token names, and the URLs.
-- **Prefer established, well-maintained libraries over custom code.** Write custom code only when the performance bar forces it. The plan permits four hand-rolled parts: the ⌘K palette, the BibTeX cite toggle, the tty3 shell, and the `/photon-sphere` shader. Use a library for everything else.
-- **Compose small modules with explicit interfaces.** Do not build a central system that every other file imports. A component that takes props is the default unit.
-- **Keep each module to one job.** Content collections hold the data. Layouts and
-  components render it. Build scripts transform it. Do not mix these three.
-- **Comment only when necessary.** A comment must explain something the code cannot:
-  a non-obvious constraint, a version trap, a reason for an unusual choice. Never
-  narrate what an edit did, why you chose it, or what is missing. Those belong in the
-  response or the plan, not the file.
+- **Pick the simplest solution that fits current requirements.** Build what the site needs now. Do not add hooks or options for unrequested features.
+- **Avoid premature abstraction.** Write concrete code until a real pattern repeats. Two similar blocks are not a pattern.
+- **Avoid unnecessary fallbacks.** Unused fallbacks hide real failures. Add a fallback only for a failure you can name.
+- **Decide for the long term on choices that are hard to reverse.** Keep content schemas, design token names, and URLs clean from the start instead of shipping stopgaps.
+- **Prefer maintained libraries over custom code.** Write custom code only when performance or scope requires it. The four custom interactive parts are the ⌘K palette, the boot sequence, the tty3 shell, and the `/photon-sphere` shader.
+- **Compose small modules with explicit interfaces.** Default to components that take props rather than shared central hubs.
+- **Keep each module to one job.** Content collections hold data. Layouts and components render it. Utilities and build scripts transform it.
+- **Comment only when necessary.** Explain non-obvious constraints, version traps, or unusual trade-offs. Do not narrate what an edit did or what is missing.
 
 ## Design rules
 
-The `hallmark` skill governs all visual work. Two rules matter most here:
+The `hallmark` skill governs visual work.
 
-- **No invented content.** Every metric, date, rank, and link must come from the
-  content inventory in plan §3. A portfolio that fabricates numbers is worthless.
-  The fictional tty3 hardware is the only exception. Each hardware field must say
-  `simulated` so it cannot read as a portfolio claim.
-- **No slop tells.** Inter, purple or blue gradients, bento grids, glassmorphism,
-  centred heroes, emoji icons, italic headings, fake browser chrome, `transition: all`.
-
-Design direction is "quiet craft": Swiss typography, light default with banded
-sections, restrained motion. Dark mode is a token re-point, not a second design.
-Tokens, type scale, and the band mechanism are specified in plan §2.5.
-
-**Other UI rules:**
-
-- Do not add subtitles, helper text, or descriptive copy beneath headings, labels, cards,
-  or settings by default. Prefer one concise, self-explanatory heading
-  or label. Only add supporting copy when the user explicitly asks for it or when it is
-  necessary to prevent misunderstanding or error, and never use it to restate the heading.
+- **No invented content.** Every metric, date, rank, and link must come from the verified content inventory in plan §3. The simulated `tty3` hardware is the sole exception, and each hardware field must include `[simulated]` so it cannot read as a real claim.
+- **No slop tells.** Avoid Inter, purple or blue gradients, bento grids, glassmorphism, centered heroes, emoji icons, italic headings, fake browser chrome, and `transition: all`.
+- **Quiet craft layout.** Single-column academic layout (`58rem` on `/`, `48rem` on reading pages, hairline-ruled `<h2>` headings, `11rem` left gutter). Light mode is the default; dark mode re-points tokens in `src/styles/theme.css`. Newsreader renders headings and blog prose, IBM Plex Sans renders homepage body and UI, and JetBrains Mono renders code and metadata. See plan §2.5 for the full scale and tokens.
+- **No redundant helper copy.** Do not add subtitles, helper text, or descriptions beneath headings, labels, cards, or settings by default. Use one concise, self-explanatory label. Add supporting copy only when requested or needed to prevent user error, and never restate the heading.
 
 ## Performance bar
 
-Near 0 bytes of JavaScript on page load. Everything runs at build time or loads on
-interaction. The ⌘K palette loads on the first keypress. Math renders with KaTeX at
-build time. Keep Lighthouse near 100 on all four scores.
+Keep initial JavaScript minimal. Render math (KaTeX), code highlighting (Shiki), and static pages at build time. Lazy-load heavier features on interaction: the ⌘K palette module loads on first `⌘K` or search click, and Pagefind loads on query. Keep Lighthouse near 100 across all four categories.
 
 ## Verifying
 
-**Never skip verification.** Do not bypass a required check, a test, or a quality gate.
-The lefthook pre-commit hook runs Prettier and `astro check` on staged files. Do not pass
-`--no-verify` to `git commit`.
+**Never skip verification.** Do not bypass checks or pass `--no-verify` to `git commit`.
 
-Give the smallest sufficient proof. Run `astro check` and a scoped lint, not a
-repository-wide sweep. For visual changes, take a screenshot at 1440, 768, and 375 px
-and check the browser console.
+The `lefthook.yml` pre-commit hook runs three sequential checks:
+
+1. `prettier --check --ignore-unknown` on staged non-symlink files.
+2. `eslint --no-warn-ignored` on staged Astro, TypeScript, and JavaScript files.
+3. `astro check` across the whole project when code, JSON, or MDX files are staged.
+
+Give the smallest sufficient proof for your edit. Run `astro check` and a scoped lint rather than a repository-wide sweep when possible. For visual changes, serve `dist/`, capture screenshots at 1440, 768, and 375 px, and check the browser console.
 
 ## Git
 
-- **Work in place.** If the current directory is inside the repository, work there.
-  Do not use `git worktree` unless the user asks for one.
-- **Ask before you branch.** Do not create or switch branches on your own.
-- **Name branches by type.** Use a Conventional Commit prefix, such as `feat/tty` or
-  `fix/boot`.
-- **Safe by default.** `git status`, `git diff`, and `git log` are always fine. Run
-  `reset --hard`, `clean`, `restore`, `checkout <file>`, or `rm` only when the user asks.
-  Each of these commands can destroy uncommitted work.
-- **Commit and push only when asked.** Stage and commit only when asked.
-  A narrow instruction such as "pull and push" permits that action only.
-  It does not permit an amend or a branch change.
-  Keep each commit thin and focused, do not commit a large batch of changes at once.
-- **Follow Conventional Commits**:
-  `feat | fix | refactor | build | ci | chore | docs | style | perf | test`.
-- **Keep edits small.** Do not run repository-wide search-and-replace scripts. Keep each
-  change scoped and easy to review.
-- **Expect concurrent changes.** If you see edits that you did not make, assume that
-  another agent or the user made them. Stay inside your own scope. Stop and ask if there
-  is a conflict.
+- **Work in place.** Stay in the current repository directory. Do not use `git worktree` unless asked.
+- **Ask before branching.** Do not create or switch branches on your own.
+- **Name branches by type.** Use a Conventional Commit prefix such as `feat/tty` or `fix/boot`.
+- **Stay safe by default.** `git status`, `git diff`, and `git log` are always fine. Run destructive commands (`reset --hard`, `clean`, `restore`, `checkout <file>`, `rm`) only when asked.
+- **Commit and push only when asked.** A narrow instruction like "pull and push" permits only that action, not amends or branch switches. Keep each commit thin and focused.
+- **Use Conventional Commits:** `feat`, `fix`, `refactor`, `build`, `ci`, `chore`, `docs`, `style`, `perf`, `test`.
+- **Keep edits small.** Avoid repository-wide search-and-replace scripts.
+- **Expect concurrent changes.** Treat edits you did not make as belonging to the user or another agent. Stay in your scope, and stop to ask if there is a conflict.
