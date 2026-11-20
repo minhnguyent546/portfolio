@@ -1,6 +1,7 @@
 ---
 title: Agentic QA over Business Data
-venue: Zalo AI Challenge 2026
+venue: Zalo AI Challenge 2026, DataMate Track
+venueUrl: https://challenge.zalo.ai/portal/datamate
 date: 2026-11-01
 datePrecision: month
 summary:

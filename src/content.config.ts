@@ -86,6 +86,7 @@ const competitions = defineCollection({
     z.object({
       title: z.string(),
       venue: z.string(),
+      venueUrl: z.url().optional(),
       date: z.date(),
       /**
        * How much of `date` is known. "month" renders "October 2025" and keeps

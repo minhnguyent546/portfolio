@@ -89,6 +89,9 @@ export function buildFs(content: {
   }
 
   for (const { id, data, body } of content.competitions) {
+    const venueLinks: Link[] = data.venueUrl
+      ? [{ label: "Competition", url: data.venueUrl }]
+      : [];
     files[`${HOME}/competitions/${id}.txt`] = block([
       data.title,
       "",
@@ -98,7 +101,7 @@ export function buildFs(content: {
       "",
       flattenMarkdown(data.summary.trim()),
       ...bodyLines(body),
-      ...linkLines(data.links),
+      ...linkLines([...venueLinks, ...data.links]),
     ]);
   }
 

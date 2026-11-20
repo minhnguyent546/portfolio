@@ -9,8 +9,17 @@ import ExternalLink from "./ExternalLink.astro";
 type Props = { entry: CollectionEntry<"competitions"> };
 
 const { entry } = Astro.props;
-const { title, venue, date, datePrecision, result, summary, links, figure } =
-  entry.data;
+const {
+  title,
+  venue,
+  venueUrl,
+  date,
+  datePrecision,
+  result,
+  summary,
+  links,
+  figure,
+} = entry.data;
 
 const { label, datetime } = formatDate(
   date,
@@ -30,7 +39,22 @@ const summaryParts = summary.split(/\*\*([^*]+)\*\*/g);
     <p class="tabular-nums">
       <time datetime={datetime}>{label}</time>
     </p>
-    <p class="mt-0.5 leading-snug">{venue}</p>
+    <p class="mt-0.5 leading-snug">
+      {
+        venueUrl ? (
+          <a
+            href={venueUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline decoration-rule underline-offset-4 transition-colors duration-(--dur-micro) hover:text-accent hover:decoration-current"
+          >
+            {venue}
+          </a>
+        ) : (
+          venue
+        )
+      }
+    </p>
   </div>
 
   <div class="min-w-0">
