@@ -34,7 +34,7 @@ export default defineConfig({
     sitemap({
       filter: page =>
         (config.features?.showArchives !== false ||
-          !page.endsWith("/archives/")) &&
+          !page.endsWith("/blog/archives/")) &&
         !HIDDEN_ROUTES.some(route => page.endsWith(route)),
     }),
   ],

@@ -40,14 +40,14 @@ const chips = [
 
 const links = [
   {
-    href: getRelativeLocaleUrl(locale, "tags"),
+    href: getRelativeLocaleUrl(locale, "blog/tags"),
     label: t.nav.tags,
     active: current === "tags",
   },
   ...(config.features.showArchives
     ? [
         {
-          href: getRelativeLocaleUrl(locale, "archives"),
+          href: getRelativeLocaleUrl(locale, "blog/archives"),
           label: t.nav.archives,
           active: current === "archives",
         },

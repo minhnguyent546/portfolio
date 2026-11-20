@@ -40,7 +40,7 @@ interface FeaturesConfig {
    * for the default layout OG image (build fails if missing).
    */
   dynamicOgImage?: boolean;
-  /** Show the /archives page and link it in nav. Defaults to true. */
+  /** Show the /blog/archives page and link it in nav. Defaults to true. */
   showArchives?: boolean;
   /** Show back button on post detail pages. Defaults to true. */
   showBackButton?: boolean;

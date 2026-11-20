@@ -50,8 +50,11 @@ const index = buildIndex({
   blogUrl,
   routes: [
     { label: t.nav.blog, url: blogUrl },
-    { label: t.nav.tags, url: getRelativeLocaleUrl(locale, "tags") },
-    { label: t.nav.archives, url: getRelativeLocaleUrl(locale, "archives") },
+    { label: t.nav.tags, url: getRelativeLocaleUrl(locale, "blog/tags") },
+    {
+      label: t.nav.archives,
+      url: getRelativeLocaleUrl(locale, "blog/archives"),
+    },
     { label: t.nav.search, url: getRelativeLocaleUrl(locale, "search") },
     { label: "tty3", url: getRelativeLocaleUrl(locale, "tty3") },
   ],

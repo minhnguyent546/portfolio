@@ -122,12 +122,7 @@ const showPalette = features.search !== false && !isActive("/tty3");
             href={getRelativeLocaleUrl(locale, "blog")}
             class:list={[
               "px-1 py-1 text-meta font-medium whitespace-nowrap text-ink hover:text-accent",
-              {
-                "active-nav":
-                  isActive("/blog") ||
-                  isActive("/tags") ||
-                  isActive("/archives"),
-              },
+              { "active-nav": isActive("/blog") },
             ]}
           >
             {t.nav.blog}

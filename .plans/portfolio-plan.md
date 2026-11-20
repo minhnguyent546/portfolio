@@ -211,11 +211,10 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   fences excluded). A row's card image comes from optional `thumbnail` frontmatter and
   falls back to the generated OG card. Topic filters render as pills; each populated
   topic also gets `/blog/topic/<name>/`. A topic joins `BlogNav` and gets a page once it
-  has a post, so the row never offers an empty list. `BlogNav` also carries Tags and
-  Archives on the right, as the secondary axes, and stays visible on `/tags` and
-  `/archives` (where `Breadcrumb` inserts `Blog` before them and `Header` keeps `Blog`
-  active). Filters are real routes, which keeps
-  the page at 0 bytes of JavaScript. Pagination is gone: `/archives` already holds the
+  has a post, so the row never offers an empty list. `BlogNav` also carries Tags
+  (`/blog/tags`) and Archives (`/blog/archives`) on the right, as the secondary axes,
+  and stays visible on both pages. Filters are real routes, which keeps
+  the page at 0 bytes of JavaScript. Pagination is gone: `/blog/archives` already holds the
   full history, and a year heading split across pages stops grouping. Sorting is on
   `pubDatetime` alone, not the `modDatetime` that `getSortedPosts` prefers, or an
   edited old post would head the list while sitting in an older year group.

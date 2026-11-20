@@ -15,7 +15,7 @@ const t = useTranslations(locale);
 const pathWithoutBase = stripBase(Astro.url.pathname).replace(/\/+$/, "");
 const currentUrlPath = stripLocale(pathWithoutBase, locale);
 
-// eg: /tags/tailwindcss => ['tags', 'tailwindcss']
+// eg: /blog/tags/tailwindcss => ['blog', 'tags', 'tailwindcss']
 const segments = currentUrlPath.split("/").filter(Boolean);
 
 const decodeSegment = (value: string) => {
@@ -46,20 +46,16 @@ if (segments[0] === "blog" && segments[1] === "topic") {
   crumbs.splice(1, 2, { label: TOPIC_LABELS[topic as Topic] ?? topic });
 }
 
-// Home > Tags > [tag] > [page] => Home > Tags > [tag] (page n).
-// Page 1 is served at /tags/[tag], so this segment is always 2 or higher.
-if (segments[0] === "tags" && !isNaN(Number(segments[2]))) {
-  const tag = decodeSegment(segments[1]);
-  crumbs.splice(1, 3, {
-    label: `${tag} (${t.pagination.page.toLowerCase()} ${segments[2]})`,
-  });
-}
-
-// Tags and Archives live at top-level routes but belong under Blog.
-if (segments[0] === "tags" || segments[0] === "archives") {
-  crumbs.unshift({
-    label: t.nav.blog,
-    href: getRelativeLocaleUrl(locale, "blog"),
+// Home > Blog > Tags > [tag] > [page] => Home > Blog > Tags > [tag] (page n).
+// Page 1 is served at /blog/tags/[tag], so this segment is always 2 or higher.
+if (
+  segments[0] === "blog" &&
+  segments[1] === "tags" &&
+  !isNaN(Number(segments[3]))
+) {
+  const tag = decodeSegment(segments[2]);
+  crumbs.splice(2, 2, {
+    label: `${tag} (${t.pagination.page.toLowerCase()} ${segments[3]})`,
   });
 }
 
