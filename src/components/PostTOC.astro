@@ -132,6 +132,8 @@ const hideInlineToc = `@media (min-width: 80rem) {
 
     addEventListener("scroll", requestSync, { passive: true });
     addEventListener("resize", requestSync, { passive: true });
-    sync();
+    // Defer initial layout read to rAF so sibling page scripts finish DOM
+    // mutations first instead of triggering a second full style/layout pass.
+    requestSync();
   }
 </script>

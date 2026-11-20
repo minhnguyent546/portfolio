@@ -28,12 +28,17 @@ const boot = (
 let mode: ThemeMode = boot?.value ?? storedMode();
 let effective: string = boot?.effective ?? effectiveOf(mode);
 
-function reflect(): void {
-  const root = document.firstElementChild;
-  root?.setAttribute("data-theme", effective);
-  root?.setAttribute("data-theme-mode", mode);
-  root?.classList.toggle("dark", effective === DARK);
+// Capture the light/dark chrome colours once from the SSR <meta> tags before
+// any manual override overwrites them, avoiding getComputedStyle on load.
+const themeColorMetas = [
+  ...document.querySelectorAll<HTMLMetaElement>("meta[name='theme-color']"),
+];
+const themeColors: Record<string, string | undefined> = {
+  [LIGHT]: themeColorMetas.find(tag => tag.media.includes("light"))?.content,
+  [DARK]: themeColorMetas.find(tag => tag.media.includes("dark"))?.content,
+};
 
+function syncChrome(): void {
   const btn = document.querySelector<HTMLElement>("#theme-btn");
   if (btn) {
     const label =
@@ -52,10 +57,18 @@ function reflect(): void {
 
   // Two tags exist (light/dark media) so system followers get the right
   // chrome before JS; sync both so manual overrides tint correctly too.
-  const bg = window.getComputedStyle(document.body).backgroundColor;
-  document
-    .querySelectorAll("meta[name='theme-color']")
-    .forEach(tag => tag.setAttribute("content", bg));
+  const bg = themeColors[effective];
+  if (bg) {
+    themeColorMetas.forEach(tag => tag.setAttribute("content", bg));
+  }
+}
+
+function reflect(): void {
+  const root = document.firstElementChild;
+  root?.setAttribute("data-theme", effective);
+  root?.setAttribute("data-theme-mode", mode);
+  root?.classList.toggle("dark", effective === DARK);
+  syncChrome();
 }
 
 function persist(): void {
@@ -93,7 +106,10 @@ function cycle(): void {
 }
 
 document.querySelector("#theme-btn")?.addEventListener("click", cycle);
-reflect();
+// The inline head script already set data-theme before paint; skip redundant
+// <html> writes on boot and sync only the button label and theme-color meta.
+if (boot) syncChrome();
+else reflect();
 
 // Follow OS-level dark/light changes, but only while the mode is "system".
 prefersDarkQuery.addEventListener("change", ({ matches }) => {
