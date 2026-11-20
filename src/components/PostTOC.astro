@@ -15,7 +15,7 @@ import Slugger from "github-slugger";
 import { TOC_HEADING } from "@/utils/tocHeading";
 
 type Props = {
-  headings: { depth: number; slug: string; text: string }[];
+  headings: { depth: number; slug: string; text: string; html?: string }[];
   label: string;
 };
 
@@ -45,14 +45,14 @@ const hideInlineToc = `@media (min-width: 80rem) {
     >
       <p class="font-mono text-meta text-ink-muted">{label}</p>
       <ul class="mt-2 max-h-[calc(100dvh-9rem)] [scrollbar-width:thin] space-y-0.5 overflow-y-auto border-s border-rule">
-        {headings.map(({ depth, slug, text }) => (
+        {headings.map(({ depth, slug, text, html }) => (
           <li>
             <a
               href={`#${slug}`}
               data-depth={depth}
-              class="-ms-px block border-s-2 border-transparent py-0.5 ps-3 text-meta leading-snug text-ink-muted hover:text-ink aria-[current]:border-accent aria-[current]:text-accent [&[data-depth='3']]:ps-8"
+              class="-ms-px block border-s-2 border-transparent py-0.5 ps-3 text-meta leading-snug text-ink-muted hover:text-ink aria-[current]:border-accent aria-[current]:text-accent [&_.katex]:text-[1em] [&[data-depth='3']]:ps-8"
             >
-              {text}
+              {html ? <Fragment set:html={html} /> : text}
             </a>
           </li>
         ))}

@@ -89,10 +89,16 @@ const {
 
 const t = useTranslations(lang);
 
-const { Content, headings } = await render(post);
-const tocHeadings = headings.filter(
-  h => (h.depth === 2 || h.depth === 3) && !tocHeadingPattern.test(h.text)
-);
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+const tocHtml = (remarkPluginFrontmatter.tocHtml ?? {}) as Record<
+  string,
+  string
+>;
+const tocHeadings = headings
+  .filter(
+    h => (h.depth === 2 || h.depth === 3) && !tocHeadingPattern.test(h.text)
+  )
+  .map(h => ({ ...h, html: tocHtml[h.slug] }));
 
 let ogImageUrl: string | undefined;
 
