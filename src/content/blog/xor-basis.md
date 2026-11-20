@@ -1,6 +1,6 @@
 ---
 title: XOR Basis
-description: Introduces the xor basis technique — representing integers as vectors in a binary vector space and using the space's basis to solve problems about the xor of subarrays of an array.
+description: An introduction to the XOR basis technique — representing integers as vectors in a binary vector space and using its basis to solve problems involving the XOR sum of elements in an array.
 tags:
   - xor-basis
   - linear-algebra
@@ -16,25 +16,25 @@ translationOf: xor-basis-vi
 
 ## Introduction
 
-The xor basis is a technique for problems about the xor sum of subarrays (contiguous or not) of an array of integers, or about appending elements to an array while answering queries.
+XOR basis is a technique for solving problems involving the XOR sum of subarrays or subsequences (contiguous or non-contiguous) of a given integer array, or inserting elements into an array while answering queries.
 
-The technique splits into two main parts:
+The technique can be split into two main parts:
 
-- Represent the integers in base 2 and view each element as a vector in the vector space $\mathbb{Z}_2^d$, where $d$ is the number of bits needed to represent them. Xor between elements then equals addition between the corresponding vectors in $\mathbb{Z}_2^d$.
-- Relate what a query asks to the basis of the vector space built above.
+- Represent the integers in base 2 and view each element as a vector in the vector space $\mathbb{Z}_2^d$, where $d$ is the maximum number of bits needed to represent them. The XOR of elements is then equivalent to the addition of their corresponding vectors in $\mathbb{Z}_2^d$.
+- Relate what the queries ask for to the basis of the vector space constructed above.
 
 ## Some concepts
 
 ### Vector space
 
-A set $V \ne \varnothing$ is a vector space if $V$ carries two operations: addition and multiplication by a scalar. The elements of $V$ are called vectors.
+A set $V \ne \varnothing$ is called a vector space if $V$ is equipped with two operations: addition and scalar multiplication. The elements of $V$ are called vectors.
 
-- $V$ is closed: $\forall x, y \in V \Longrightarrow x + y \in V$ and $\forall x \in V \Longrightarrow kx \in V$, where $k$ is a scalar.
-- Addition is associative and commutative.
-- Multiplication by a scalar is associative and distributive.
-- $V$ contains an element $O$ called the zero vector (not to be confused with the number $0$).
+- $V$ must be closed under both operations: $\forall x, y \in V \Longrightarrow x + y \in V$ and $\forall x \in V \Longrightarrow kx \in V$, where $k$ is a scalar.
+- Addition must be associative and commutative.
+- Scalar multiplication must be associative and distributive.
+- $V$ must contain an element $O$ called the zero vector (not to be confused with the number $0$).
 
-Some special vector spaces:
+Some common vector spaces:
 
 - The coordinate space $\mathbb{R}^n = \{(x_1, x_2, \ldots, x_n)\}$.
 - The vector space $M_{n \times m}$ of $n \times m$ matrices.
@@ -52,63 +52,69 @@ $$
 
 has only the trivial solution $x_1 = x_2 = \ldots = x_n = 0$.
 
-Conversely, if there exist $x_1, x_2, \ldots, x_n$ not all zero with
+Conversely, if there exist $x_1, x_2, \ldots, x_n$ not all zero such that
 
 $$
 x_1v_1 + x_2v_2 + \ldots + x_nv_n = O,
 $$
 
-the set is **linearly dependent**.
+then the set is **linearly dependent**.
 
 ### The vector space $\mathbb{Z}_2^d$
 
-$\mathbb{Z}_2$: $\mathbb{Z}_m$ is the set of residues when dividing by $m$, and the operations on $\mathbb{Z}_m$ also divide by $m$. So $\mathbb{Z}_2$ is the set of residues when dividing by $2$, hence $\mathbb{Z}_2 = \{0, 1\}$.
+$\mathbb{Z}_2$: $\mathbb{Z}_m$ is the set of remainders upon division by $m$, and operations on $\mathbb{Z}_m$ are also taken modulo $m$. Therefore, $\mathbb{Z}_2$ is the set of remainders modulo $2$, so $\mathbb{Z}_2 = \{0, 1\}$.
 
-$\mathbb{Z}_2^d$: a $d$-dimensional vector space containing every vector with $d$ coordinates, each coordinate an element of $\mathbb{Z}_2$.
+$\mathbb{Z}_2^d$: a $d$-dimensional vector space consisting of all vectors with $d$ coordinates, where each coordinate is an element of $\mathbb{Z}_2$.
 
-- For two vectors $x, y \in \mathbb{Z}_2^d$, define $x + y$ as $x \oplus y$ ($\oplus$ is bitwise xor). Note that $x + y \in \mathbb{Z}_2^d$ must hold. Concretely:
+- For two vectors $x, y \in \mathbb{Z}_2^d$, $x + y$ is defined as $x \oplus y$ (where $\oplus$ is bitwise XOR). Note that $x + y \in \mathbb{Z}_2^d$ must hold. Specifically:
   |     |     | $\oplus$ | Sum | Sum mod 2 |
   | :-: | :-: | :------: | :-: | :-------: |
   |  0  |  0  |    0     |  0  |     0     |
   |  0  |  1  |    1     |  1  |     1     |
   |  1  |  0  |    1     |  1  |     1     |
   |  1  |  1  |    0     |  2  |     0     |
-- For $c \in \mathbb{Z}_2$, write $cx = \underbrace{x + x + \ldots + x}_{c \text{ times }x}$. Then $cx = 0$ if $c$ is even and $cx = x$ if $c$ is odd.
+- For $c \in \mathbb{Z}_2$, we write $cx = \underbrace{x + x + \ldots + x}_{c \text{ times}}$. Then $cx = 0$ if $c$ is even and $cx = x$ if $c$ is odd.
 
-**From here on we only care about the vector space $\mathbb{Z}_2^d$. Every computation is taken modulo 2, and we treat $\oplus$ (bitwise xor) as the $+$ of $\mathbb{Z}_2^d$.**
+**From here on, we only consider the vector space $\mathbb{Z}_2^d$: all arithmetic is taken modulo 2, and we treat $\oplus$ (bitwise XOR) as equivalent to $+$ in $\mathbb{Z}_2^d$.**
 
 ### Linear span
 
-A vector space $V$ is spanned by a set of vectors $S = \{v_1, v_2, \ldots, v_n\}$ if it contains every vector $x$ expressible as a linear combination of the vectors in $S$.
-$$\text{span}(S) = \left\{\sum_{i = 1}^n c_i v_i \, \middle| \, v_i \in S, c_i \in \{0, 1\} \right\}$$
-Then we say $V$ is spanned by $S$, $V$ is generated by $S$, or $S$ generates $V$.
-_Note:_ since we only work in $\mathbb{Z}_2^d$, each coefficient $c_i$ is also a binary value. So in the combination above each $v_i$ has exactly two states: **present** or **absent**.
-**Example:** find span$(\{2, 5\})$, span$(\{2, 5, 7\})$ and span$(\{\})$?
-
-- Since $2 \oplus 5 = 7$:
+A vector space $V$ spanned by a set of vectors $S = \{v_1, v_2, \ldots, v_n\}$ contains every vector $x$ that can be expressed as a linear combination of the vectors in $S$:
 
 $$
-\text{span}(\{2, 5\}) =\text{span}(\{2, 5, 7\}) = \{0, 2, 5, 7\} \\
-\text{span}(\{\})= \{0\}
+\text{span}(S) = \left\{\sum_{i = 1}^n c_i v_i \, \middle| \, v_i \in S, c_i \in \{0, 1\} \right\}
+$$
+
+We then say that $V$ is spanned by $S$, $V$ is generated by $S$, or $S$ generates $V$.
+
+_Note:_ Since we only work over $\mathbb{Z}_2^d$, each coefficient $c_i$ also belongs to $\mathbb{Z}_2$. Thus, in the linear combination above, each $v_i$ has only two states: **included** or **not included**.
+
+**Example:** Find $\text{span}(\{2, 5\})$, $\text{span}(\{2, 5, 7\})$, and $\text{span}(\{\})$.
+
+- Since $2 \oplus 5 = 7$, we have:
+
+$$
+\text{span}(\{2, 5\}) = \text{span}(\{2, 5, 7\}) = \{0, 2, 5, 7\} \\
+\text{span}(\{\}) = \{0\}
 $$
 
 Some important properties:
 
-- If $v_{n + 1} \in \text{span}(\{v_1, v_2, \ldots, v_n\})$ then:
+- If $v_{n + 1} \in \text{span}(\{v_1, v_2, \ldots, v_n\})$, then:
 
-  $$
-  \text{span}(\{v_1, v_2, \ldots, v_n, v_{n + 1}\}) = \text{span}(\{v_1, v_2, \ldots, v_n\})
-  $$
+$$
+\text{span}(\{v_1, v_2, \ldots, v_n, v_{n + 1}\}) = \text{span}(\{v_1, v_2, \ldots, v_n\})
+$$
 
-- $\text{span}(\{v_1 + v_3, v_2, \ldots, v_n\}) = \text{span}(\{v_1, v_2, \ldots, v_n\})$
+- $\text{span}(\{v_1 + v_3, v_2, \ldots, v_n\}) = \text{span}(\{v_1, v_2, \ldots, v_n\})$.
 
 ### Basis
 
-A set of vectors $B = \{v_1, v_2, \ldots, v_n\}$ is a basis of a vector space $V$ if span$(B) = V$ and $B$ is **linearly independent**. Then $n$ is the **dimension** of $V$, written $\text{dim}(V)$.
+A set of vectors $B = \{v_1, v_2, \ldots, v_n\}$ is called a basis of a vector space $V$ if $\text{span}(B) = V$ and $B$ is **linearly independent**. Then $n$ is called the **dimension** of $V$, denoted $\text{dim}(V)$.
 
-**Example:** consider the vector space $V = \{0, 2, 5, 7\}$. $\{2, 5\}$ is a basis of $V$, but $\{2, 5, 7\}$ is not, because it is linearly dependent: $2 \oplus 5 \oplus 7 = 0$. Naturally $\{2, 7\}$ and $\{5, 7\}$ are also bases of $V$.
+**Example:** Consider the vector space $V = \{0, 2, 5, 7\}$. Here, $\{2, 5\}$ is a basis of $V$, while $\{2, 5, 7\}$ is not, because it is linearly dependent ($2 \oplus 5 \oplus 7 = 0$). Naturally, $\{2, 7\}$ and $\{5, 7\}$ are also bases of $V$.
 
-_Note:_ the number of distinct elements in a vector space $V$ spanned by a basis $B = \{v_1, v_2, \ldots, v_n\}$ is $|V| = 2^n$.
+_Note:_ The number of distinct elements in a vector space $V$ spanned by a basis $B = \{v_1, v_2, \ldots, v_n\}$ is $|V| = 2^n$.
 
 ### Matrices
 
@@ -117,7 +123,7 @@ _Note:_ the number of distinct elements in a vector space $V$ spanned by a basis
 Consider an $n \times m$ matrix $M$ ($n$ rows and $m$ columns):
 
 $$
- M =
+M =
 \begin{bmatrix}
 v_{1,1} & v_{1,2} & \cdots & v_{1,m} \\
 v_{2,1} & v_{2,2} & \cdots & v_{2,m} \\
@@ -130,7 +136,7 @@ $$
   $$row_i = [v_{i, 1}, v_{i, 2}, \ldots, v_{i, m}]$$
 - Splitting $M$ into column vectors gives:
   $$col_i = [v_{1, i}, v_{2, i}, \ldots, v_{n, i}]$$
-- The row space and column space of $M$ are then:
+- The row space and column space of $M$ are then defined as:
 
 $$
 RS(M) = \text{span}(\{row_1, row_2, \ldots, row_n\}) \\
@@ -139,14 +145,14 @@ $$
 
 #### Rank of a matrix
 
-One can prove that dim$(RS(M)) = $ dim$(CS(M))$; this common value is written dim$(M)$ and is known as the rank of $M$, written rank$(M)$.
-(See the proof [here](https://math.stackexchange.com/questions/332908/looking-for-an-intuitive-explanation-why-the-row-rank-is-equal-to-the-column-ran))
+It can be proven that $\text{dim}(RS(M)) = \text{dim}(CS(M))$. This common value is denoted $\text{dim}(M)$, also known as the rank of matrix $M$, denoted $\text{rank}(M)$.
+(See the proof [here](https://math.stackexchange.com/questions/332908/looking-for-an-intuitive-explanation-why-the-row-rank-is-equal-to-the-column-ran).)
 
 #### Null space
 
-To follow this part you need to be comfortable with [matrix multiplication](https://en.wikipedia.org/wiki/Matrix_multiplication).
+To follow this section, you need to be familiar with [matrix multiplication](https://en.wikipedia.org/wiki/Matrix_multiplication).
 
-The null space of a matrix $M$, written null$(M)$, is the set of vectors $x \in \mathbb{R}^m$ (written as columns) with:
+The null space of a matrix $M$, denoted $\text{null}(M)$, is the set of vectors $x \in \mathbb{R}^m$ (written as column vectors) such that:
 
 $$
 M \cdot x = O
@@ -155,7 +161,7 @@ $$
 Suppose:
 
 $$
- M =
+M =
 \begin{bmatrix}
 	v_{1,1} & v_{1,2} & \cdots & v_{1,m} \\
 	v_{2,1} & v_{2,2} & \cdots & v_{2,m} \\
@@ -172,10 +178,10 @@ x =
 \end{bmatrix}
 $$
 
-Then $(x_1, x_2, \ldots, x_m)$ solves the system:
+Then $(x_1, x_2, \ldots, x_m)$ is a solution to the system of equations:
 
 $$
- \begin{cases}
+\begin{cases}
 	v_{1, 1}x_1 + v_{1, 2}x_2 + \ldots + v_{1, m}x_m = 0 \\
 	v_{2, 1}x_1 + v_{2, 2}x_2 + \ldots + v_{2, m}x_m = 0 \\
 	\ldots \\
@@ -183,10 +189,10 @@ $$
 \end{cases}
 $$
 
-**In particular:** if the $n \times m$ matrix $M$ consists of $m$ vectors $v \in \mathbb{Z}_2^n$ and $x \in \mathbb{Z}_2^m$ (the vectors $v$ and $x$ written as columns):
+**In particular:** If an $n \times m$ matrix $M$ consists of $m$ vectors $v \in \mathbb{Z}_2^n$ and $x \in \mathbb{Z}_2^m$ (with $v$ and $x$ written as column vectors):
 
 $$
- M =
+M =
 \begin{bmatrix}
 	| & | & \ldots & | \\
 	v_1 & v_2 & \ldots & v_m \\
@@ -209,10 +215,10 @@ x =
 \end{bmatrix}
 $$
 
-then:
+Then:
 
 $$
- M \cdot x = O \\
+M \cdot x = O \\
 \Longleftrightarrow
 \begin{cases}
 v_{1, 1}x_1 + v_{2, 1}x_2 + \ldots + v_{m, 1}x_m \equiv 0 \pmod 2 \\
@@ -222,10 +228,10 @@ v_{1, n}x_1 + v_{2, n}x_2 + \ldots + v_{m, n}x_m \equiv 0 \pmod 2
 \end{cases}
 $$
 
-Note that the null space is itself a vector space:
+Notice that the null space is itself a vector space, since:
 
 $$
- M\cdot a = O, M \cdot b = O \Longrightarrow M \cdot (a + b) = O \\
+M \cdot a = O, M \cdot b = O \Longrightarrow M \cdot (a + b) = O \\
 M \cdot a = O \Longrightarrow M \cdot (ca) = O
 $$
 
@@ -239,10 +245,530 @@ $$
 
 #### Rank-nullity theorem
 
-For an $n \times m$ matrix $M$:
+This theorem states that for any $n \times m$ matrix $M$:
 
 $$
 \text{rank}(M) + \text{nullity}(M) = \text{number of columns} = m
 $$
 
-The proof is involved and needs several more concepts, so you can consult [this one](https://en.wikipedia.org/wiki/Rank%E2%80%93nullity_theorem#First_proof).
+The proof is rather involved and requires introducing several additional concepts, so you can refer to [this proof](https://en.wikipedia.org/wiki/Rank%E2%80%93nullity_theorem#First_proof).
+
+## Algorithm for finding the basis of a vector space
+
+Next, we move on to the main part of this article: how to efficiently find a basis of a vector space where every vector belongs to $\mathbb{Z}_2^d$. We will analyze the algorithm through the problem below.
+
+### [XOR Closure](https://csacademy.com/contest/archive/task/xor-closure/)
+
+**Problem statement**
+
+Given an array $a$ of $n$ distinct elements $a_1, a_2, \ldots, a_n$, find the minimum number of elements to add to $a$ so that the following condition holds: for all $x, y \in a$, $x \oplus y$ is also in $a$.
+
+**Constraints**
+
+- $1 \leq n \leq 10^5$.
+- $0 \leq a_i \leq 10^{18}$.
+
+**Solution**
+
+Notice that we must satisfy $\forall x, y \in a \implies x \oplus y \in a$. Therefore, we need to construct a **basis $B$** of the vector space $V$ spanned by array $a$. The answer to the problem is then $2^{\text{dim}(\text{span}(a))} - n = 2^{|B|} - n$.
+
+We process the elements one by one as follows:
+
+- Suppose we have already processed $a_1, a_2, \ldots, a_{i - 1}$ and obtained a basis $B$. We want to update $B$ so that $a_i$ can also be represented by the vectors in $B$.
+- Check whether $a_i$ can be represented as a linear combination of the vectors in $B$:
+  - If so, do nothing.
+  - Otherwise, insert $a_i$ into $B$.
+
+The hardest part is checking whether $a_i$ can be represented using the vectors in $B$.
+
+- Checking all $2^{|B|}$ linear combinations of vectors in $B$ is clearly too slow.
+- For a positive integer $x$, define $\text{msb}(x)$ as the position of the most significant bit of $x$. For example:
+
+$$
+\text{msb}(5) = \text{msb}(7) = 2 \\
+\text{msb}(3) = 1, \text{msb}(1) = 0
+$$
+
+- Suppose we have a basis $B = \{b_1, b_2, \ldots, b_k\}$ for $a_1, a_2, \ldots, a_{i - 1}$ such that $\text{msb}(b_1) > \text{msb}(b_2) > \ldots > \text{msb}(b_k)$.
+- Then we simply iterate $j$ from $1$ to $k$. If $a_i + b_j < a_i$ (i.e., $\text{msb}(a_i) = \text{msb}(b_j)$), we set $a_i = a_i + b_j$. If $a_i = 0$ at the end, then $a_i$ can be represented by the vectors in $B$. Otherwise, we insert the remaining value of $a_i$ into the appropriate position in $B$ to maintain the strictly decreasing order of $\text{msb}$.
+- **Example:** Check whether $x = 20$ belongs to $\text{span}(\{26, 15, 3, 1\})$.
+
+$$
+\begin{align*}
+26 &= 11010_2 \\
+15 &= 01111_2 \\
+3 &= 00011_2 \\
+1 &= 00001_2 \\
+20 &= 10100_2
+\end{align*}
+$$
+
+- $x \oplus 26 = \mathbf{14} < x \Rightarrow$ update $x = 14$.
+- $x \oplus 15 = \mathbf{1} < x \Rightarrow$ update $x = 1$.
+- $x \oplus 3 = \mathbf{2} > x$.
+- $x \oplus 1 = \mathbf{0} < x \Rightarrow$ update $x = 0$.
+
+Thus, $20 = 26 \oplus 15 \oplus 1$, so $20 \in \text{span}(\{26, 15, 3, 1\})$.
+
+- **In general:** The algorithm above finds the minimum possible value of $a_i + v$ over all $v \in \text{span}(\{b_1, b_2, \ldots, b_k\})$.
+- **Example:** Consider $x = 9$ and $\text{span}(\{26, 15, 3, 1\})$. The minimum achievable value is:
+
+$$
+9 \oplus 15 \oplus 3 \oplus 1 = \mathbf{4} = 100_2.
+$$
+
+**Sample implementation:**
+
+```cpp
+vector<long long> basis;
+int sz;
+void insertVector(long long mask) {
+  // iterate through basis elements in decreasing order of msb.
+  for (int i = 0; i < sz; ++i) {
+      mask = min(mask, mask ^ basis[i]);
+  }
+  if (mask != 0) {
+      basis.push_back(mask);
+      sz++;
+      int i = sz - 1;
+      // maintain basis elements in decreasing order of msb.
+      while (i > 0 && basis[i - 1] < basis[i]) {
+          swap(basis[i - 1], basis[i]);
+          i--;
+      }
+  }
+}
+```
+
+**Complexity analysis**
+
+Since the elements have type `long long`, at most 64 bits are needed to represent them. Let $d = \text{basis.size()} = \text{dim}(\text{span}(a)) \leq 64$. Inserting each vector takes $\mathcal{O}(d)$ time, so inserting all $n$ vectors takes $\mathcal{O}(nd)$ time in total.
+
+Notice that in the algorithm above, $v_i$ is only added to `basis` when no existing element $b_j$ has $\text{msb}(b_j) = \text{msb}(v_i)$. Therefore, all $\text{msb}(b_j)$ values in $B$ are distinct. We can simplify the implementation as follows:
+
+**Improved implementation**
+
+```cpp
+vector<long long> basis;
+void insertVector(long long mask) {
+  for (int i = 0; i < (int) basis.size(); ++i) {
+      mask = min(mask, mask ^ basis[i]);
+  }
+  if (mask != 0) {
+      basis.push_back(mask);
+      // simply append to the back; no need to maintain decreasing order of msb.
+  }
+}
+```
+
+**Full implementation**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<long long> basis;
+void insertVector(long long mask) {
+  for (int i = 0; i < (int) basis.size(); ++i) {
+      mask = min(mask, mask ^ basis[i]);
+  }
+  if (mask != 0) {
+      basis.push_back(mask);
+  }
+}
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  int n;
+  cin >> n;
+  vector<long long> a(n);
+  for (int i = 0; i < n; ++i) {
+      cin >> a[i];
+      insertVector(a[i]);
+  }
+  long long ret = (1LL << basis.size()) - n;
+  cout << ret << '\n';
+
+  return 0;
+}
+```
+
+## Example problems
+
+### [CodeChef - XORCMPNT](https://www.codechef.com/problems/XORCMPNT)
+
+**Problem summary**
+
+There are $2^K$ power stations numbered from $0$ to $2^K - 1$, with no connections between them initially. You are given $M$ integers $x_1, x_2, \ldots, x_M$. There is a direct edge between two distinct stations $u$ and $v$ if there exists an index $i$ such that $u \oplus v = x_i$. Two stations $u$ and $v$ belong to the same connected component if they are connected directly or indirectly through other stations.
+Process $T$ test cases. For each test case, find the number of connected components formed.
+
+**Constraints**
+
+- $1 \leq T \leq 10^5$.
+- $1 \leq K \leq 30$.
+- $1 \leq M \leq 10^5$.
+- $0 \leq x_i < 2^K$.
+- The sum of $M$ over all test cases does not exceed $10^5$.
+
+**Solution**
+
+- Since $K \leq 30$, we cannot iterate over all $2^K$ stations.
+- Suppose we have three stations satisfying $u \oplus v = x_i$ and $v \oplus w = x_j$. Then $u$ and $w$ have an indirect path through $v$, so they lie in the same connected component and $u \oplus w = x_i \oplus x_j$.
+- Therefore, any two stations $u$ and $v$ are in the same connected component if $u \oplus v = x_i \oplus x_{i + 1} \oplus \ldots \oplus x_j$, where $\{x_i, x_{i + 1}, \ldots, x_j\}$ is any subset of $\{x_1, x_2, \ldots, x_M\}$. Let $z = x_i \oplus x_{i + 1} \oplus \ldots \oplus x_j$; then $z \in \text{span}(\{x_1, x_2, \ldots, x_M\})$. Let $d = \text{dim}(\text{span}(\{x_1, x_2, \ldots, x_M\}))$.
+- Consider any station $u$. The stations $v$ ($v \ne u$) in the same connected component as $u$ satisfy $u \oplus v = z \Longrightarrow v = u \oplus z$. Since there are $2^d$ distinct values of $z$ (including $z = 0$, which gives $v = u$), there are $2^d - 1$ such stations $v$.
+- Thus, every station $u$ is connected to $2^d - 1$ other stations. Every connected component has size $2^d$, so there are $2^K / 2^d$ connected components in total.
+
+**Sample implementation**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> basis;
+void insertVector(int mask) {
+  for (int i = 0; i < (int) basis.size(); ++i) {
+      mask = min(mask, mask ^ basis[i]);
+  }
+  if (mask != 0) {
+      basis.push_back(mask);
+  }
+}
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  int t;
+  cin >> t;
+  while (t--) {
+      int k, m;
+      cin >> k >> m;
+      vector<int> a(m);
+      for (int i = 0; i < m; ++i) {
+          cin >> a[i];
+      }
+      // build the basis of the vector space spanned by {x_1, x_2, ..., x_m}.
+      basis.clear();
+      for (int i = 0; i < m; ++i) {
+          insertVector(a[i]);
+      }
+      int d = (int) basis.size();
+      cout << (1 << k) / (1 << d) << '\n';
+  }
+  return 0;
+}
+```
+
+**Complexity analysis**
+
+The `insertVector` function takes $\mathcal{O}(d)$ time, where $d$ is the dimension of the vector space spanned by $\{x_1, x_2, \ldots, x_M\}$ (the size of `basis`). Here $x_i < 2^K$, so $d \leq K$. The total time complexity is $\mathcal{O}(MK)$.
+
+### [Maximum XOR over all subsets](https://codeforces.com/blog/entry/60003)
+
+**Problem statement**
+
+Given a set $S$ of $n$ elements $a_1, a_2, \ldots, a_n$, find the maximum XOR sum over all subsets of $S$.
+
+**Constraints**
+
+- $1 \leq n \leq 10^5$.
+- $0 \leq a_i < 2^{20}$.
+
+**Solution**
+
+- Since $n$ is large, we cannot enumerate all $2^n$ subsets of $S$.
+- Observe that since $a_i < 2^{20}$, we can find a basis $B$ of the vector space $V$ spanned by $S$, and then iterate over all $2^{|B|}$ subsets of $B$ ($|B| \leq 20$). The time complexity is $\mathcal{O}(2^{|B|})$.
+
+**Proof**
+
+- Suppose $B = \{b_1, b_2, \ldots, b_k\}$.
+- Since every element of $S$ can be written as a linear combination of vectors in $B$ ($a_i = \sum_{j = 1}^k c_j b_j, c_j \in \{0, 1\}$), for any subset $\{a_1, a_2, \ldots, a_m\}$, the sum $a_1 + a_2 + \ldots + a_m$ can also be expressed in terms of the vectors in $B$.
+
+**Sample implementation**
+
+```cpp
+int k = (int) basis.size();
+int answer = 0;
+// iterate over all 2^k subsets.
+for (int mask = 0; mask < (1 << k); ++mask) {
+  int cur = 0; // stores the XOR sum of the current subset.
+  for (int i = 0; i < k; ++i) {
+      if (mask & (1 << i)) {
+          cur ^= basis[i];
+      }
+  }
+  answer = max(answer, cur);
+}
+cout << answer << '\n';
+```
+
+**Further optimization**
+
+- We can use a greedy approach by prioritizing setting higher bits of the result to 1, because even if all lower bits are set to 1, they cannot beat having bit $i$ set: $2^0 + 2^1 + \ldots + 2^{i - 1} = 2^i - 1 < 2^i$. Time complexity: $\mathcal{O}(|B|)$.
+
+```cpp
+int k = (int) basis.size();
+// no need to iterate in decreasing order of msb since all msb values in basis are distinct.
+int answer = 0;
+for (int i = 0; i < k; ++i) {
+  answer = max(answer, answer ^ basis[i]);
+}
+cout << answer << '\n';
+```
+
+### [Codeforces 895C - Square Subsets](https://codeforces.com/contest/895/problem/C)
+
+**Problem summary**
+
+Given an array $a$ of $n$ positive integers, find the number of ways to choose a non-empty subset of $a$ such that the product of the chosen elements is a perfect square. Two ways are considered different if there is an index chosen in one subset and not in the other.
+Since the answer can be very large, print it modulo $10^9 + 7$.
+
+**Constraints**
+
+- $1 \leq n \leq 10^5$.
+- $1 \leq a_i \leq 70$.
+
+**Solution**
+
+This problem can be solved with bitmask DP, but I will introduce a simpler approach with lower complexity using the **rank-nullity theorem**.
+
+- Every positive integer $x$ can be written as a product of prime powers $p_1^{k_1} \cdot p_2^{k_2} \cdots p_m^{k_m}$ (where $p_i$ are primes and $k_i \ge 0$). Then $x$ is a perfect square if and only if $k_1, k_2, \ldots, k_m$ are all even.
+- For each number, we only care about the positions $i$ where $k_i$ is odd. There are only $19$ primes in the range $[1, 70]$, so we can represent each number as a vector in $\mathbb{Z}_2^{19}$, where multiplying two numbers corresponds to adding their vectors. A perfect square then corresponds to the zero vector ($O$).
+- Let $v_i$ be the vector in $\mathbb{Z}_2^{19}$ corresponding to $a_i$. We can represent the array $a$ as a $19 \times n$ matrix (with each $v_i$ written as a column vector):
+
+$$
+M =
+\begin{bmatrix}
+	| & | & \ldots & | \\
+	v_1 & v_2 & \ldots & v_n \\
+	| & | & \ldots & |
+\end{bmatrix}
+$$
+
+- We want to count all vectors $x = [x_1, x_2, \ldots, x_n]$ ($x \in \mathbb{Z}_2^n$), where $x_i = 0$ means $a_i$ is not chosen and $x_i = 1$ means $a_i$ is chosen, such that:
+
+$$
+M \cdot x = O
+$$
+
+- The number of valid vectors $x$ is the number of vectors in the null space of $M$, which equals $2^{\text{nullity}(M)}$ (including choosing the empty subset of $a$). Thus, the answer is $2^{\text{nullity}(M)} - 1$.
+- By the rank-nullity theorem:
+
+$$
+\text{rank}(M) + \text{nullity}(M) = \text{number of columns} = n
+$$
+
+It follows directly that:
+
+$$
+\text{nullity}(M) = n - \text{rank}(M) = n - \text{dim}(\text{CS}(M)) = n - \text{dim}(\text{span}(a))
+$$
+
+**Sample implementation**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MOD = (int) 1e9 + 7;
+
+vector<int> primes, basis;
+const int MAX_VAL = 70;
+
+void precompute() {
+    // find all primes <= 70.
+    for (int i = 2; i <= MAX_VAL; ++i) {
+        bool is_prime = true;
+        for (int j = 2; j * j <= i; ++j) {
+            if (i % j == 0) {
+                is_prime = false;
+                break;
+            }
+        }
+        if (is_prime) {
+            primes.push_back(i);
+        }
+    }
+}
+
+void insertVector(int mask) {
+    for (int i = 0; i < (int) basis.size(); ++i) {
+        mask = min(mask, mask ^ basis[i]);
+    }
+    if (mask != 0) {
+        basis.push_back(mask);
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    precompute();
+    int n;
+    cin >> n;
+    vector<int> a(n), cnt(MAX_VAL + 1);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        cnt[a[i]]++;
+    }
+    // compute the corresponding vector v.
+    for (int i = 0; i <= MAX_VAL; ++i) {
+        if (!cnt[i]) continue;
+        int v = 0, cur = i;
+        for (int j = 0; j < (int) primes.size(); ++j) {
+            int k = 0;
+            while (cur % primes[j] == 0) {
+                cur /= primes[j];
+                k++;
+            }
+            // if k is odd, set the j-th bit to 1.
+            if (k & 1) {
+                v += (1 << j);
+            }
+        }
+        insertVector(v);
+    }
+    int d = (int) basis.size();
+    int nullity = n - d;
+    int answer = 1;
+    for (int i = 0; i < nullity; ++i) {
+        answer = answer * 2 % MOD;
+    }
+    cout << (answer == 0 ? MOD - 1 : answer - 1) << '\n';
+    return 0;
+}
+```
+
+**Complexity**
+
+- Let $m = \max\{a_i\}$ and $d = \text{basis.size()}$.
+- The time complexity is $\mathcal{O}(m\sqrt{m} + md\log{m} + n) = \mathcal{O}(n)$.
+
+**Generalization**
+
+Given an array $a$ of $n$ elements and an integer $s$, find the number of subsets of $a$ whose XOR sum equals $s$. Constraints: $1 \leq n \leq 10^5$, $0 \leq a_i < 2^{31}$, $0 \leq s < 2^{31}$.
+
+**Analysis**
+
+- View each element $a_i$ as a vector in $\mathbb{Z}_2^d$, and represent $a$ as a $d \times n$ matrix $M$:
+
+$$
+M =
+\begin{bmatrix}
+	| & | & \ldots & | \\
+	a_1 & a_2 & \ldots & a_n \\
+	| & | & \ldots & |
+\end{bmatrix}
+\equiv
+\begin{bmatrix}
+	a_{1,1} & a_{2,1} & \cdots & a_{n,1} \\
+	a_{1,2} & a_{2,2} & \cdots & a_{n,2} \\
+	\vdots & \vdots & \ddots & \vdots \\
+	a_{1,d} & a_{2,d} & \cdots & a_{n,d}
+\end{bmatrix}
+$$
+
+- First, check whether $s$ can be represented as a linear combination of the vectors $a_i$. If not, the answer is $0$. Otherwise, suppose $s = a_i + a_{i + 1} + \ldots + a_j$ (where $\{a_i, a_{i + 1}, \ldots, a_j\}$ is some subset of $a$).
+- Then we need to count the number of vectors $x = [x_1, x_2, \ldots, x_n]$ ($x \in \mathbb{Z}_2^n$) such that:
+
+$$
+M \cdot x = s \\
+\Longleftrightarrow
+\begin{cases}
+	a_{1, 1}x_1 + a_{2, 1}x_2 + \ldots + a_{n, 1}x_n \equiv a_{i, 1} + a_{i + 1, 1} + \ldots + a_{j, 1} \pmod 2 \\
+	a_{1, 2}x_1 + a_{2, 2}x_2 + \ldots + a_{n, 2}x_n \equiv a_{i, 2} + a_{i + 1, 2} + \ldots + a_{j, 2} \pmod 2 \\
+	\ldots \\
+	a_{1, d}x_1 + a_{2, d}x_2 + \ldots + a_{n, d}x_n \equiv a_{i, d} + a_{i + 1, d} + \ldots + a_{j, d} \pmod 2
+\end{cases}
+$$
+
+By an equivalent transformation, we obtain the same answer.
+
+### [(Zero XOR Subset)-less](https://codeforces.com/contest/1101/problem/G)
+
+**Problem statement**
+
+Given an array $a$ of $n$ integers, partition the array into the maximum number of segments such that:
+
+- Each element belongs to exactly one segment.
+- Each segment contains at least one element.
+- There is no non-empty subset of segments whose combined XOR sum is $0$.
+
+Print the maximum number of segments, or $-1$ if no valid partition exists.
+
+**Constraints**
+
+- $1 \leq n \leq 2 \cdot 10^5$.
+- $0 \leq a_i \leq 10^9$.
+
+**Analysis**
+
+- View the XOR sum of each segment as a vector in $\mathbb{Z}_2^{30}$.
+- Clearly, in any valid partition, the set of segment vectors must be linearly independent.
+- Suppose we have an optimal valid partition (with the maximum possible number of segments): $[l_1 = 1, r_1], [l_2 = r_1 + 1, r_2], \ldots, [l_m = r_{m - 1} + 1, r_m = n]$. Let $v_i$ be the XOR sum of the $i$-th segment. Then the set $S = \{v_1, v_2, \ldots, v_m\}$ is linearly independent and $\mathbf{\text{dim}(\text{span}(S)) = m}$.
+- By the properties of linearly independent sets, the set $Q = \{v_1, v_1 + v_2, \ldots, v_1 + v_2 + \ldots + v_m\} = \{p_{r_1}, p_{r_2}, \ldots, p_{r_m}\}$ (where $p_i$ is the prefix XOR of the first $i$ elements) is also linearly independent, and $\text{dim}(\text{span}(Q)) = \text{dim}(\text{span}(S))$.
+- Since the partition above is optimal, we can add any $p_i$ into $Q$ without changing the number of linearly independent vectors ($\text{dim}(\text{span}(Q))$ remains unchanged).
+- Therefore, the final answer is $\text{dim}(\text{span}(\{p_1, p_2, \ldots, p_n\}))$, except when $p_n = 0$, in which case no valid partition exists and we print $-1$.
+
+**Sample implementation**
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> basis;
+void insertVector(int mask) {
+    for (int i = 0; i < (int) basis.size(); ++i) {
+        mask = min(mask, mask ^ basis[i]);
+    }
+    if (mask != 0) {
+        basis.push_back(mask);
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    int p = 0; // stores the prefix XOR of the first i elements.
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        p ^= a[i];
+        insertVector(p);
+    }
+    // if p_n = 0, no valid partition exists.
+    if (p == 0) {
+        cout << -1 << '\n';
+    }
+    else {
+        cout << basis.size() << '\n';
+    }
+    return 0;
+}
+```
+
+**Complexity**
+
+The time complexity is $\mathcal{O}(nd)$ (since $a_i \leq 10^9$, we have $d = \text{basis.size()} \leq 30$).
+
+## Practice problems
+
+- [Codeforces - Godzilla and Pretty XOR](https://codeforces.com/group/qcIqFPYhVr/contest/203881/problem/S) (you need to join the group [here](https://codeforces.com/group/qcIqFPYhVr))
+- [Codeforces - Round 473 - Div.2 - F](https://codeforces.com/contest/959/problem/F)
+- [AtCoder - Xor Battle](https://atcoder.jp/contests/agc045/tasks/agc045_a)
+- [AtCoder - Xor Sum 3](https://atcoder.jp/contests/abc141/tasks/abc141_f)
+- [AtCoder - Spices](https://atcoder.jp/contests/abc236/tasks/abc236_f)
+- [Codeforces - Global Round 11 - E. Xum](https://codeforces.com/problemset/problem/1427/E)
+- [HackerEarth - Chef & Chutneys](https://www.hackerearth.com/problem/algorithm/chef-f59c8115/)
+- [AtCoder - Xor Query](https://atcoder.jp/contests/abc223/tasks/abc223_h)
+- [Codeforces - Round 635 - Div.1 - E1](https://codeforces.com/contest/1336/problem/E1)
+
+## References
+
+- [Codeforces blog - A Beautiful Technique for Some XOR Related Problems](https://codeforces.com/blog/entry/68953)
+- [Codeforces blog - 2 Special cases of Gaussian](https://codeforces.com/blog/entry/60003)
+- [Benjamin Qi - Vector in $\mathbb{Z}_2^d$](https://drive.google.com/drive/folders/1Ll8EuA3p64JLmzImfQu5qiWvc6_QTa0E?usp=sharing)
+- [USACO - Xor basis](https://usaco.guide/adv/xor-basis?lang=cpp)
