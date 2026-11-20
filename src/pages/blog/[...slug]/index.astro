@@ -21,7 +21,6 @@ import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import BackButton from "./_components/BackButton.astro";
 import EditPost from "./_components/EditPost.astro";
 import LangSwitch from "./_components/LangSwitch.astro";
-import ShareLinks from "./_components/ShareLinks.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -203,13 +202,9 @@ const ogImage = ogImageUrl
       <Content />
     </article>
 
-    <hr class="my-8 border-dashed" />
-
-    <EditPost class="sm:hidden" {hideEditPost} {post} uiLocale={lang} />
+    <EditPost class="mt-8 sm:hidden" {hideEditPost} {post} uiLocale={lang} />
 
     <BackToTopButton uiLocale={lang} />
-
-    <ShareLinks uiLocale={lang} />
 
     <hr class="my-8 border-dashed" />
 
