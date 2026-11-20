@@ -10,6 +10,9 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  ASTRO_TELEMETRY_DISABLED: "1"
+
 # Never cancel a deploy mid-flight; queue it behind the running one instead.
 concurrency:
   group: pages

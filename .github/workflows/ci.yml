@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  ASTRO_TELEMETRY_DISABLED: "1"
+
 # A newer push to the same branch makes the in-flight run obsolete.
 concurrency:
   group: ci-${{ github.ref }}
