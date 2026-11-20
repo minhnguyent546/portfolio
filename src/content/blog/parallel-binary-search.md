@@ -9,7 +9,7 @@ author: Minh Thien Nguyen
 pubDatetime: 2023-08-26
 lang: en
 translationOf: parallel-binary-search-vi
-thumbnail: ./parallel-binary-search/thumbnail.png
+thumbnail: ./parallel-binary-search/thumbnail.svg
 ---
 
 ## Table of contents

@@ -5,7 +5,7 @@ tags:
   - bit-compression
   - bitset
 topic: algorithms
-thumbnail: ./bit-compression/thumbnail.png
+thumbnail: ./bit-compression/thumbnail.svg
 author: Minh Thien Nguyen
 pubDatetime: 2023-10-16
 lang: en

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400" role="img" aria-label="XOR Basis upper-triangular binary matrix">
+  <!-- Clean warm-paper ground -->
+  <rect width="640" height="400" fill="#faf9f6"/>
+
+  <!-- Subtle row-echelon staircase hairline -->
+  <path d="M 164 74 L 164 134 L 242 134 L 242 200 L 320 200 L 320 266 L 398 266 L 398 332 L 470 332" fill="none" stroke="#d5cfc4" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+
+  <!-- Thin mathematical matrix brackets -->
+  <path d="M 150 62 L 132 62 L 132 338 L 150 338" fill="none" stroke="#262522" stroke-width="2.8" stroke-linecap="square"/>
+  <path d="M 490 62 L 508 62 L 508 338 L 490 338" fill="none" stroke="#262522" stroke-width="2.8" stroke-linecap="square"/>
+
+  <!-- 4x4 Upper-Triangular Binary Basis Matrix -->
+  <!-- Columns x: 170, 248, 326, 404 (w=66, gap=12) -->
+  <!-- Rows y: 74, 140, 206, 272 (h=54, gap=12) -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="600" text-anchor="middle" dominant-baseline="central">
+    <!-- Row 0: 1 0 1 1 -->
+    <rect x="170" y="74" width="66" height="54" rx="6" fill="#c46d2d"/>
+    <text x="203" y="102" fill="#faf9f6">1</text>
+
+    <rect x="248" y="74" width="66" height="54" rx="6" fill="#f1eee7"/>
+    <text x="281" y="102" fill="#a6a197">0</text>
+
+    <rect x="326" y="74" width="66" height="54" rx="6" fill="#e3f0e9" stroke="#bcd8c9" stroke-width="1.5"/>
+    <text x="359" y="102" fill="#2b6a4b">1</text>
+
+    <rect x="404" y="74" width="66" height="54" rx="6" fill="#e3f0e9" stroke="#bcd8c9" stroke-width="1.5"/>
+    <text x="437" y="102" fill="#2b6a4b">1</text>
+
+    <!-- Row 1: 0 1 0 1 -->
+    <text x="203" y="168" fill="#c7c2b8">0</text>
+
+    <rect x="248" y="140" width="66" height="54" rx="6" fill="#c46d2d"/>
+    <text x="281" y="168" fill="#faf9f6">1</text>
+
+    <rect x="326" y="140" width="66" height="54" rx="6" fill="#f1eee7"/>
+    <text x="359" y="168" fill="#a6a197">0</text>
+
+    <rect x="404" y="140" width="66" height="54" rx="6" fill="#e3f0e9" stroke="#bcd8c9" stroke-width="1.5"/>
+    <text x="437" y="168" fill="#2b6a4b">1</text>
+
+    <!-- Row 2: 0 0 1 1 -->
+    <text x="203" y="234" fill="#c7c2b8">0</text>
+    <text x="281" y="234" fill="#c7c2b8">0</text>
+
+    <rect x="326" y="206" width="66" height="54" rx="6" fill="#c46d2d"/>
+    <text x="359" y="234" fill="#faf9f6">1</text>
+
+    <rect x="404" y="206" width="66" height="54" rx="6" fill="#e3f0e9" stroke="#bcd8c9" stroke-width="1.5"/>
+    <text x="437" y="234" fill="#2b6a4b">1</text>
+
+    <!-- Row 3: 0 0 0 1 -->
+    <text x="203" y="300" fill="#c7c2b8">0</text>
+    <text x="281" y="300" fill="#c7c2b8">0</text>
+    <text x="359" y="300" fill="#c7c2b8">0</text>
+
+    <rect x="404" y="272" width="66" height="54" rx="6" fill="#c46d2d"/>
+    <text x="437" y="300" fill="#faf9f6">1</text>
+  </g>
+</svg>

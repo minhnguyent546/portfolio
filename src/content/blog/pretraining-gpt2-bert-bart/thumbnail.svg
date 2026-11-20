@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400" role="img" aria-label="Attention mask comparison for GPT-2 causal, BERT bidirectional, and BART encoder-decoder pre-training">
+  <!-- Clean warm-paper ground -->
+  <rect width="640" height="400" fill="#faf9f6"/>
+
+  <!-- 1. GPT-2: Causal (lower-triangular, decoder-only) — x0 = 35, y0 = 76, cell = 38, gap = 6 -->
+  <g>
+    <!-- Row 0: 1 0 0 0 -->
+    <rect x="35" y="76" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="79" y="76" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+    <rect x="123" y="76" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+    <rect x="167" y="76" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+
+    <!-- Row 1: 1 1 0 0 -->
+    <rect x="35" y="120" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="79" y="120" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="123" y="120" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+    <rect x="167" y="120" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+
+    <!-- Row 2: 1 1 1 0 -->
+    <rect x="35" y="164" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="79" y="164" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="123" y="164" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="167" y="164" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+
+    <!-- Row 3: 1 1 1 1 -->
+    <rect x="35" y="208" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="79" y="208" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="123" y="208" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="167" y="208" width="38" height="38" rx="6" fill="#c46d2d"/>
+  </g>
+
+  <!-- 2. BERT: Full Bidirectional (encoder-only) — x0 = 235, y0 = 76 -->
+  <g>
+    <!-- Row 0 -->
+    <rect x="235" y="76" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="279" y="76" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="323" y="76" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="367" y="76" width="38" height="38" rx="6" fill="#2b6a4b"/>
+
+    <!-- Row 1 -->
+    <rect x="235" y="120" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="279" y="120" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="323" y="120" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="367" y="120" width="38" height="38" rx="6" fill="#2b6a4b"/>
+
+    <!-- Row 2 -->
+    <rect x="235" y="164" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="279" y="164" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="323" y="164" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="367" y="164" width="38" height="38" rx="6" fill="#2b6a4b"/>
+
+    <!-- Row 3 -->
+    <rect x="235" y="208" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="279" y="208" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="323" y="208" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="367" y="208" width="38" height="38" rx="6" fill="#2b6a4b"/>
+  </g>
+
+  <!-- 3. BART: Encoder-Decoder (bidirectional encoder + cross-attention + causal decoder) — x0 = 435, y0 = 76 -->
+  <g>
+    <!-- Row 0 (encoder) -->
+    <rect x="435" y="76" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="479" y="76" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="523" y="76" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+    <rect x="567" y="76" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+
+    <!-- Row 1 (encoder) -->
+    <rect x="435" y="120" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="479" y="120" width="38" height="38" rx="6" fill="#2b6a4b"/>
+    <rect x="523" y="120" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+    <rect x="567" y="120" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+
+    <!-- Row 2 (decoder: cross-attn to enc + causal self-attn) -->
+    <rect x="435" y="164" width="38" height="38" rx="6" fill="#1f6f78"/>
+    <rect x="479" y="164" width="38" height="38" rx="6" fill="#1f6f78"/>
+    <rect x="523" y="164" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="567" y="164" width="38" height="38" rx="6" fill="#ffffff" stroke="#e2dfd7" stroke-width="1.6"/>
+
+    <!-- Row 3 (decoder: cross-attn to enc + causal self-attn) -->
+    <rect x="435" y="208" width="38" height="38" rx="6" fill="#1f6f78"/>
+    <rect x="479" y="208" width="38" height="38" rx="6" fill="#1f6f78"/>
+    <rect x="523" y="208" width="38" height="38" rx="6" fill="#c46d2d"/>
+    <rect x="567" y="208" width="38" height="38" rx="6" fill="#c46d2d"/>
+  </g>
+
+  <!-- Clear labels below each mask -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">
+    <text x="120" y="294" font-size="25" font-weight="700" fill="#262522">GPT-2</text>
+    <text x="120" y="324" font-size="16" font-weight="500" fill="#6b665d">causal</text>
+
+    <text x="320" y="294" font-size="25" font-weight="700" fill="#262522">BERT</text>
+    <text x="320" y="324" font-size="16" font-weight="500" fill="#6b665d">bidirectional</text>
+
+    <text x="520" y="294" font-size="25" font-weight="700" fill="#262522">BART</text>
+    <text x="520" y="324" font-size="16" font-weight="500" fill="#6b665d">enc-dec</text>
+  </g>
+</svg>
