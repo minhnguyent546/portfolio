@@ -1,20 +1,20 @@
 ---
 title: ViREx-Bench
 summary: >
-  An evaluation framework for inference-time scaling on Vietnamese reasoning.
-  It supports 7 reasoning strategies on any OpenAI-compatible model and was
-  benchmarked with 8 models. The strategies include chain-of-thought,
-  self-consistency, tree-of-thought (Beam search, DFS, and Monte-Carlo tree search),
-  and a symbolic-reasoning pipeline (program-of-thought + Z3). Search-based methods
-  spend up to 32× more tokens without beating plain chain-of-thought;
-  the proposed pipeline led them in accuracy at 3.3 model calls per item,
-  versus 18–28 for the others.
+  An open-source inference-time scaling benchmark for Vietnamese logical
+  reasoning, supporting 7 strategies (CoT, self-consistency, Tree-of-Thought
+  with Beam/DFS/MCTS, Cumulative Reasoning, and Program-of-Thought + Z3) on any
+  OpenAI-compatible LLM. Across 8 models, the symbolic pipeline beat
+  search-based methods in accuracy at a fraction of the model calls.
 stack:
   - Inference-time scaling
   - Z3
   - Program-of-Thought
   - Evaluation
 repo: https://github.com/minhnguyent546/ViREx-Bench
+links:
+  - label: Report
+    url: https://drive.google.com/file/d/1eQCaAq8LWyAFn7IxNFEOatuT3a7snMx0/view?usp=sharing
 order: 1
 featured: true
 ---

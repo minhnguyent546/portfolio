@@ -1,10 +1,9 @@
 ---
 title: medical-llama2
 summary: >
-  Med-Alpaca-2-7b-chat, a medical question-answering chatbot fine-tuned from
-  LLaMA 2 7B with QLoRA. Training ran across multiple GPUs; the model was then
-  quantized and served through llama.cpp, with a live demo on Hugging Face
-  Spaces.
+  Med-Alpaca-2-7b-chat, a medical QA model fine-tuned from LLaMA 2 7B with
+  QLoRA and DDP across multiple GPUs, then quantized and served locally via
+  llama.cpp with a live demo on Hugging Face Spaces.
 stack:
   - QLoRA
   - DDP
