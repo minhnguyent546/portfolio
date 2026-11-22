@@ -1,4 +1,5 @@
 ---
+import IconCertificate from "@/assets/icons/IconCertificate.svg";
 import IconExternalLink from "@/assets/icons/IconExternalLink.svg";
 import IconFileText from "@/assets/icons/IconFileText.svg";
 import IconTrophy from "@/assets/icons/IconTrophy.svg";
@@ -6,6 +7,7 @@ import IconArxiv from "@/assets/icons/links/arxiv.svg";
 import IconDoi from "@/assets/icons/links/doi.svg";
 import IconHuggingFace from "@/assets/icons/links/huggingface.svg";
 import IconGithub from "@/assets/icons/socials/github.svg";
+import { getAssetPath } from "@/utils/withBase";
 
 type Props = {
   label: string;
@@ -14,15 +16,20 @@ type Props = {
 };
 
 const { label, url, class: className } = Astro.props;
+const isSitePath = url.startsWith("/") && !url.startsWith("//");
+const href = isSitePath ? getAssetPath(url) : url;
 
 let host = "";
 let pathname = "";
 try {
-  const parsed = new URL(url);
-  host = parsed.hostname.replace(/^www\./, "");
+  const parsed = new URL(url, "https://local.invalid");
+  host =
+    parsed.hostname === "local.invalid"
+      ? ""
+      : parsed.hostname.replace(/^www\./, "");
   pathname = parsed.pathname.toLowerCase();
 } catch {
-  // Relative or non-standard URL falls through to the generic icon.
+  // Non-standard URL falls through to the generic icon.
 }
 
 const lowerLabel = label.toLowerCase();
@@ -54,6 +61,12 @@ function pickIcon(): IconSpec {
     return { Component: IconTrophy, mode: "outline" };
   }
   if (
+    lowerLabel.includes("certificate") ||
+    pathname.includes("/certificates/")
+  ) {
+    return { Component: IconCertificate, mode: "outline" };
+  }
+  if (
     pathname.endsWith(".pdf") ||
     host === "drive.google.com" ||
     lowerLabel.includes("pdf")
@@ -67,7 +80,7 @@ const { Component: Icon, mode, colorClass } = pickIcon();
 ---
 
 <a
-  href={url}
+  {href}
   target="_blank"
   rel="noopener noreferrer"
   class:list={[

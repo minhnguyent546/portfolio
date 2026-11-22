@@ -17,6 +17,10 @@ links:
     url: https://huggingface.co/collections/cotulabs/cotu-exact-2026
   - label: Leaderboard
     url: https://exact-ijcnn.vercel.app/leaderboard
+  - label: Certificate (IEEE WCCI)
+    url: /certificates/ieee-wcci-2026-exact-second-runner-up.pdf
+  - label: Certificate (EXACT)
+    url: /certificates/exact-2026-third-prize.pdf
 figure:
   src: ./exact-2026-pipeline.png
   alt: Pipeline of the CoTu system. A 4B backbone routes each question by answer

@@ -44,11 +44,11 @@ const pages = defineCollection({
   }),
 });
 
-/** A labelled outbound link in a publication, competition, or project row. */
+/** A labelled link in a publication, competition, or project row. */
 const linkList = z.array(
   z.object({
     label: z.string(),
-    url: z.url(),
+    url: z.union([z.url(), z.string().regex(/^\/(?!\/)/)]),
   })
 );
 
