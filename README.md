@@ -30,4 +30,6 @@ Built with [Astro](https://astro.build/) and Tailwind CSS v4, starting from [Ast
 
 ## License
 
-Licensed under the [MIT License](LICENSE). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for third-party icon attributions.
+- **Source code:** [GNU GPLv3](LICENSE-CODE) (see [LICENSE](LICENSE) for scope).
+- **Content, personal documents, and media** (`cv/`, `public/certificates/`, `src/content/`, personal images): All Rights Reserved.
+- **Third-party attributions:** See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

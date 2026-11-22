@@ -1,21 +1,37 @@
-MIT License
+Copyright (c) 2026 Minh-Thien Nguyen.
 
-Copyright (c) 2026 Minh-Thien Nguyen
+This repository uses split licensing.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Source Code — GNU General Public License v3.0 (GPL-3.0-only)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Original source code for this website — including components, layouts, styles,
+configuration, and scripts under `src/` (excluding `src/content/` and
+`src/assets/images/`), root configuration files, and `.github/` workflows — is
+licensed under the GNU General Public License, Version 3, 29 June 2007.
+See `LICENSE-CODE` for the full license text.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Content, Personal Documents, and Media — All Rights Reserved
+
+All non-code content, personal documents, structured personal data, and media
+in this repository are Copyright (c) 2026 Minh-Thien Nguyen, All Rights
+Reserved. This includes, without limitation:
+
+- `cv/` and `public/cv.pdf`
+- `public/certificates/`
+- `src/content/` (blog posts, articles, diagrams, figures, biography,
+  publications, experience, competitions, projects, and news)
+- `src/assets/images/` (personal photographs and portraits)
+- `assets/`, `public/favicon.png`, and `public/apple-touch-icon.png`
+
+No permission is granted to copy, modify, publish, distribute, sublicense, or
+create derivative works from these files without prior written permission from
+the copyright holder, except as permitted by applicable law.
+
+Certificates and any third-party logos, figures, or media remain the property
+of their respective issuers or copyright holders and are not licensed for
+reuse.
+
+3. Third-Party Components
+
+Portions of this repository include or derive from third-party works under
+their own licenses. See `THIRD_PARTY_NOTICES.md`.
