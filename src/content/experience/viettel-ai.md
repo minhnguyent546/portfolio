@@ -1,11 +1,11 @@
 ---
 role: Data Science and AI Intern
 organization: Viettel AI
-orgNote: Viettel Digital Talent 2026 program
+orgNote: Selected via Viettel Digital Talent 2026 program
 period: 05/2026 – 08/2026
 highlights:
-  - "Built ViREx-Bench, an inference-time-scaling evaluation framework supporting 7 reasoning strategies on any OpenAI-compatible model; benchmarked against 8 models."
-  - "Curated a 294-item Vietnamese multi-step logical-reasoning dataset, translated with TranslateGemma-27B and re-annotated via a program-of-thought + Z3 pipeline (96.7% agreement with human labels)."
-  - "Found chain-of-thought captures most of the accuracy gain; the proposed symbolic-reasoning pipeline (program-of-thought + Z3) led the search-based strategies in accuracy at 3.3 model calls per item, versus 18–28 for the search-based ones."
+  - "Curated a 294-item Vietnamese multi-step logical reasoning dataset using TranslateGemma-27B and a Program-of-Thought + Z3 re-annotation pipeline (DeepSeek-V4-Pro), reaching 96.7% agreement on 50 human-annotated samples."
+  - "Built ViREx-Bench to evaluate 7 inference-time scaling strategies across 8 OpenAI-compatible LLMs."
+  - "Showed that CoT captures most of the accuracy gain while search-based methods spend up to 32× more tokens without beating it, and that symbolic reasoning outperformed all search methods at 3.3 model calls per item (vs. 18–28)."
 order: 2
 ---

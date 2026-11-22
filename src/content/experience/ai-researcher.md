@@ -5,7 +5,7 @@ orgNote: In collaboration with CICT, Can Tho University
 period: 08/2025 – present
 current: true
 highlights:
-  - "Research inference-time scaling, embedding models, Vietnamese image–text retrieval, and optimal transport: set the research questions, design and run the experiments, and write the papers."
-  - "Three papers to date: one published (ICT Research), two accepted (Machine Vision and Applications, CSoNet 2026), plus a 3rd-place finish of 50 teams at the EXACT 2026 challenge."
+  - "Research inference-time scaling, neuro-symbolic reasoning, multimodal retrieval, and optimal transport: set the research questions, design and run the experiments, and write the papers with co-authors and an academic advisor."
+  - "Co-authored three peer-reviewed papers (two co-first-author) and placed 3rd of 50 teams in the EXACT 2026 challenge at IEEE IJCNN 2026."
 order: 1
 ---
