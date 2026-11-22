@@ -9,7 +9,7 @@ authors:
   - Truong-Thanh Ma
   - Nguyen-Khang Pham
 venue: "Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS"
-date: 2026-07-15
+date: 2026-09-08
 arxivId: "2607.14735"
 links:
   - label: Code
@@ -18,13 +18,18 @@ links:
     url: https://huggingface.co/collections/cotulabs/cotu-exact-2026
 thumbnail: ../competitions/exact-2026-pipeline.png
 abstract: >
-  CoTu is a neuro-symbolic Program-of-Thought system for explainable educational
-  question answering. A 4B open-weight backbone writes a program instead of
-  stating an answer. For regulation queries, it produces a Z3 encoding whose
-  entailment verdict supports the deduction. For physics questions, it produces
-  numerical Python. It scored perfectly on physics in both automated selection
-  rounds of the EXACT 2026
-  challenge and took the highest technical score of any team in the final.
+  EXACT 2026 requires self-hosted open-weight models capped at 8B parameters to
+  produce accurate, explainable answers on two tasks where direct generation
+  from small models is unreliable: formal deduction over university regulations
+  and multi-step physics. Team CoTu built a neuro-symbolic Program-of-Thought
+  system on a 4B backbone that writes executable programs instead of direct
+  answers: Z3 constraints whose entailment verdicts ground regulation
+  deductions, and numerical Python for physics, both executed inside a sandboxed
+  self-correction loop. The system achieved a perfect physics score in both
+  selection rounds and earned the highest final-round technical score (13.44/15
+  vs. 12.51 runner-up across automated accuracy and expert-judged reasoning
+  depth). With the presentation score weighted equally, Team CoTu finished 3rd
+  out of 50 teams overall.
 bibtex: |
   @misc{tran2026cotu,
     title        = {CoTu at EXACT 2026: Neuro-Symbolic Reasoning for Transparent Educational QA},

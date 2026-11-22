@@ -37,7 +37,7 @@
 - id: exact-2026-csonet-submission
   date: 2026-07-15
   text: >
-    Submitted the CoTu system paper to CSoNet 2026, Special Session: EXACT
+    Submitted Team CoTu's system paper to CSoNet 2026, Special Session: EXACT
     Competition, hosted at HCMUT.
   links:
     - label: Technical report
@@ -53,8 +53,8 @@
   date: 2026-03-02
   text:
     Preprint on model soups for Mekong Delta intangible-cultural-heritage image
-    classification. Early accept at the Journal on Information Technologies and
-    Communications.
+    classification. Published in the Journal on Information Technologies and
+    Communications (Vol. 2025 No. 3).
   links:
     - label: arXiv
       url: https://arxiv.org/abs/2603.02181
