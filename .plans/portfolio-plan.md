@@ -1,7 +1,7 @@
 # Portfolio Plan — minhnguyent546.io.vn
 
 > High-level structure and stack for Minh-Thien Nguyen's personal portfolio
-> (AI Research Engineer — NLP & Deep Learning).
+> (AI Researcher — NLP & Deep Learning).
 > Status: **approved direction, pre-implementation**. Written 2026-08-01.
 
 ---
@@ -170,37 +170,37 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   mobile), bold self-author, verbatim venue + date line, and one link row (`DOI`,
   `arXiv`, `Code`, `Hugging Face`, expandable `Abstract` via `<details>`; `bibtex` stays
   in frontmatter for `tty3`):
-  - **ViCLIP-OT** — Vietnamese image–text retrieval w/ Optimal Transport. Accepted at Machine Vision and Applications. arXiv 2602.22678 · code · Hugging Face collection.
-  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for explainable educational QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS. Camera-ready revisions pending. arXiv 2607.14735 · code · Hugging Face collection.
-  - **soups** — model soups for Mekong Delta intangible-cultural-heritage image classification. Published in Journal on Information Technologies and Communications. arXiv 2603.02181 · code.
+  - **ViCLIP-OT** — Vietnamese image–text retrieval w/ Optimal Transport (SIGROT, ≤2.7% overhead, 67.34% avg Recall@K on UIT-OpenViIC, ViSigLIP-OT 68.96% ahead of zero-shot models up to 4B). Accepted at Machine Vision and Applications (Oct 2026). arXiv 2602.22678 · code · Hugging Face collection.
+  - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for transparent educational QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS (Sep 2026). Camera-ready revisions pending. arXiv 2607.14735 · code · Hugging Face collection.
+  - **soups** — model soups for Mekong Delta intangible-cultural-heritage image classification (72.36% top-1, 69.28% macro F1 on ICH-17). Published in Journal on Information Technologies and Communications, Vol. 2025 No. 3 (Oct 2025). arXiv 2603.02181 · code.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.
 - **Experience:** `src/content/experience/` rendered as flat two-column rows (`period`
-  left, `role · organization` and full-ink highlights right).
+  left, `role · organization` and full-ink highlights right). Includes Viettel AI
+  294-item dataset (TranslateGemma-27B, DeepSeek-V4-Pro PoT+Z3, 96.7% on 50 human
+  samples, 32× search token cost, 3.3 vs. 18–28 calls).
 - **Education & Honors:** `#education` section below Projects. Lists Can Tho University
-  (GPA 3.91/4.0, TOEIC 845, thesis 9.6/10) and `src/data/awards.ts` grouped by year;
+  (GPA 3.91/4.0, Top 3 in IT, TOEIC 845, thesis 9.6/10) and `src/data/awards.ts` grouped by year;
   the ⌘K palette routes award queries to `#education`.
-- **Project summaries** state what each project does and the result it produced, with one
-  number and the decision behind it (GPT-2 perplexity ~21.02, SEAS MRR 0.18→0.70, MCQA
-  91.2%/4×, medical-llama2 QLoRA).
 - **Competitions** (flat two-column rows; extended write-ups and diagrams expand behind `<details>`):
-  - **Zalo AI Challenge 2026, DataMate Track** — Agentic QA over business data (DuckDB + SQL/Python,
+  - **Zalo AI Challenge 2026, DataMate Track** — Agentic QA over business data (DSPy, DuckDB + SQL/Python,
     LoRA-tuned MiMo-V2.6-Distill-Qwen-9B, W8A16 INT8). Month-only date (2026-11);
     0.856 Penalized Accuracy on the 1,000-question public leaderboard. HF model;
     optional `venueUrl` links the challenge portal while the contest is live.
   - **VLSP 2026, Numerical Reasoning QA** — Numerical reasoning QA over Vietnamese financial reports (DSPy,
     LoRA rejection-sampling SFT on GRM-2.5 4B, self-consistency). Month-only date
-    (2026-10); 67.13% program accuracy on the private test. `venueUrl` links the
+    (2026-10); 67.13% program accuracy on the private test set. `venueUrl` links the
     shared-task page.
-  - **EXACT 2026** (IEEE IJCNN) — *highest technical score 13.44/15, 3rd overall*,
-    announced 2026-06-25. Code · tech report (arXiv 2607.14735) · HF collection ·
-    leaderboard. The leaderboard is on free Vercel hosting and may disappear; the
+  - **EXACT 2026** (IEEE IJCNN) — *highest technical score 13.44/15 (vs. 12.51 runner-up), 3rd of 50 teams overall*,
+    12.1 s logic / 4.2 s physics in the second selection round, announced 2026-06-25. Code · tech report (arXiv 2607.14735) · HF collection ·
+    leaderboard · official certificates hosted in `public/certificates/` (IEEE WCCI team certificate + EXACT individual certificate). The leaderboard is on free Vercel hosting and may disappear; the
     claim must stand on the tech report alone.
-  - **Viettel AI Race 2025** — MCQA pipeline for complex technical documents. Code.
-    Month-only date (2025-10); top 3 on the public leaderboard, 91.2% round-3 accuracy.
-- **Projects** (framed around engineering decisions & scale):
-  ViREx-Bench (inference-time scaling, Vietnamese reasoning) · seas (async
-  FastAPI/SQLAlchemy/Qdrant) · medical-llama2 (LLaMA-2 7B fine-tune + HF Spaces demo) ·
-  pre-training-gpt2 (PyTorch/XLA, CUDA + TPU).
+  - **Viettel AI Race 2025** — Multimodal extraction and hybrid dense-sparse RAG pipeline for technical PDFs (87.05 extraction score). Code.
+    Month-only date (2025-11); top 5 in round 1, top 3 in rounds 2–3 on the public leaderboard, 91.2% round-3 accuracy, 4× faster with vLLM.
+- **Projects** (framed around engineering decisions, scale, and headline numbers):
+  ViREx-Bench (inference-time scaling benchmark, 7 strategies across 8 LLMs, Report link) ·
+  seas (async FastAPI/LangChain/Qdrant/AWS, 4.7 s streaming, MRR@10 0.184→0.701, 0.771 Recall@10, 0.713 NDCG@10) ·
+  medical-llama2 (LLaMA 2 7B QLoRA + DDP, llama.cpp, HF Spaces demo) ·
+  pre-training-gpt2 (GPT-2 124M on FineWeb-Edu 10BT, PyTorch/XLA, CUDA + TPU, ~21.02 perplexity).
 - **Blog taxonomy** (2026-08-11; ledger redesigned 2026-08-21): every post declares one
   `topic` from a closed enum — `algorithms`, `llm`, `nlp`, `systems` — in
   `src/data/topics.ts`, beside the free `tags`. The field is required with no default,
