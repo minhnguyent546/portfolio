@@ -4,10 +4,11 @@ venue: EXACT 2026, IEEE IJCNN 2026 Competition
 date: 2026-06-25
 result: Highest technical score, 3rd overall
 summary:
-  A neuro-symbolic Program-of-Thought pipeline for explainable educational QA
-  under an 8B open-weight limit. Team CoTu took the **highest final-round
-  technical score** of any team, **13.44/15**, and placed 3rd overall once the
-  equally weighted presentation score was included.
+  A neuro-symbolic Program-of-Thought system built on a 4B open-weight model for
+  transparent educational QA under an 8B parameter cap. Team CoTu earned the
+  **highest technical score** in the final (**13.44/15** vs. 12.51 runner-up)
+  and, with the presentation score weighted equally, finished 3rd out of 50
+  teams overall.
 links:
   - label: Code
     url: https://github.com/minhnguyent546/EXACT-2026-CoTu
@@ -23,22 +24,24 @@ links:
     url: /certificates/exact-2026-third-prize.pdf
 figure:
   src: ./exact-2026-pipeline.png
-  alt: Pipeline of the CoTu system. A 4B backbone routes each question by answer
+  alt:
+    Pipeline of Team CoTu's system. A 4B backbone routes each question by answer
     type, then emits either a Z3 encoding for regulation queries or numerical
     Python for physics, both passing through a shared self-correction loop to a
     unified explained-JSON output.
 order: 3
 ---
 
-EXACT 2026 asks for answers that are correct and explainable, from self-hosted
-open-weight models capped at 8B parameters with a 60-second budget per query,
-over two tasks: logical reasoning over university regulations, and multi-step
-physics. The CoTu system writes a program instead of stating an answer. For
-regulation queries, it produces a Z3 encoding whose entailment verdict supports
-the deduction. For physics questions, it produces numerical Python. Both paths
-use the same self-correction loop and explained-JSON structure. Answer-type
-routing, distillation-based task fine-tuning, and SGLang with speculative
-decoding keep it inside the latency limit, and the system scored perfectly on
-physics in both automated selection rounds. The symbolic solver produces
-verifiable deductions even at 4B scale. Premise selection remains the harder
-problem.
+EXACT 2026 asks for accurate, transparent answers from self-hosted open-weight
+models capped at 8B parameters with a 60 s budget per query, over two tasks:
+logical reasoning over university regulations and multi-step physics. Our system
+writes a program instead of stating an answer: a Z3 encoding whose entailment
+verdict supports the deduction for regulation queries, or numerical Python for
+physics, both running in a sandboxed self-correction loop with a shared
+explained-JSON format. Answer-type routing, distillation-based task fine-tuning,
+and an unquantized BF16 serving stack (SGLang prefix caching, DFLASH speculative
+decoding, and a fast non-thinking fallback) kept it inside the latency limit,
+averaging 12.1 s on logic and 4.2 s on physics in the second selection round.
+The system scored perfectly on physics in both selection rounds. The symbolic
+solver produces verifiable deductions even at 4B scale; premise selection
+remains the harder problem.
