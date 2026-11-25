@@ -170,7 +170,7 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
   mobile), bold self-author, verbatim venue + date line, and one link row (`DOI`,
   `arXiv`, `Code`, `Hugging Face`, expandable `Abstract` via `<details>`; `bibtex` stays
   in frontmatter for `tty3`):
-  - **ViCLIP-OT** — Vietnamese image–text retrieval w/ Optimal Transport (SIGROT, ≤2.7% overhead, 67.34% avg Recall@K on UIT-OpenViIC, ViSigLIP-OT 68.96% ahead of zero-shot models up to 4B). Accepted at Machine Vision and Applications (Oct 2026). arXiv 2602.22678 · code · Hugging Face collection.
+  - **ViCLIP-OT** — Vietnamese image–text retrieval w/ Optimal Transport (SIGROT, ≤2.7% overhead, 67.34% avg Recall@K on UIT-OpenViIC, ViSigLIP-OT 68.96% ahead of zero-shot models up to 4B). Published in Machine Vision and Applications, Vol. 38, Art. 26 (Nov 2026; DOI 10.1007/s00138-026-01956-0). arXiv 2602.22678 · code · Hugging Face collection.
   - **CoTu @ EXACT 2026** — neuro-symbolic Program-of-Thought for transparent educational QA. Accepted at CSoNet 2026, Special Session: EXACT Competition, Springer LNCS (Sep 2026). Camera-ready revisions pending. arXiv 2607.14735 · code · Hugging Face collection.
   - **soups** — model soups for Mekong Delta intangible-cultural-heritage image classification (72.36% top-1, 69.28% macro F1 on ICH-17). Published in Journal on Information Technologies and Communications, Vol. 2025 No. 3 (Oct 2025). arXiv 2603.02181 · code.
   - CoTu and ViCLIP-OT are **co-first-authored**; the site footnotes `* Equal contribution`.

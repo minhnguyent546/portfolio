@@ -5,9 +5,10 @@ authors:
   - Quoc-Khang Tran*
   - Minh-Thien Nguyen*
   - Nguyen-Khang Pham
-venue: "Accepted at Machine Vision and Applications (SCIE, Scopus Q2)"
-date: 2026-10-31
+venue: "Machine Vision and Applications, Vol. 38, Art. 26 (SCIE, Scopus Q2)"
+date: 2026-11-25
 arxivId: "2602.22678"
+doi: 10.1007/s00138-026-01956-0
 links:
   - label: Code
     url: https://github.com/minhnguyent546/ViCLIP-OT
@@ -31,14 +32,18 @@ abstract: >
   zero-shot, while embedding-space analysis shows that SIGROT narrows the
   modality gap.
 bibtex: |
-  @misc{tran2026viclipot,
-    title        = {ViCLIP-OT: A Structure-Aware Vision-Language Model for Vietnamese Image-Text Retrieval},
-    author       = {Tran, Quoc-Khang and Nguyen, Minh-Thien and Pham, Nguyen-Khang},
-    year         = {2026},
-    eprint       = {2602.22678},
-    archivePrefix = {arXiv},
-    primaryClass = {cs.CV},
-    url          = {https://arxiv.org/abs/2602.22678}
+  @article{tran2026viclipot,
+    title   = {{ViCLIP-OT}: A Structure-Aware Vision-Language Model for {Vietnamese} Image-Text Retrieval},
+    author  = {Tran, Quoc-Khang and Nguyen, Minh-Thien and Pham, Nguyen-Khang},
+    journal = {Machine Vision and Applications},
+    volume  = {38},
+    number  = {1},
+    pages   = {26},
+    year    = {2026},
+    month   = nov,
+    issn    = {1432-1769},
+    doi     = {10.1007/s00138-026-01956-0},
+    url     = {https://doi.org/10.1007/s00138-026-01956-0}
   }
 order: 0
 ---

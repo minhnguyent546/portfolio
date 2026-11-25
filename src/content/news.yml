@@ -1,3 +1,11 @@
+- id: viclip-ot-mva-published
+  date: 2026-11-25
+  text: >
+    Our ViCLIP-OT paper was published in Machine Vision and Applications.
+  links:
+    - label: DOI
+      url: https://doi.org/10.1007/s00138-026-01956-0
+
 - id: viclip-ot-mva-acceptance
   date: 2026-10-31
   text: >
