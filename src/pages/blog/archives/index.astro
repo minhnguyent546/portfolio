@@ -3,16 +3,17 @@ import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import BlogNav from "@/components/BlogNav.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
-import Card from "@/components/Card.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
 import Main from "@/components/Main.astro";
 import config from "@/config";
+import { TOPIC_LABELS } from "@/data/topics";
 import { useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+import { formatDate } from "@/utils/formatDate";
 import { getTopicCounts } from "@/utils/getLedgerPosts";
+import { getPostUrl } from "@/utils/getPostPaths";
 import { dedupeTranslations } from "@/utils/getTranslation";
-import { getPostsByGroupCondition } from "@/utils/groupPosts";
 import { postFilter } from "@/utils/postFilter";
 
 const locale = Astro.currentLocale ?? config.site.lang;
@@ -28,7 +29,59 @@ const t = useTranslations(locale);
 const posts = await getCollection("blog");
 const filteredPosts = dedupeTranslations(posts.filter(postFilter));
 const counts = getTopicCounts(filteredPosts);
-const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
+const articles = await getCollection("articles");
+
+type ArchiveEntry = {
+  year: number;
+  sortTime: number;
+  dateLabel: string;
+  datetime?: string;
+  title: string;
+  href: string;
+  lang?: string;
+  meta: string;
+  external?: boolean;
+};
+
+const entries: ArchiveEntry[] = [
+  ...filteredPosts.map(post => {
+    const { label, datetime } = formatDate(post.data.pubDatetime, "day-short");
+    return {
+      year: post.data.pubDatetime.getFullYear(),
+      sortTime: post.data.pubDatetime.getTime(),
+      dateLabel: label,
+      datetime,
+      title: post.data.title,
+      href: getPostUrl(post.id, post.filePath, locale),
+      lang: post.data.lang,
+      meta: TOPIC_LABELS[post.data.topic],
+    };
+  }),
+  ...articles.map(article => ({
+    year: article.data.year,
+    // External articles only carry a year; place them after dated posts in the same year.
+    sortTime: new Date(article.data.year, 0, 1).getTime() - 1,
+    dateLabel: "—",
+    title: article.data.title,
+    href: article.data.url,
+    meta: article.data.publication,
+    external: true,
+  })),
+];
+
+const byYear = new Map<number, ArchiveEntry[]>();
+for (const entry of entries) {
+  const list = byYear.get(entry.year) ?? [];
+  list.push(entry);
+  byYear.set(entry.year, list);
+}
+
+const years = [...byYear.entries()]
+  .sort(([a], [b]) => b - a)
+  .map(
+    ([year, list]) =>
+      [year, list.sort((a, b) => b.sortTime - a.sortTime)] as const
+  );
 ---
 
 <Layout title={`${t.pages.archivesTitle} | ${config.site.title}`}>
@@ -40,54 +93,56 @@ const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
     <BlogNav {counts} total={filteredPosts.length} current="archives" />
 
     {
-      Object.entries(
-        getPostsByGroupCondition(filteredPosts, post =>
-          post.data.pubDatetime.getFullYear()
-        )
-      )
-        .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
-        .map(([year, yearGroup]) => (
-          <div>
-            <span class="text-2xl font-bold">{year}</span>
-            <sup class="text-sm text-ink-muted">{yearGroup.length}</sup>
-            {Object.entries(
-              getPostsByGroupCondition(
-                yearGroup,
-                post => post.data.pubDatetime.getMonth() + 1
-              )
-            )
-              .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
-              .map(([month, monthGroup]) => (
-                <div class="flex flex-col sm:flex-row">
-                  <div class="mt-6 min-w-36 text-lg sm:my-6">
-                    <span class="font-bold">
-                      {monthFormatter.format(
-                        new Date(2000, Number(month) - 1, 1)
-                      )}
+      years.map(([year, yearEntries]) => (
+        <section class="mt-8 first:mt-0">
+          <h2 class="border-b border-rule pb-2 font-display text-h2 font-semibold text-ink-heading tabular-nums">
+            {year}
+            <sup class="ms-1 font-mono text-xs font-normal text-ink-muted">
+              {yearEntries.length}
+            </sup>
+          </h2>
+          <ol class="divide-y divide-rule/60">
+            {yearEntries.map(entry => (
+              <li>
+                <a
+                  href={entry.href}
+                  lang={entry.lang}
+                  target={entry.external ? "_blank" : undefined}
+                  rel={entry.external ? "noopener noreferrer" : undefined}
+                  class="group grid grid-cols-[4.5rem_minmax(0,1fr)] items-baseline gap-x-4 py-2.5 sm:grid-cols-[5.25rem_minmax(0,1fr)_auto]"
+                >
+                  {entry.datetime ? (
+                    <time
+                      datetime={entry.datetime}
+                      class="font-mono text-[0.78rem] text-ink-muted tabular-nums"
+                    >
+                      {entry.dateLabel}
+                    </time>
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      class="font-mono text-[0.78rem] text-ink-muted/60"
+                    >
+                      {entry.dateLabel}
                     </span>
-                    <sup class="text-xs text-ink-muted">
-                      {monthGroup.length}
-                    </sup>
-                  </div>
-                  <ul>
-                    {monthGroup
-                      .sort(
-                        (a, b) =>
-                          Math.floor(
-                            new Date(b.data.pubDatetime).getTime() / 1000
-                          ) -
-                          Math.floor(
-                            new Date(a.data.pubDatetime).getTime() / 1000
-                          )
-                      )
-                      .map(data => (
-                        <Card {...data} />
-                      ))}
-                  </ul>
-                </div>
-              ))}
-          </div>
-        ))
+                  )}
+                  <span class="min-w-0 font-display text-[1.05rem] leading-snug font-medium text-ink-heading underline decoration-transparent decoration-[1.5px] underline-offset-4 transition-colors duration-(--dur-micro) group-hover:text-accent group-hover:decoration-current">
+                    {entry.title}
+                  </span>
+                  <span class="col-start-2 mt-0.5 font-mono text-[0.72rem] tracking-wide text-ink-muted lowercase sm:col-start-3 sm:mt-0 sm:text-right">
+                    {entry.meta}
+                    {entry.external && (
+                      <span aria-hidden="true" class="ms-1">
+                        ↗
+                      </span>
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
     }
   </Main>
 

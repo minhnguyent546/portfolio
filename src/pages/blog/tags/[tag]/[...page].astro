@@ -49,7 +49,7 @@ const t = useTranslations(locale);
     pageTitle={`${t.pages.tagTitle}: ${tagName}`}
     pageDesc={`${t.pages.tagDesc} "${tagName}".`}
   >
-    <ul>
+    <ul class="divide-y divide-rule border-y border-rule">
       {page.data.map(data => <Card {...data} />)}
     </ul>
   </Main>

@@ -181,11 +181,16 @@ const t = useTranslations(locale);
     }
 
     .pagefind-ui__result-title a {
-      color: var(--accent);
+      font-family: var(--font-display);
+      color: var(--ink-heading);
       outline-offset: 1px;
       outline-color: var(--accent);
-      text-decoration-style: dashed;
+      text-decoration-style: solid;
       text-underline-offset: 4px;
+    }
+
+    .pagefind-ui__result-title a:hover {
+      color: var(--accent);
     }
 
     .pagefind-ui__result-title a:focus-visible,

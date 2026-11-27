@@ -9,22 +9,31 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, lang, ...props } = data;
+const { title, description, lang, pubDatetime, modDatetime, timezone } = data;
 ---
 
-<li class="my-6">
+<li>
   <a
     href={getPostUrl(id, filePath, Astro.currentLocale)}
-    class:list={[
-      "inline-block text-lg font-medium text-accent",
-      "decoration-dashed underline-offset-4 hover:underline",
-      "focus-visible:no-underline focus-visible:underline-offset-0",
-    ]}
+    {lang}
+    class="group block py-4"
   >
-    <Heading lang={lang}>
+    <Heading
+      class="font-display text-h3 leading-tight font-medium text-ink-heading underline decoration-transparent decoration-[1.5px] underline-offset-4 transition-colors duration-(--dur-micro) group-hover:text-accent group-hover:decoration-current"
+    >
       {title}
     </Heading>
+    <Datetime
+      {pubDatetime}
+      {modDatetime}
+      {timezone}
+      uiLocale={lang}
+      size="inherit"
+      showIcon={false}
+      class="mt-1.5 font-mono text-[0.78rem]"
+    />
+    <p class="mt-1 text-[0.95rem] leading-[1.55] text-ink-muted">
+      {description}
+    </p>
   </a>
-  <Datetime {...props} />
-  <p lang={lang}>{description}</p>
 </li>
