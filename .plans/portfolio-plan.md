@@ -61,10 +61,10 @@ tovacinni/research-website-template (publication rows — design only, repo is s
 ## 2.5 Design system — single-column academic layout ("quiet craft")
 
 Single-column academic dossier (`58rem` container, hairline-ruled top headings, shared
-`11rem` left gutter across every section). Keeps the warm-paper palette, desaturated
+`11rem` left gutter across every section). Uses the cool-alabaster palette, desaturated
 slate-blue accent, dark mode, and near-0 JS bar.
 
-### Colour — warm neutral paper, desaturated blue accent
+### Colour — cool neutral alabaster, desaturated blue accent
 
 Light is the **default**. All five studied references are light; report 3 found
 dark-SaaS-by-default is itself a slop tell. Dark mode is a token re-point, not a
@@ -77,42 +77,39 @@ FOUC script and `theme.ts` share the same mode/effective split.
 
 | Token | Light | Dark | Role |
 |---|---|---|---|
-| `--paper` | `#fdfcfa` | `#16161a` | odd sections |
-| `--paper-alt` | `#f8f7f3` | `#1c1c21` | even sections (band) |
-| `--ink` | `#1a1a18` | `#eceae6` | body text |
-| `--ink-heading` | `#312f2b` | `#eceae6` | headings |
-| `--ink-muted` | `#57544d` | `#a8a49c` | subtitles, metadata |
+| `--paper` | `#fafaf8` | `#151518` | odd sections |
+| `--paper-alt` | `#f3f3f1` | `#1b1b20` | even sections (band) |
+| `--ink` | `#1f1f1e` | `#e7e6e2` | body text |
+| `--ink-heading` | `#111110` | `#f5f5f3` | headings |
+| `--ink-muted` | `#5c5c58` | `#9c9b95` | subtitles, metadata |
 | `--accent` | `#2c5f8a` | `#7fb0d4` | links |
-| `--accent-ink` | `#ffffff` | `#16161a` | text on an accent fill |
+| `--accent-ink` | `#ffffff` | `#151518` | text on an accent fill |
 | `--ink-warn` | `#a3382a` | `#e08c74` | failure states, search marks |
 | `--ink-ok` | `#24603a` | `#7fc79b` | success states |
-| `--surface` | `#eeece5` | `#26262d` | code blocks, table stripes, chips |
-| `--rule` | `#e6e3dc` | `#2a2a30` | hairlines |
+| `--surface` | `#e8eaee` | `#24262e` | code blocks, table stripes, chips |
+| `--rule` | `#e4e4e2` | `#2e3038` | hairlines |
+| `--code-bg` | `#f0f0ee` | `#222227` | inline code background |
+| `--code-ink` | `#1c1c1b` | `#e4e3df` | inline code text |
 
-`--surface` sits at ~2× the band delta (1.15 vs `--paper`), so a code block still reads
-as a distinct box when it lands on `--paper-alt`. Accent stays AA on it (5.71 / 6.49).
-
-Warm-neutral paper rather than pure white — report 5 found `#f8f6ef`-family warm
-off-white across the field, and it's kinder for long reading. **`--accent` is a
-desaturated slate blue** (hue 207, sat 52%) — it keeps the calm blue register the user
-liked while stepping away from `#1565c0` Material Blue (sat 80%), which is the
-AI-slop hue family. **Footprint ≤5%:** links, the active nav item, and the award pill.
-Never a button flood, never a gradient. The ⌘K palette marks matches in `--ink-warn` at
-600 weight, not accent: accent blue is too near the body ink to find at a glance in
-light mode. That gives the token two jobs, which is accepted because a failure state and
-a search mark never share a screen (5.63 light / 5.85 dark on the selected row).
+Cool alabaster (`#fafaf8`) paired with neutral surfaces (`#f3f3f1`, `#e8eaee`, `#f0f0ee`)
+replaces the earlier yellow-tinted parchment tokens (`#fdfcfa` / `#eeece5`) so
+long-form posts read like crisp lab publications (2026-11-26). **`--accent` is a
+desaturated slate blue** (hue 207, sat 52%) with **footprint ≤5%** (links, active
+nav/ToC dot, topic eyebrow, award pill). The ⌘K palette marks matches in `--ink-warn`
+at 600 weight because accent blue sits too close to body ink in light mode.
 
 **Contrast verified** (WCAG AA needs 4.5 body / 3.0 large), computed both bands:
 
 | Pair | on `--paper` | on `--paper-alt` |
 |---|---|---|
-| `--ink` | 17.00 | 16.26 |
-| `--ink-muted` | 7.37 | 7.05 |
-| `--accent` | 6.58 | 6.30 |
-| `--ink-warn` | 6.49 | 6.21 |
-| `--ink-ok` | 7.29 | 8.52 |
+| `--ink` | 15.79 | 14.85 |
+| `--ink-heading` | 18.08 | 17.01 |
+| `--ink-muted` | 6.43 | 6.04 |
+| `--accent` | 6.46 | 6.08 |
+| `--ink-warn` | 6.37 | 5.99 |
+| `--ink-ok` | 7.15 | 6.73 |
 
-Band pair itself: 1.045 light, 1.063 dark.
+Inline code contrast: 14.95 light, 12.33 dark. Band pair: 1.063 light, 1.062 dark.
 
 These names replace AstroPaper's `--background` / `--foreground` / `--border`
 (decided 2026-08-02). Tailwind derives the utilities from `@theme inline`, so the
@@ -126,7 +123,9 @@ site theme and the OS theme disagree.
 
 UI and homepage body use **IBM Plex Sans** (16 px floor, tabular figures for dates).
 Headings and blog article bodies use **Newsreader** (preserving its optical match with
-KaTeX). **JetBrains Mono** stays limited to code blocks, BibTeX, and project names.
+KaTeX). **Source Code Pro** (roman + italic, Latin + Vietnamese) renders code blocks,
+inline code, BibTeX, and monospace metadata (switched from JetBrains Mono on 2026-11-26
+for wider apertures and true italics with Monokai).
 
 | Role | 375 px | 1440 px | `clamp()` |
 |---|---|---|---|
@@ -137,24 +136,29 @@ KaTeX). **JetBrains Mono** stays limited to code blocks, BibTeX, and project nam
 | meta | 14 | 15 | `clamp(0.875rem, 0.8574rem + 0.0751vw, 0.9375rem)` |
 
 Fluid via `clamp()`. Base body leading is **1.6** with a **65ch** prose measure;
-headings use weight **600** (article headings in `.app-prose` use **700** so titles
-stay heavier than `<strong>` at 600). `.app-prose` must set its own `font-size` and
-h1–h3 rules because the typography plugin otherwise resets reading pages to 16 px.
-Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display` on
-`#article`), with inline code at **0.8em** to match Newsreader optically.
+headings use weight **600**. Blog posts use a centered **32 px** near-black Newsreader
+title (`clamp(1.7rem, 1.5944rem + 0.4507vw, 2rem)`) with inline back link, topic
+eyebrow, deck, and hairline-ruled meta strip; `.app-prose` scales section headings
+proportionally (**23 px** h2, **18.4 px** h3) over **17 px** Newsreader
+(`leading-[1.68]`) in a **42rem** column. Inline code uses borderless neutral tints
+(`0.83em`); Markdown tables render in **15 px Newsreader** with `booktabs` horizontal
+rules, tabular numbers, Markdown alignment support, automatic outer padding on
+highlighted rows via `:has()`, and a `rehypeWrapTables` scroll wrapper.
 
 ### Layout
 
-- **Single column with top headings.** Container is `58rem` on `/` via `--app-width`
-  and `48rem` on reading pages. Each section uses a hairline-ruled `<h2>` and
-  `py-5 sm:py-6` padding, aligned to one `11rem` left gutter.
+- **Single column with top headings.** Container is `58rem` on `/` via `--app-width`,
+  `48rem` on reading pages, and `42rem` on blog post columns. Each homepage section uses
+  a hairline-ruled `<h2>` and `py-5 sm:py-6` padding, aligned to one `11rem` left gutter.
 - **Sticky `Header.astro`.** Solid `bg-paper` bar. On `/` it shows desktop section anchors
   (`News`, `Publications`, `Experience`, `Competitions`, `Projects`) with active-section
   scroll highlighting on the left, a collapsible mobile section menu below `md` (with
   `minhnguyent546` on the left so the author's name does not repeat above the hero `h1`),
   and `Blog`, search, and the theme toggle on the right. Subpages show a monospace `~/`
   home link that expands to `/home/minhnguyent546/` on hover (with a 10% chance of
-  `/root/`). `scroll-padding-top` clears the header height.
+  `/root/`). Blog posts pass `autoHide` (slides away on scroll down, returns on scroll up
+  or keyboard focus), and active nav uses a 1 px solid underline. `scroll-padding-top`
+  clears the header height.
 
 
 ## 3. Content inventory (from GitHub README)
@@ -240,7 +244,7 @@ Blog articles render **17 px Newsreader** in a **45.5rem** column (`font-display
 |---|---|---|
 | Headings / display / blog body | **Newsreader** (wght 400–700, roman + italic) | `--font-display` |
 | Homepage body / UI | **IBM Plex Sans** (wght 400–700, roman + italic) | `--font-app` |
-| Code / dates / metadata | **JetBrains Mono** (wght 400–600) | `--font-mono` |
+| Code / dates / metadata | **Source Code Pro** (wght 400–600, roman + italic) | `--font-mono` |
 
 All OFL. Astro's top-level `fonts` config loads all three browser families with Latin
 and Vietnamese subsets. Newsreader keeps blog prose optically matched to KaTeX (x-height
@@ -249,8 +253,8 @@ A separate build-only Archivo TTF family supplies Satori Vietnamese glyphs for O
 
 - **The `opsz` axis is omitted on purpose.** It doubles the file, from 57 KB to 129 KB,
   and the type scale runs only 14–38 px.
-- **`styles` defaults to `["normal", "italic"]`.** Italic is a second file. Only
-  Newsreader declares it.
+- **`styles` defaults to `["normal", "italic"]`.** Italic is a second file. All three
+  browser families declare italic (Source Code Pro needs true italics for Monokai).
 - **satori cannot read woff2**, so the OG routes use a separate build-only family,
   `--font-archivo-og`. Do not add `ttf` to a browser family: that puts static
   `@font-face` blocks in the browser stylesheet, and a heading at weight 500 then pulls
@@ -274,7 +278,7 @@ A separate build-only Archivo TTF family supplies Satori Vietnamese glyphs for O
 | Tooltips | **CSS-only, local to the first use** | Keep the social tooltip in `Socials.astro` while it is the only use. When a second use appears, extract `Tooltip.astro` with start, center, and end alignment. Keep it free of runtime JavaScript. Add Floating UI only if automatic collision handling or portals become necessary. |
 | Search | **Pagefind 1.5** via `astro-pagefind` | Static, indexes built HTML, lazy chunked index. `data-pagefind-body` on articles. |
 | ⌘K palette | **Hand-rolled vanilla island** over a build-time index, with Pagefind for post bodies | **Done (2026-08-06).** `data-pagefind-body` sat on the post route alone (Pagefind saw 2 pages of 12) until 2026-08-09, when it moved onto the homepage `<main>` (Pagefind saw 3 pages). Homepage full-text was reverted the same day: it surfaced snippets in the palette whose URL was `/`, so selecting them jumped to the page top. The build-time index now carries every homepage section — including the Awards, which share `src/data/awards.ts` — so full-text stays on post bodies. The palette therefore carries its own JSON index (23 rows, 1.6KB gz), inlined as `application/json` on every page, and loads Pagefind core (12.8KB gz, not the 29.6KB UI) only when a query reaches 3 characters. Each row also indexes the fields it does not display — a paper's full title, authors, and abstract, a competition's summary, a project's stack, a post's tags — because searching only the two shown fields missed "CoTu", which appears in the summary alone. A row that matches on one of those appends the matched span to its detail line, so it always shows why it is listed, and a match late in a long line slides into view rather than sitting past the ellipsis. Matching runs inside words, since "auxi" has to find "Auxiliary" as the visitor types; word-start matches are ranked above interior ones so "ot" finds ViCLIP-OT before "chatbot". A translated pair contributes one row; the dropped title rides along in the same hidden field so a Vietnamese query still matches. The bootstrap costs 2 eager requests (1.1KB gz) because Astro externalizes any `<script>` that holds an import, and Vite adds its preload helper. `<dialog>` + `showModal()` gives the focus trap, the top layer, and Escape. Escape needs three parts, because the native path alone did not hold. The keydown handler on the input calls `close()` itself: the `cancel` event never arrived in one real Chrome session, although the keydown did, which is what an extension that binds Escape at the browser level does. `closedby="any"` states the intent to the browser. The bootstrap holds a cancel flag, since Escape in the gap between the shortcut and the lazy chunk reaches no dialog and the panel would open after the visitor dismissed it. A footer names the four keys, because a palette that opens on a shortcut has to say how to leave. Rejected: cmdk (drags React), ninja-keys/astro-command-palette (dead). |
-| Code blocks | **Astro Shiki + `@shikijs/transformers` + custom copy button** | Build-time dual themes, filename labels, line and word highlights, and diffs. Expressive Code stays deferred because this pipeline already meets the requirement. |
+| Code blocks | **Astro Shiki + `@shikijs/transformers` + custom copy button** | Build-time dual themes: custom WCAG-AA `monokaiLightTheme` (`#f4f5f6`) in light mode and built-in `"monokai"` (`#272822`, `#88846F` comments lifted to `#9c9784` for 5.08:1 AA) in dark mode (2026-11-26). Supports filename labels, line/word highlights, and diffs. Expressive Code stays deferred. |
 | Math | **KaTeX** (`remark-math` + `rehype-katex`) | Fully build-time, 0 runtime JS. Self-host KaTeX fonts. Serif body solves size harmony; MathJax only if exotic LaTeX needed. A `remarkHeadingIds` plugin (2026-08-11) pre-slugs every heading from the raw markdown text, so a heading that contains inline math still gets a TOC anchor that resolves — remark-toc and Astro otherwise slug it differently. |
 | Page transitions | **Native CSS `@view-transition`** (Chrome/Edge 126+, Safari 18.2+; **not Firefox**) + CSS micro-interactions (`@starting-style`, 150–250ms, `prefers-reduced-motion` guarded) | **Done (2026-08-01).** `ClientRouter` removed from `Layout.astro`; `@view-transition { navigation: auto }` in `global.css`. Homepage went from a 16KB blocking module fetch to **0 external JS / 1.9KB inline** (2.8KB since the boot intro). Removing it makes every `astro:page-load` / `after-swap` / `before-swap` listener dead — 7 files had to be rewired (see §6 gotcha 9). **Correction:** an earlier draft of this row said "cross-browser now" — that was wrong. MDN rates the at-rule "Limited availability" (lowest Baseline tier); Gecko meta bug 1860854 is still NEW, unassigned, no milestone, 14 open deps. Firefox therefore gets a plain hard navigation, and since `ClientRouter` used the *same-document* API it **would** have animated there — a real if small regression, accepted because 16KB on 100% of loads against the §1 perf bar outweighs animation for ~3–5% of visitors on a site where most visits are 1–2 pages deep. Revisit if Firefox ships. Add `motion/mini` (2.6KB) only if a real need appears. |
 | OG images | **satori** pipeline (ships with AstroPaper) | Alternative if friction: `astro-og-canvas` 0.13 (Astro 7 ready, simpler). |
@@ -283,9 +287,9 @@ A separate build-only Archivo TTF family supplies Satori Vietnamese glyphs for O
 | Sitemap | `@astrojs/sitemap` (+ `site` set in config) | |
 | Comments | **Skip for v1** | If wanted later: giscus via lazy plain `<script>` (audience has GitHub accounts). |
 | Section nav | **Sticky `Header.astro` anchors** | Desktop `/` shows four section links (`Publications`, `Experience`, `Competitions`, `Projects`) beside `Blog`, search, and theme toggle with 0 JS. |
-| Post TOC | **`PostTOC.astro`** — fixed "On this page" rail in the gutter right of the article column, current heading marked | **Done (2026-08-21).** Headings come build-time from `render()` (h2–h3); the script only scroll-spies, same contract as `SectionNav` (reading line at 35% of viewport, clicked link pinned, last heading at page bottom). Hidden below `xl`: the 48 rem container leaves no gutter before that, and the inline remark-toc block stays the TOC there. At `xl` and up the roles flip: the rail is 14 rem wide (fits most headings on one line) and a style built in the component from the `TOC_HEADING` slugs hides the inline block — its heading ids plus every `details:not(.spoiler)`, since spoilers are the only other `<details>` and carry the class by convention (`typography.css`). For math-bearing headings, `remarkHeadingIds` renders inline KaTeX HTML into `remarkPluginFrontmatter.tocHtml` before `rehype-katex` flattens `headings[].text`. The inline TOC's own heading is excluded from the rail through `TOC_HEADING`, moved to `src/utils/tocHeading.ts` so `astro.config.ts` and the filter share one source. Label is `post.onThisPage` ("On this page" / "Mục lục"). Rail hrefs are percent-decoded before `getElementById`, since github-slugger keeps Vietnamese diacritics. |
+| Post TOC | **`PostTOC.astro`** — fixed "On this page" rail in the gutter left of the article column, current heading marked | **Updated (2026-11-27).** Headings come build-time from `render()` (h2–h3); the script scroll-spies (reading line at 35% of viewport, clicked link pinned, last heading at page bottom). Hidden below `78rem` (1248 px), where the inline remark-toc block stays visible. At `78rem` and up, a borderless `12.5px` sans rail (`w-46`, 68 px gap at 1248 px widening to 92 px at `86rem`+) sits left of the 42 rem prose column with a sliding `6px` accent dot; at scroll top it rests as the muted uppercase label plus three hairline bars and expands on mouse hover, keyboard focus, or once the reader scrolls into `#article` (with `<noscript>` fallback visible), while a component style hides the inline block (`TOC_HEADING` slugs in `src/utils/tocHeading.ts` plus `details:not(.spoiler):not(.callout)`). For math-bearing headings, `remarkHeadingIds` renders inline KaTeX HTML into `remarkPluginFrontmatter.tocHtml`. Rail hrefs are percent-decoded before `getElementById` because github-slugger keeps Vietnamese diacritics. Label is `post.onThisPage` ("On this page" / "Mục lục"). On blog posts, `Header` runs with `autoHide` (slides out on scroll down, returns on scroll up or keyboard focus), and the top reading progress bar is removed. |
 | Analytics | **GoatCounter** (hosted, free, no cookies/banner) | **Done (2026-08-08).** `GoatCounter.astro` sits behind `import.meta.env.PROD` in `Layout.astro`, so dev sessions do not count, and GoatCounter ignores `localhost`. Both `<script>` tags use `is:inline` so Astro does not bundle them and the browser reads `data-goatcounter`. The first script strips `ref`, `src`, `source`, `campaign`, and `utm_*` via `history.replaceState` inside `window.goatcounter.referrer` after `count.js` copies `location.search` (including background tabs), with a fallback when `count.js` is blocked or filtered. **Not** Cloudflare Web Analytics — free tier being wound down. Umami self-hosted as alt. |
-| Boot intro | **`BootSequence.astro`** — systemd-style boot log on `/`, once per session | Overrides §1's "no terminal cosplay" for this one component. It uses the site tokens and JetBrains Mono on `--paper`, not a black-and-green tty. `index.astro` passes the entry ids of the publications, competitions, and projects collections. Each section prints at most 5 `Started <id>.service` lines and then counts the rest, so a long collection cannot flood the log. A section with no entries prints nothing. Joke lines follow. The sequence has a fixed length near 4.1 s: a cap on the log compresses the row gaps as content grows, and the last 2 s hold on the login prompt to let the visitor read the log. The log clips at the height of the screen and follows the printing line down, so a long list cannot push a row off the top. Any key ends it early. A press of `t` opens `/tty3` instead. Pointer and scroll input do not end it. A session gate on `<html data-boot>` stops a replay and also skips the overlay under `prefers-reduced-motion: reduce`. Cost against the §1 bar: homepage inline JS goes from 1.9 KB to 2.8 KB, and external JS on `/` stays at 0. |
+| Boot intro | **`BootSequence.astro`** — systemd-style boot log on `/`, once per session | Overrides §1's "no terminal cosplay" for this one component. It uses the site tokens and `--font-mono` on `--paper`, not a black-and-green tty. `index.astro` passes the entry ids of the publications, competitions, and projects collections. Each section prints at most 5 `Started <id>.service` lines and then counts the rest, so a long collection cannot flood the log. A section with no entries prints nothing. Joke lines follow. The sequence has a fixed length near 4.1 s: a cap on the log compresses the row gaps as content grows, and the last 2 s hold on the login prompt to let the visitor read the log. The log clips at the height of the screen and follows the printing line down, so a long list cannot push a row off the top. Any key ends it early. A press of `t` opens `/tty3` instead. Pointer and scroll input do not end it. A session gate on `<html data-boot>` stops a replay and also skips the overlay under `prefers-reduced-motion: reduce`. Cost against the §1 bar: homepage inline JS goes from 1.9 KB to 2.8 KB, and external JS on `/` stays at 0. |
 | tty3 shell | **`src/pages/tty3/`** + `src/scripts/tty.ts` — a simulated shell over the site content | The sequel to the boot intro: the log is tty1 and its login prompt is tty2, so the shell is tty3. Hand-rolled, which makes it the third exception to §1. xterm.js was rejected: it is 117 KB gz and supplies only VT rendering, so every command is hand-written either way. `_utils/buildFs.ts` turns the collections into a flat `path -> body` map at build time, so a directory is any path prefix and new content appears in the shell with no code change. The map ships as a JSON `<script>` (4 KB gz), which is HTML rather than JS; the shell itself is 2.8 KB gz and loads only on this route. `buildFs` keys the content at `/home/visitor`, and the login renames that home to the name the visitor typed, so `pwd`, `ls /home/<name>`, and the prompt all agree. Login accepts each name that has a non-whitespace character. A blank name produces no output and keeps the login prompt. A blank password shows the same error as a locked account. Any non-whitespace password opens an account that is not locked. `root` and `minhnguyent546` are the exception: no password logs in as either, and the two homes `/root` and `/home/minhnguyent546` refuse `ls`, `cd`, and `cat`. They are listed by their parent but hold nothing, so the door exists and stays shut. 17 command names, Tab completion, and history. `fastfetch` and `neofetch` are two names for one built-in summary of the simulated host. The summary has a fixed CPU and GPU profile with no telemetry. `open` uses a new tab, which leaves the session running behind it. All output goes through `textContent`, since `echo` reflects what the visitor typed. A reload restores the screen, the working directory, and the history from `sessionStorage`: the lines are stored as text and re-printed through the same path, so the guard holds. `exit` and `Ctrl+D` use the same logout path. `Ctrl+D` replaces the browser bookmark shortcut while the tty input has focus. Logout removes the tty3 session and replaces its history entry. A direct return starts at login, and Back cannot restore the logged-in tty. The store is the visitor's to edit, so a restored name is checked against the locked accounts again. The last 500 lines are kept, which is 30 KB and 0.13 ms to write. |
 | Photon sphere | **`src/pages/photon-sphere.astro`** + `src/scripts/photon-sphere.ts` + `photon-sphere.frag.glsl` — a ray-traced Schwarzschild black hole on a hidden route | The first easter egg: no menu links here. Overrides §1's "no 3D/WebGL hero scenes" and is the fourth hand-rolled exception. Hidden is not the same as unfindable, so three hints lead here: the 404 page names one of the two eggs, picked at random on each load; the tty3 shell carries `/dev/photon_sphere` for `ls` and `cat`, and `open photon`; and a comment in every page head names both. The 404 pick is the one place the near-zero-JS rule bends — the site is static, so only the browser can vary it. The first route still renders server-side, so the hint works without JavaScript. Raw WebGL2, no three.js: the feature is one full-screen fragment shader, and a scene graph, camera rig, and material system are the parts it does not use. WebGL2 is required, not preferred — GLSL ES 1.00 forbids the non-constant `break` that stops the integrator at the horizon, and `highp` in a fragment shader is optional there. Every null geodesic in Schwarzschild lies in a plane through the origin, so each pixel integrates one 2D ODE, `d²u/dφ² = -u + 1.5u²`, for 520 leapfrog steps at `dφ = 0.02`, about 596°: the n=1 lensing ring is light that made one extra half-loop, so it needs ~540 before it can form and a shorter sweep forces a renderer to fake the bright rim. Leapfrog, not RK4: one force evaluation per step buys four times the steps, and step count is what resolves the disk crossings. The shadow, the Einstein ring, and the photon sphere are not drawn — they fall out of the integration. Zeroing the `1.5u²` term shrinks the shadow by 24%, which is the check that the lensing is real. Disk emission combines Doppler and gravitational redshift into one factor `g`, with intensity `g⁴` and temperature `T·g` through the Helland–Bartlett blackbody fit; the measured limb ratio is 2.6. Equatorial crossings composite front to back at low opacity, which shows the disk over and under the hole and lets the lensed higher-order images form the rim at the shadow edge; a drawn rim there is the standard fake. The crossing is solved in closed form, not interpolated, so its error does not depend on the step size. Seen edge-on one pixel covers many noise cells, so the disk texture drops the octaves finer than the pixel and renormalizes the rest; fading them all toward the mean instead lowers the contrast of the whole texture, which is the same operation as deleting it. The footprint comes from the distance and the grazing angle, because `dFdx` is undefined where the disk is sampled in a divergent branch. The noise tiles over 32 cells per turn: `atan` jumps by 2π across its branch cut, and the two sides otherwise read unrelated cells and join as a wedge running out from the hole. Octaves double and offset rather than rotate, since a rotation mixes the two axes and destroys that period. Half a code of dither goes in before the 8-bit write, or the shallow disk gradient bands into contour lines. `devicePixelRatio` caps at 1.5 and the buffer at 1.6 M pixels: at 520 steps per pixel the fragment count is the whole budget. The draw rate is capped at 30 fps, since a 90 s orbit does not need display-rate updates; the frame budget carries a 2 ms margin so a 120 Hz display does not miss the deadline every frame and halve the rate again. `visibilitychange` stops the loop and rebases the clock, so the disk resumes instead of jumping. `webglcontextrestored` rebuilds every GL object and forces the resize, since the canvas keeps its size and would otherwise never re-upload `uResolution` to the new context. `prefers-reduced-motion: reduce` draws one frame and starts no rAF. No WebGL2 reveals one line of text; a canvas-2D version of a per-pixel integrator is a different feature, not a fallback. `noindex` through a new `Layout` prop, and the `astro.config.ts` sitemap filter drops this route and `/tty3/`. Full-bleed with no Header or Footer, `role="img"`, and an English label kept out of the i18n contract: the route has no locale prefix and will not be translated. |
 

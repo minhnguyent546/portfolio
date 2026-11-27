@@ -68,7 +68,7 @@ The `hallmark` skill governs visual work.
 
 - **No invented content.** Every metric, date, rank, and link must come from the verified content inventory in plan §3. The simulated `tty3` hardware is the sole exception, and each hardware field must include `[simulated]` so it cannot read as a real claim.
 - **No slop tells.** Avoid Inter, purple or blue gradients, bento grids, glassmorphism, centered heroes, emoji icons, italic headings, fake browser chrome, and `transition: all`.
-- **Quiet craft layout.** Single-column academic layout (`58rem` on `/`, `48rem` on reading pages, hairline-ruled `<h2>` headings, `11rem` left gutter). Light mode is the default; dark mode re-points tokens in `src/styles/theme.css`. Newsreader renders headings and blog prose, IBM Plex Sans renders homepage body and UI, and JetBrains Mono renders code and metadata. See plan §2.5 for the full scale and tokens.
+- **Quiet craft layout.** Single-column academic layout (`58rem` on `/`, `48rem` on reading pages, `42rem` article column with a centered `32px` post header and deck on blog posts; hairline-ruled `<h2>` headings and `11rem` left gutter on `/`). Light mode is the default; dark mode re-points tokens in `src/styles/theme.css`. Newsreader renders headings and blog prose, IBM Plex Sans renders homepage body and UI, and Source Code Pro renders code and metadata. See plan §2.5 for the full scale and tokens.
 - **No redundant helper copy.** Do not add subtitles, helper text, or descriptions beneath headings, labels, cards, or settings by default. Use one concise, self-explanatory label. Add supporting copy only when requested or needed to prevent user error, and never restate the heading.
 
 ## Performance bar
