@@ -6,7 +6,6 @@ import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
 import IconSystem from "@/assets/icons/IconSystem.svg";
-import IconUnderline from "@/assets/icons/IconUnderline.svg";
 import IconX from "@/assets/icons/IconX.svg";
 import config from "@/config";
 import { useTranslations } from "@/i18n";
@@ -16,9 +15,11 @@ import CommandPalette from "./palette/CommandPalette.astro";
 
 type Props = {
   sections?: { id: string; label: string }[];
+  /** Hide the sticky bar while scrolling down on reading pages; reveal on scroll up. */
+  autoHide?: boolean;
 };
 
-const { sections = [] } = Astro.props;
+const { sections = [], autoHide = false } = Astro.props;
 const { site, features } = config;
 
 // Blog reads the collection, so the link is dead until the first post exists.
@@ -62,6 +63,7 @@ const showPalette = features.search !== false && !isActive("/tty3");
 <header
   id="site-header"
   lang="en"
+  data-auto-hide={autoHide ? "true" : undefined}
   class="sticky top-0 z-30 border-b border-rule bg-paper"
 >
   <div
@@ -141,9 +143,9 @@ const showPalette = features.search !== false && !isActive("/tty3");
             <IconSearch class="absolute top-1/2 left-1/2 size-5 -translate-x-1/2 -translate-y-1/2" />
             <span class="sr-only">{t.nav.search}</span>
             {isActive("/search") && (
-              <IconUnderline
+              <span
                 aria-hidden="true"
-                class="absolute bottom-0 w-5 scale-125"
+                class="absolute inset-x-1.5 bottom-0.5 h-px rounded-full bg-current"
               />
             )}
           </LinkButton>
@@ -370,9 +372,59 @@ const showPalette = features.search !== false && !isActive("/tty3");
       sync();
     }
   }
+
+  if (header?.dataset.autoHide === "true") {
+    let lastY = scrollY;
+    let hidden = false;
+    let ticking = false;
+
+    const setHidden = (next: boolean) => {
+      if (next === hidden) return;
+      hidden = next;
+      header.dataset.hidden = String(next);
+    };
+
+    const update = () => {
+      const y = Math.max(0, scrollY);
+      const delta = y - lastY;
+      if (y <= 80) {
+        setHidden(false);
+        lastY = y;
+      } else if (delta > 8) {
+        setHidden(true);
+        lastY = y;
+      } else if (delta < -6) {
+        setHidden(false);
+        lastY = y;
+      }
+      ticking = false;
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+
+    // Keyboard users tabbing into the header must see it immediately.
+    header.addEventListener("focusin", () => setHidden(false));
+  }
 </script>
 
 <style>
+  #site-header[data-auto-hide="true"] {
+    transition: transform 280ms var(--ease-out);
+  }
+
+  #site-header[data-auto-hide="true"][data-hidden="true"] {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
   /* Three-state theme icon: sun in light, moon in dark, the auto mark in system
      mode. `data-theme-mode` is set on <html> by the FOUC script before paint
      and kept in sync by theme.ts, so the icon never flashes a wrong state. */
