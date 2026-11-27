@@ -11,10 +11,12 @@
   --color-ink-ok: var(--ink-ok);
   --color-surface: var(--surface);
   --color-rule: var(--rule);
+  --color-code-bg: var(--code-bg);
+  --color-code-ink: var(--code-ink);
 
   --font-app: var(--font-ibm-plex-sans);
   --font-display: var(--font-newsreader);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-mono: var(--font-source-code-pro);
 
   /* Fluid scale (375px -> 1440px): h1 30-38, h2 22-26, h3 18-20, body 16-17, meta 14-15. */
   --text-meta: clamp(0.875rem, 0.8574rem + 0.0751vw, 0.9375rem);
@@ -36,32 +38,36 @@
      transitions when the site theme disagrees with the OS theme. */
   color-scheme: light;
 
-  --paper: #fdfcfa;
-  --paper-alt: #f8f7f3;
-  --ink: #1a1a18;
-  --ink-heading: #312f2b;
-  --ink-muted: #57544d;
+  --paper: #fafaf8;
+  --paper-alt: #f3f3f1;
+  --ink: #1f1f1e;
+  --ink-heading: #111110;
+  --ink-muted: #5c5c58;
   --accent: #2c5f8a;
   --accent-ink: #ffffff;
   --ink-warn: #a3382a;
   --ink-ok: #24603a;
-  --surface: #eeece5;
-  --rule: #dcd8d0;
+  --surface: #e8eaee;
+  --rule: #e4e4e2;
+  --code-bg: #f0f0ee;
+  --code-ink: #1c1c1b;
 }
 
 /* Dark theme values */
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --paper: #16161a;
-  --paper-alt: #1c1c21;
-  --ink: #eceae6;
-  --ink-heading: #eceae6;
-  --ink-muted: #a8a49c;
+  --paper: #151518;
+  --paper-alt: #1b1b20;
+  --ink: #e7e6e2;
+  --ink-heading: #f5f5f3;
+  --ink-muted: #9c9b95;
   --accent: #7fb0d4;
-  --accent-ink: #16161a;
+  --accent-ink: #151518;
   --ink-warn: #e08c74;
   --ink-ok: #7fc79b;
-  --surface: #26262d;
-  --rule: #34343c;
+  --surface: #24262e;
+  --rule: #2e3038;
+  --code-bg: #222227;
+  --code-ink: #e4e3df;
 }

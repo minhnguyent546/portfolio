@@ -17,9 +17,12 @@
     line-height: 1.2;
   }
 
-  h1,
-  h2 {
+  h1 {
     text-wrap: balance;
+  }
+
+  h2 {
+    text-wrap: pretty;
   }
 
   h1 {
@@ -50,9 +53,8 @@
        everything inside sizes in `em`, so the whole block scales with it. */
     font-size: var(--text-body);
 
-    /* Headings are heavier than bold text so a section title never reads
-       lighter than the emphasis inside it. Table headers stay at the label
-       weight (500). */
+    /* Headings stay heavier than body text without overwhelming the 32px
+       article title. Table headers share the same semibold weight. */
     h1,
     h2,
     h3,
@@ -65,24 +67,29 @@
     h2,
     h3,
     h4 {
-      @apply font-bold;
+      @apply font-semibold;
     }
 
     th {
-      @apply font-medium;
+      @apply font-semibold;
     }
 
-    /* The `prose` plugin ships its own sizes; defer to the fluid scale. */
+    /* Proportional article heading scale under the 32px post title. */
     h1 {
       font-size: var(--text-h1);
     }
 
     h2 {
-      font-size: var(--text-h2);
+      font-size: 1.4375rem;
+      letter-spacing: -0.012em;
+      margin-top: 2.3em;
+      margin-bottom: 0.65em;
     }
 
     h3 {
-      font-size: var(--text-h3);
+      font-size: 1.15rem;
+      margin-top: 1.8em;
+      margin-bottom: 0.5em;
     }
 
     p,
@@ -96,7 +103,7 @@
     }
 
     a {
-      @apply wrap-break-word text-ink decoration-dashed underline-offset-4 hover:text-accent focus-visible:no-underline;
+      @apply wrap-break-word text-ink decoration-accent/60 decoration-solid decoration-1 underline-offset-[3px] hover:text-accent hover:decoration-accent focus-visible:no-underline;
     }
 
     ul {
@@ -156,35 +163,103 @@
       font-size: 1em;
     }
 
+    .table-scroll {
+      @apply my-7 w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus-visible:outline-dashed;
+    }
+
     table {
+      @apply my-0 w-full border-collapse font-display text-[0.9375rem] leading-normal;
+
+      font-variant-numeric: lining-nums tabular-nums;
+      border-top: 1.5px solid
+        color-mix(in srgb, var(--ink-heading) 45%, transparent);
+      border-bottom: 1.5px solid
+        color-mix(in srgb, var(--ink-heading) 45%, transparent);
+
       th,
       td {
-        @apply border border-rule p-2;
+        @apply border-0 border-b border-rule/85 px-[0.55rem] py-2 text-left align-baseline;
+      }
+
+      th[align="center"],
+      td[align="center"] {
+        @apply text-center;
+      }
+
+      th[align="right"],
+      td[align="right"] {
+        @apply text-right;
+      }
+
+      tr:last-child td {
+        @apply border-b-0;
       }
 
       th {
-        @apply bg-surface py-1.5;
+        @apply bg-transparent align-bottom leading-snug text-ink-heading;
+
+        border-bottom-color: color-mix(
+          in srgb,
+          var(--ink-heading) 25%,
+          transparent
+        );
+      }
+
+      th:first-child,
+      td:first-child {
+        @apply ps-0;
+      }
+
+      th:last-child,
+      td:last-child {
+        @apply pe-0;
+      }
+
+      /* Restore outer cell padding across the whole table when any row or cell
+         carries a custom background so columns stay aligned inside the tint. */
+      &:has(
+        tr[style*="background"],
+        td[style*="background"],
+        tr[class],
+        tr[data-highlight]
+      ) {
+        th:first-child,
+        td:first-child {
+          @apply ps-[0.55rem];
+        }
+
+        th:last-child,
+        td:last-child {
+          @apply pe-[0.55rem];
+        }
+      }
+
+      td:not(:first-child) {
+        @apply whitespace-nowrap;
       }
     }
 
-    code {
-      @apply rounded bg-surface/75 p-1 wrap-break-word text-ink before:content-none after:content-none;
+    :not(pre) > code {
+      @apply rounded-[3px] bg-code-bg px-[0.3em] py-[0.05em] wrap-break-word text-code-ink before:content-none after:content-none;
 
-      /* JetBrains Mono's tall x-height makes 0.875em read larger than the
-         Newsreader body around it. 0.8em matches the serif optically. */
-      font-size: 0.8em;
+      font-size: 0.83em;
+    }
+
+    :is(h2, h3) code {
+      @apply font-medium;
+
+      font-size: 0.84em;
     }
 
     .astro-code code {
-      @apply flex-[1_0_100%] bg-inherit p-0;
+      @apply flex-[1_0_100%] border-0 bg-transparent p-0 text-inherit before:content-none after:content-none;
 
-      /* The pre already sizes to 0.8em; keep the code inside it at 1em so the
-         two 0.8em rules above don't compound to 0.64em. */
       font-size: 1em;
     }
 
     pre {
-      font-size: 0.8em;
+      font-size: 0.84375rem;
+      line-height: 1.58;
     }
 
     blockquote {
@@ -217,23 +292,26 @@
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply flex border bg-(--shiki-light-bg) text-(--shiki-light) outline-rule [&_span]:text-(--shiki-light);
+    @apply flex rounded-lg border border-rule bg-(--shiki-light-bg) text-(--shiki-light) outline-rule [&_span]:text-(--shiki-light);
+  }
+
+  .astro-code span {
+    font-style: var(--shiki-light-font-style, normal);
   }
 
   html[data-theme="dark"] .astro-code {
-    @apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    @apply border-rule bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
   }
 
-  /* Both themes ship a comment colour below WCAG AA on their own background:
-     min-light #C2C3C5 is 1.76, night-owl #637777 is 3.87. The theme writes the
-     value into an inline `style`, which outranks a rule that re-points the
-     custom property, so set `color` itself. */
-  .astro-code span[style*="--shiki-light:#C2C3C5"] {
-    color: #727376 !important;
+  html[data-theme="dark"] .astro-code span {
+    font-style: var(--shiki-dark-font-style, normal);
   }
 
-  html[data-theme="dark"] .astro-code span[style*="--shiki-dark:#637777"] {
-    color: #8a9e9e !important;
+  /* Shiki's built-in Monokai emits `#88846F` for comments (3.95:1 on `#272822`,
+     below WCAG AA). The theme writes the value into an inline `style`, which
+     outranks a custom-property override, so lift `color` directly to 5.08:1. */
+  html[data-theme="dark"] .astro-code span[style*="--shiki-dark:#88846F" i] {
+    color: #9c9784 !important;
   }
 
   /* Styles for Shiki transformers */

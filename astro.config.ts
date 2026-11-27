@@ -19,7 +19,9 @@ import remarkCollapse from "remark-collapse";
 import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import config from "./astro-paper.config";
+import { monokaiLightTheme } from "./src/utils/monokaiLightTheme";
 import { rehypeIgnoreMathml } from "./src/utils/rehypeIgnoreMathml";
+import { rehypeWrapTables } from "./src/utils/rehypeWrapTables";
 import { remarkHeadingIds } from "./src/utils/remarkHeadingIds";
 import { TOC_HEADING } from "./src/utils/tocHeading";
 import { transformerFileName } from "./src/utils/transformers/fileName";
@@ -69,10 +71,15 @@ export default defineConfig({
           },
         ],
       ],
-      rehypePlugins: [rehypeKatex, rehypeIgnoreMathml, rehypeCallouts],
+      rehypePlugins: [
+        rehypeKatex,
+        rehypeIgnoreMathml,
+        rehypeCallouts,
+        rehypeWrapTables,
+      ],
     }),
     shikiConfig: {
-      themes: { light: "min-light", dark: "night-owl" },
+      themes: { light: monokaiLightTheme, dark: "monokai" },
       defaultColor: false,
       wrap: false,
       transformers: [
@@ -120,12 +127,12 @@ export default defineConfig({
       subsets: ["latin", "vietnamese"],
     },
     {
-      name: "JetBrains Mono",
-      cssVariable: "--font-jetbrains-mono",
+      name: "Source Code Pro",
+      cssVariable: "--font-source-code-pro",
       provider: fontProviders.google(),
       fallbacks: ["ui-monospace", "monospace"],
       weights: ["400 600"],
-      styles: ["normal"],
+      styles: ["normal", "italic"],
       subsets: ["latin", "vietnamese"],
     },
     // Build-time only: satori cannot parse woff2, so the OG routes read these
