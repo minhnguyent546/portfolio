@@ -1,15 +1,15 @@
 ---
 /**
- * Fixed "On this page" rail for blog posts, in the gutter right of the
- * article column. Hidden below `xl` (1280 px): the 48 rem page container
- * leaves less than the rail's width plus margins before that, and the inline
+ * Fixed "On this page" rail for blog posts, in the gutter left of the
+ * article column. Hidden below `78rem` (1248 px): the 42 rem article column
+ * leaves less than the rail's width plus gutter before that, and the inline
  * remark-toc block stays the table of contents on narrow screens.
  *
- * Headings arrive build-time from `render()`; the script only marks the
- * current one. Same scroll-spy contract as the homepage `Header`: reading
- * line at a third of the viewport, clicked link pinned until the reader
- * scrolls, last heading selected at page bottom (short final sections never
- * reach the line).
+ * Headings arrive build-time from `render()`; the script reveals the rail once
+ * the reader scrolls past the post header and glides the active dot between
+ * headings. Same scroll-spy contract as the homepage `Header`: reading line at
+ * a third of the viewport, clicked link pinned until the reader scrolls, last
+ * heading selected at page bottom.
  */
 import Slugger from "github-slugger";
 import { TOC_HEADING } from "@/utils/tocHeading";
@@ -24,13 +24,11 @@ const { headings, label } = Astro.props;
 // At the rail's breakpoint the inline remark-toc block hides — the rail is
 // the table of contents there. The block carries no class of its own, so the
 // rule targets the heading ids slugged from TOC_HEADING plus every details
-// that is not a spoiler (the repo's spoiler convention, styled in
-// typography.css). 80rem is Tailwind's `xl`, the same breakpoint the rail
-// itself uses.
+// that is neither a spoiler nor a callout. 78rem (1248 px) matches the rail.
 const tocIds = TOC_HEADING.split("|").map(t => new Slugger().slug(t.trim()));
-const hideInlineToc = `@media (min-width: 80rem) {
+const hideInlineToc = `@media (min-width: 78rem) {
   ${tocIds.map(id => `.app-prose [id='${id}']`).join(",\n  ")},
-  .app-prose details:not(.spoiler) {
+  .app-prose details:not(.spoiler):not(.callout) {
     display: none;
   }
 }`;
@@ -38,60 +36,174 @@ const hideInlineToc = `@media (min-width: 80rem) {
 
 {
   headings.length > 0 && (
-    <nav
-      id="post-toc"
-      aria-label={label}
-      class="fixed start-[calc(50%+24rem)] top-20 hidden w-56 xl:block"
-    >
-      <p class="font-mono text-meta text-ink-muted">{label}</p>
-      <ul class="mt-2 max-h-[calc(100dvh-9rem)] [scrollbar-width:thin] space-y-0.5 overflow-y-auto border-s border-rule">
-        {headings.map(({ depth, slug, text, html }) => (
-          <li>
-            <a
-              href={`#${slug}`}
-              data-depth={depth}
-              class="-ms-px block border-s-2 border-transparent py-0.5 ps-3 text-meta leading-snug text-ink-muted hover:text-ink aria-[current]:border-accent aria-[current]:text-accent [&_.katex]:text-[1em] [&[data-depth='3']]:ps-8"
+    <>
+      <div
+        id="post-toc-zone"
+        data-visible="false"
+        class="toc-zone group fixed end-[calc(50%+25rem)] top-24 hidden w-46 font-app min-[78rem]:block min-[86rem]:end-[calc(50%+26.5rem)]"
+      >
+        <nav id="post-toc" aria-label={label}>
+          <button
+            type="button"
+            aria-controls="post-toc-list"
+            aria-expanded="false"
+            class="toc-trigger mb-3 block cursor-pointer ps-3.5 text-left text-[0.6875rem] leading-[1.45] font-medium tracking-[0.06em] text-ink-muted uppercase transition-colors duration-200 hover:text-ink-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus-visible:outline-dashed"
+          >
+            {label}
+          </button>
+          <div class="relative">
+            <div
+              aria-hidden="true"
+              class="toc-cue-bars pointer-events-none absolute start-3.5 top-0.5 flex flex-col gap-[5px] opacity-100 group-data-[visible=true]:opacity-0"
             >
-              {html ? <Fragment set:html={html} /> : text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+              <span class="block h-[1.5px] w-7 rounded-full bg-ink-muted/35 transition-colors duration-200 group-hover:bg-ink-muted/60" />
+              <span class="block h-[1.5px] w-4.5 rounded-full bg-ink-muted/30 transition-colors duration-200 group-hover:bg-ink-muted/55" />
+              <span class="block h-[1.5px] w-5.5 rounded-full bg-ink-muted/25 transition-colors duration-200 group-hover:bg-ink-muted/50" />
+            </div>
+            <ul
+              id="post-toc-list"
+              class="toc-list pointer-events-none invisible relative -m-1 max-h-[calc(100dvh-10rem)] -translate-y-2.5 [scrollbar-width:none] space-y-1.5 overflow-y-auto p-1 opacity-0 group-data-[visible=true]:pointer-events-auto group-data-[visible=true]:visible group-data-[visible=true]:translate-y-0 group-data-[visible=true]:opacity-100"
+            >
+              <li
+                aria-hidden="true"
+                class="toc-active-dot pointer-events-none absolute start-1.5 top-0 size-1.5 rounded-full bg-accent opacity-0"
+              />
+              {headings.map(({ depth, slug, text, html }) => (
+                <li>
+                  <a
+                    href={`#${slug}`}
+                    data-depth={depth}
+                    class:list={[
+                      "relative block py-0.5 leading-[1.42] text-ink-muted transition-colors duration-200 ease-(--ease-out) hover:text-ink-heading aria-[current]:font-medium aria-[current]:text-ink-heading [&_.katex]:text-[0.96em] [&_code]:font-mono [&_code]:text-[0.9em]",
+                      depth === 3
+                        ? "ps-6 text-[0.75rem]"
+                        : "ps-3.5 text-[0.78125rem]",
+                    ]}
+                  >
+                    {html ? <Fragment set:html={html} /> : text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <noscript>
+        <style
+          is:inline
+          set:html="#post-toc-list{opacity:1!important;visibility:visible!important;translate:0!important;pointer-events:auto!important}.toc-cue-bars{display:none!important}"
+        />
+      </noscript>
+    </>
   )
 }
 
 <style is:global set:html={hideInlineToc}></style>
 
+<style>
+  .toc-cue-bars {
+    transition: opacity 220ms var(--ease-out) 80ms;
+  }
+
+  .toc-zone[data-visible="true"] .toc-cue-bars {
+    transition: opacity 160ms var(--ease-out) 0s;
+  }
+
+  .toc-list {
+    transition:
+      opacity 260ms var(--ease-out),
+      translate 260ms var(--ease-out),
+      visibility 0s linear 260ms;
+  }
+
+  .toc-zone[data-visible="true"] .toc-list {
+    transition:
+      opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0s;
+  }
+
+  .toc-active-dot {
+    transform: translate3d(0, var(--toc-dot-y, 0px), 0);
+    transition:
+      transform 260ms var(--ease-out),
+      opacity 180ms var(--ease-out);
+  }
+</style>
+
 <script>
-  const nav = document.querySelector<HTMLElement>("#post-toc");
-  const links = [
-    ...(nav?.querySelectorAll<HTMLAnchorElement>("a[href^='#']") ?? []),
-  ];
-  const headings = links
-    .map(link => {
-      try {
-        return document.getElementById(decodeURIComponent(link.hash.slice(1)));
-      } catch {
-        return null;
-      }
-    })
-    .filter((h): h is HTMLElement => h != null);
+  const zone = document.querySelector<HTMLElement>("#post-toc-zone");
+  if (zone) {
+    const article = document.getElementById("article");
+    const trigger = zone.querySelector<HTMLButtonElement>(".toc-trigger");
+    const list = zone.querySelector<HTMLUListElement>("#post-toc-list");
+    const dot = zone.querySelector<HTMLElement>(".toc-active-dot");
+    const links = [...zone.querySelectorAll<HTMLAnchorElement>("a[href^='#']")];
+    const headings = links
+      .map(link => {
+        try {
+          return document.getElementById(
+            decodeURIComponent(link.hash.slice(1))
+          );
+        } catch {
+          return null;
+        }
+      })
+      .filter((h): h is HTMLElement => h != null);
 
-  if (nav && headings.length === links.length) {
-    const mark = (current: number) =>
-      links.forEach((link, i) => {
-        if (i === current) link.setAttribute("aria-current", "true");
-        else link.removeAttribute("aria-current");
-      });
-
-    // A click on a short final section lands at the page bottom, so the
-    // clicked link would immediately lose the mark. Pin it until the reader
-    // scrolls under their own steam.
+    const hasSpy = headings.length > 0 && headings.length === links.length;
+    let active = -1;
     let pinned: number | null = null;
+    let hovering = false;
 
-    const sync = () => {
-      if (pinned !== null) return;
+    const positionDot = (link: HTMLAnchorElement) => {
+      if (!dot || !list || getComputedStyle(zone).display === "none") return;
+      // Align dot with the vertical midpoint of the link's first line so
+      // multi-line headings still point cleanly at their opening line.
+      const lineHeight = parseFloat(getComputedStyle(link).lineHeight) || 18;
+      const padTop = parseFloat(getComputedStyle(link).paddingTop) || 0;
+      const y = link.offsetTop + padTop + lineHeight / 2 - dot.offsetHeight / 2;
+      dot.style.setProperty("--toc-dot-y", `${y}px`);
+      dot.style.opacity = "1";
+    };
+
+    const setVisible = (visible: boolean) => {
+      zone.dataset.visible = String(visible);
+      trigger?.setAttribute("aria-expanded", String(visible));
+    };
+
+    const mark = (current: number, forceDot = false) => {
+      if (current === active && !forceDot) return;
+      active = current;
+      links.forEach((link, i) => {
+        if (i === current) {
+          link.setAttribute("aria-current", "true");
+          positionDot(link);
+          if (list && list.scrollHeight > list.clientHeight) {
+            link.scrollIntoView({ block: "nearest" });
+          }
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    };
+
+    const isScrolledPast = () =>
+      article ? article.getBoundingClientRect().top <= 120 : scrollY >= 240;
+
+    const syncVisibility = () => {
+      // Keep open while hovered by mouse or while keyboard focus is inside.
+      if (hovering || zone.contains(document.activeElement)) {
+        setVisible(true);
+        return;
+      }
+      // Reveal once the reader scrolls past the post header into the article.
+      setVisible(isScrolledPast());
+    };
+
+    const sync = (forceDot = false) => {
+      syncVisibility();
+      if (!hasSpy || pinned !== null) return;
 
       const line = innerHeight * 0.35;
       const atEnd =
@@ -104,36 +216,65 @@ const hideInlineToc = `@media (min-width: 80rem) {
           if (heading.getBoundingClientRect().top <= line) current = i;
         });
       }
-      mark(current);
+      mark(current, forceDot);
     };
 
-    links.forEach((link, i) =>
-      link.addEventListener("click", () => {
-        pinned = i;
-        mark(i);
-      })
-    );
+    if (hasSpy) {
+      links.forEach((link, i) =>
+        link.addEventListener("click", () => {
+          pinned = i;
+          mark(i, true);
+        })
+      );
 
-    for (const event of ["wheel", "touchstart", "keydown"]) {
-      addEventListener(event, () => (pinned = null), { passive: true });
+      for (const event of ["wheel", "touchstart", "keydown"]) {
+        addEventListener(event, () => (pinned = null), { passive: true });
+      }
     }
+
+    zone.addEventListener("pointerenter", e => {
+      if (e.pointerType !== "mouse") return;
+      hovering = true;
+      setVisible(true);
+    });
+    zone.addEventListener("pointerleave", e => {
+      if (e.pointerType !== "mouse") return;
+      hovering = false;
+      syncVisibility();
+    });
+
+    trigger?.addEventListener("click", () => {
+      if (!hovering && !isScrolledPast()) {
+        setVisible(zone.dataset.visible !== "true");
+      } else {
+        setVisible(true);
+      }
+    });
+
+    zone.addEventListener("focusin", () => setVisible(true));
+    zone.addEventListener("focusout", () =>
+      requestAnimationFrame(syncVisibility)
+    );
 
     // One layout per frame: scroll fires faster than paint, and sync()
     // forces layout on every heading.
     let ticking = false;
-    function requestSync() {
+    function requestSync(forceDot = false) {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        sync();
+        sync(forceDot);
         ticking = false;
       });
     }
 
-    addEventListener("scroll", requestSync, { passive: true });
-    addEventListener("resize", requestSync, { passive: true });
+    addEventListener("scroll", () => requestSync(false), { passive: true });
+    addEventListener("resize", () => requestSync(true), { passive: true });
+    document.fonts?.ready.then(() => {
+      if (active >= 0 && links[active]) positionDot(links[active]);
+    });
     // Defer initial layout read to rAF so sibling page scripts finish DOM
     // mutations first instead of triggering a second full style/layout pass.
-    requestSync();
+    requestSync(true);
   }
 </script>

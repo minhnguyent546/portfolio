@@ -7,26 +7,41 @@ import { useTranslations } from "@/i18n";
 
 interface Props {
   uiLocale?: "en" | "vi";
+  /** Render compactly inside the centered post eyebrow instead of a standalone row. */
+  inline?: boolean;
 }
 
-const { uiLocale = "en" } = Astro.props;
+const { uiLocale = "en", inline = false } = Astro.props;
 const routeLocale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(uiLocale);
 ---
 
 {
-  config.features.showBackButton && (
-    <div class="app-layout flex items-center justify-start">
-      <LinkButton
+  config.features.showBackButton &&
+    (inline ? (
+      <a
         id="back-button"
         href={getRelativeLocaleUrl(routeLocale, "blog")}
-        class="-ms-2 mt-8 mb-2 hover:text-ink/75"
+        class="inline-flex items-center gap-0.5 text-ink-muted transition-colors duration-(--dur-micro) hover:text-ink-heading"
       >
-        <IconChevronLeft class="inline-block size-6 rtl:rotate-180" />
+        <IconChevronLeft
+          class="inline-block size-3.5 rtl:rotate-180"
+          aria-hidden="true"
+        />
         <span>{t.post.goBack}</span>
-      </LinkButton>
-    </div>
-  )
+      </a>
+    ) : (
+      <div class="app-layout flex items-center justify-start">
+        <LinkButton
+          id="back-button"
+          href={getRelativeLocaleUrl(routeLocale, "blog")}
+          class="-ms-2 mt-8 mb-2 hover:text-ink/75"
+        >
+          <IconChevronLeft class="inline-block size-6 rtl:rotate-180" />
+          <span>{t.post.goBack}</span>
+        </LinkButton>
+      </div>
+    ))
 }
 
 <script>

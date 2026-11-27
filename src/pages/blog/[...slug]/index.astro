@@ -9,9 +9,10 @@ import PostTOC from "@/components/PostTOC.astro";
 import Tag from "@/components/Tag.astro";
 import config from "@/config";
 import { TOPIC_LABELS } from "@/data/topics";
-import { useTranslations } from "@/i18n";
+import { tplStr, useTranslations } from "@/i18n";
 import PostLayout from "@/layouts/PostLayout.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
+import { getReadingTime } from "@/utils/getReadingTime";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { getTranslation } from "@/utils/getTranslation";
 import { slugifyStr } from "@/utils/slugify";
@@ -87,6 +88,7 @@ const {
 } = post.data;
 
 const t = useTranslations(lang);
+const minutes = getReadingTime(post);
 
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const tocHtml = (remarkPluginFrontmatter.tocHtml ?? {}) as Record<
@@ -129,15 +131,13 @@ const ogImage = ogImageUrl
   pubDatetime={pubDatetime}
   modDatetime={modDatetime}
 >
-  <Header />
+  <Header autoHide />
 
   <PostTOC headings={tocHeadings} label={t.post.onThisPage} />
 
-  <BackButton uiLocale={lang} />
-
   <main
     id="main-content"
-    class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
+    class="mx-auto w-full max-w-[44.5rem] px-5"
     data-pagefind-body
     data-pagefind-meta={`lang:${lang}`}
     data-copy-label={t.post.copyCode}
@@ -147,122 +147,124 @@ const ogImage = ogImageUrl
     data-close-preview-label={t.post.closeImagePreview}
     data-heading-link-label={t.post.linkToHeading}
   >
-    <h1 class="inline-block font-bold text-accent">
-      {title}
-    </h1>
-
-    <div class="my-2 flex items-center gap-2">
-      <Datetime
-        {pubDatetime}
-        {modDatetime}
-        {timezone}
-        uiLocale={lang}
-        size="lg"
-      />
-      <span
-        aria-hidden="true"
-        class:list={[
-          "text-ink-muted max-sm:hidden",
-          { hidden: !config.features.editPost?.enabled || hideEditPost },
-        ]}
+    <header
+      class="mx-auto max-w-[42rem] border-b border-rule pt-9 pb-7 text-center sm:pt-10 sm:pb-8"
+    >
+      <div
+        class="mb-3 inline-flex flex-wrap items-center justify-center gap-x-2 font-mono text-[11.5px] tracking-[0.06em]"
       >
-        |
-      </span>
-      <EditPost {hideEditPost} {post} uiLocale={lang} class="max-sm:hidden" />
-      {
-        translation && (
-          <>
-            <span aria-hidden="true" class="text-ink-muted">
-              |
-            </span>
-            <LangSwitch {post} {translation} />
-          </>
-        )
-      }
-    </div>
-
-    <ul class="my-4 flex flex-wrap items-center gap-4">
-      <li>
+        {
+          config.features.showBackButton && (
+            <>
+              <BackButton uiLocale={lang} inline />
+              <span aria-hidden="true" class="text-ink-muted/50">
+                /
+              </span>
+            </>
+          )
+        }
         <a
           href={getRelativeLocaleUrl(locale, `blog/topic/${topic}`)}
-          class="font-mono text-meta text-ink-muted uppercase underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-current"
+          class="font-medium tracking-[0.08em] text-accent uppercase hover:underline hover:underline-offset-4"
         >
           {TOPIC_LABELS[topic]}
         </a>
-      </li>
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
-    </ul>
+      </div>
+
+      <h1
+        class="mx-auto max-w-[39rem] font-display text-[clamp(1.7rem,1.5944rem+0.4507vw,2rem)] leading-[1.26] font-semibold tracking-[-0.018em] text-balance text-ink-heading"
+      >
+        {title}
+      </h1>
+
+      {
+        description && (
+          <p class="mx-auto mt-3.5 max-w-[37rem] font-app text-[0.96rem] leading-[1.55] text-ink-muted">
+            {description}
+          </p>
+        )
+      }
+
+      <div
+        class="mt-5 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 font-app text-[0.825rem] text-ink-muted"
+      >
+        <Datetime
+          {pubDatetime}
+          {modDatetime}
+          {timezone}
+          uiLocale={lang}
+          size="inherit"
+          showIcon={false}
+        />
+        <span aria-hidden="true" class="opacity-40">&middot;</span>
+        <span>{tplStr(t.post.minRead, { minutes })}</span>
+        {
+          translation && (
+            <>
+              <span aria-hidden="true" class="opacity-40">
+                &middot;
+              </span>
+              <LangSwitch {post} {translation} />
+            </>
+          )
+        }
+        {
+          config.features.editPost?.enabled && !hideEditPost && (
+            <>
+              <span aria-hidden="true" class="opacity-40 max-sm:hidden">
+                &middot;
+              </span>
+              <EditPost
+                {hideEditPost}
+                {post}
+                uiLocale={lang}
+                class="items-center max-sm:hidden [&_svg]:size-3.5"
+              />
+            </>
+          )
+        }
+      </div>
+    </header>
 
     <article
       id="article"
       class:list={[
-        "mt-8 w-full",
-        "app-prose max-w-[45.5rem] font-display text-[1.0625rem]",
+        "mx-auto mt-9 w-full",
+        "app-prose max-w-[42rem] font-display text-[1.0625rem] leading-[1.68]",
         "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
       ]}
     >
       <Content />
     </article>
 
-    <EditPost class="mt-8 sm:hidden" {hideEditPost} {post} uiLocale={lang} />
+    <div class="mx-auto max-w-[42rem]">
+      {
+        tags.length > 0 && (
+          <ul class="mt-10 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            {tags.map(tag => (
+              <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
+            ))}
+          </ul>
+        )
+      }
 
-    <BackToTopButton uiLocale={lang} />
+      <EditPost
+        class="mt-6 text-[0.825rem] sm:hidden [&_svg]:size-4"
+        {hideEditPost}
+        {post}
+        uiLocale={lang}
+      />
 
-    <hr class="my-8 border-dashed" />
+      <BackToTopButton uiLocale={lang} />
 
-    <AdjacentPostNav {prevPost} {nextPost} uiLocale={lang} />
+      <hr class="my-8 border-rule" />
+
+      <AdjacentPostNav {prevPost} {nextPost} uiLocale={lang} />
+    </div>
   </main>
   <Footer class="sm:pb-20 lg:pb-0" />
 
   <script>
-    function createProgressBar() {
-      // A scroll-position read is motion; skip it entirely for reduced-motion
-      // readers instead of animating behind their backs.
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-      const progressContainer = document.createElement("div");
-      progressContainer.className =
-        "progress-container fixed top-0 z-10 h-1 w-full bg-paper";
-
-      const progressBar = document.createElement("div");
-      progressBar.className = "progress-bar h-1 w-0 bg-accent";
-      progressBar.id = "myBar";
-
-      progressContainer.appendChild(progressBar);
-      document.body.appendChild(progressContainer);
-    }
-    createProgressBar();
-
-    function updateScrollProgress() {
-      const myBar = document.getElementById("myBar");
-      if (!myBar) return;
-
-      // Throttle the width write to one paint per scroll, not one per event.
-      let ticking = false;
-      const draw = () => {
-        const winScroll =
-          document.body.scrollTop || document.documentElement.scrollTop;
-        const height =
-          document.documentElement.scrollHeight -
-          document.documentElement.clientHeight;
-        if (height > 0) {
-          myBar.style.width = (winScroll / height) * 100 + "%";
-        }
-        ticking = false;
-      };
-      document.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(draw);
-          }
-        },
-        { passive: true }
-      );
-    }
-    updateScrollProgress();
-
     function addHeadingLinks() {
       const labelTemplate =
         document.getElementById("main-content")?.dataset.headingLinkLabel ??
@@ -316,7 +318,7 @@ const ogImage = ogImageUrl
           : "-top-3";
 
         const copyButton = document.createElement("button");
-        copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-surface border border-surface px-2 py-1 text-xs leading-4 text-ink font-medium`;
+        copyButton.className = `copy-code absolute end-3 ${topClass} rounded border border-rule bg-paper px-2 py-1 text-xs leading-4 font-medium text-ink-muted hover:text-ink`;
         copyButton.textContent = copyButtonLabel;
         // Shiki adds tabindex="0" to every <pre>. The Copy button keeps it:
         // without a tab stop on the block, keyboard users cannot reach the
